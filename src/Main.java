@@ -68,20 +68,20 @@ public class Main {
 
     public static void showMenuOptions() {
         System.out.println("""
-               
-               ===============================================
-               |                MENU OPTIONS                 |
-               ===============================================
-               |                                             |
-               |   1. Import matrix from csv file            |
-               |   2. Functionality 1                        |
-               |   3. Functionality 2                        |
-               |   4. Functionality 1                        |
-               |   5. Know Development Team                  |
-               |   0. Exit                                   |
-               |                                             |
-               ===============================================
-               """);
+                
+                ===============================================
+                |                MENU OPTIONS                 |
+                ===============================================
+                |                                             |
+                |   1. Import matrix from csv file            |
+                |   2. Functionality 1                        |
+                |   3. Functionality 2                        |
+                |   4. Functionality 1                        |
+                |   5. Know Development Team                  |
+                |   0. Exit                                   |
+                |                                             |
+                ===============================================
+                """);
         System.out.print("  Choose Option: ");
     }
 
@@ -109,5 +109,60 @@ public class Main {
 
     }
     */
+
+    /**
+     * Função que faz a validação da matriz. Verifica se a matriz é quadrada, simétrica e se não contém valores negativos, retornando o erro específico caso exista.
+     *
+     * @param matrix
+     * @return verdadeiro se a matriz é válida ou falso se não for
+     */
+    public static boolean validateMatrix(double[][] matrix) {
+
+        if (matrix.length != matrix[0].length) {
+            System.out.println("A matriz não é quadrada.");
+            return false;
+        }
+
+        String[] negativeValues = new String[matrix.length * matrix[0].length];
+        boolean hasNegatives = false;
+        int negativeIndex = 0;
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] != matrix[j][i]) {
+                    System.out.println("A matriz não é simétrica.");
+                    return false;
+                }
+                if (matrix[i][j] < 0) {
+                    hasNegatives = true;
+                    negativeValues[negativeIndex++] = "Linha: " + i + ", Coluna: " + j + " (" + matrix[i][j] + ")";
+                }
+            }
+        }
+        if (hasNegatives) {
+            System.out.println("A matriz contém valores negativos.");
+            for (int i = 0; i < negativeValues.length; i++) {
+                if (negativeValues[i] != null) {
+                    System.out.println(negativeValues[i]);
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Função para imprimir uma matriz para efeitos de teste e visualização
+     *
+     * @param matrix
+     */
+    public static void printMatrix(RealMatrix matrix) {
+        for (int i = 0; i < matrix.getRowDimension(); i++) {
+            for (int j = 0; j < matrix.getColumnDimension(); j++) {
+                System.out.print(matrix.getEntry(i, j) + " ");
+            }
+            System.out.println();
+        }
+    }
 
 }
