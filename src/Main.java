@@ -1,11 +1,18 @@
+import org.apache.commons.math3.linear.EigenDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.MatrixUtils;
+
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+        //Declaração de Variáveis
         Scanner scanner = new Scanner(System.in);
         int menuOption;
 
+        //Leitura da Opção do Menu e Redirecionamento para os diferentes casos
         do {
             menuOption = -1;
 
@@ -31,8 +38,7 @@ public class Main {
                     System.out.println("Import matrix from csv file");
                     break;
                 case 2:
-                    //TODO: Implementar esta funcionalidade
-                    System.out.println("Functionality 1");
+                    //DecomposicaoPropria();
                     break;
                 case 3:
                     //TODO: Implementar esta funcionalidade
@@ -74,4 +80,24 @@ public class Main {
                """);
         System.out.print("  Choose Option: ");
     }
+    /*
+    public static void DecomposicaoPropria(){
+        // Decomposição própria
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(A);
+
+        // Matriz dos vetores próprios (P)
+        RealMatrix P = eigenDecomposition.getV();
+
+        // Matriz diagonal dos autovalores (D)
+        RealMatrix D = MatrixUtils.createRealDiagonalMatrix(eigenDecomposition.getRealEigenvalues());
+
+        System.out.println("Matriz P (vetores próprios (Características Principais)):");
+        printMatrix(P);
+
+        System.out.println("Matriz D (autovalores (Características Mais Significativas)):");
+        printMatrix(D);
+
+    }
+    */
+
 }
