@@ -4,12 +4,15 @@ import org.apache.commons.math3.linear.MatrixUtils;
 
 
 import java.util.Scanner;
+import java.io.File;
 
 public class Main {
+    private static double[][] matrizLida;
+    static String caminhoCsv = "exampleInputFunc1.csv";
+    static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         //Declaração de Variáveis
-        Scanner scanner = new Scanner(System.in);
         int menuOption;
 
         //Leitura da Opção do Menu e Redirecionamento para os diferentes casos
@@ -36,6 +39,7 @@ public class Main {
                 case 1:
                     //TODO: Implementar esta funcionalidade
                     System.out.println("Import matrix from csv file");
+                    GetMatrixFromCSV();
                     break;
                 case 2:
                     //DecomposicaoPropria();
@@ -80,6 +84,60 @@ public class Main {
                """);
         System.out.print("  Choose Option: ");
     }
+
+    public static void GetMatrixFromCSV() {
+        // -- VERIFICAR SE O ARQUIVO EXISTE --
+        File arquivo = new File(caminhoCsv);
+        if (!arquivo.exists()) {
+            System.out.println("O arquivo não existe.");
+            return;
+        }
+
+        // LER LINHAS E COLUNAS DA MATRIZ DO CSV
+        int numLinhas = 0;
+        int numColunas = 0;
+        try (Scanner fileScanner = new Scanner(arquivo)) {
+            if (fileScanner.hasNextLine()) {
+                String linha = fileScanner.nextLine();
+                numColunas = linha.split(",").length;
+                numLinhas++;
+            }
+
+            while (fileScanner.hasNextLine()) {
+                fileScanner.nextLine();
+                numLinhas++;
+            }
+
+            //PREENCHER MATRIZ
+            matrizLida = new double[numLinhas][numColunas];
+
+            fileScanner.close();
+            try (Scanner readScanner = new Scanner(arquivo)) {
+                int rowIndex = 0;
+                while (readScanner.hasNextLine()) {
+                    String line = readScanner.nextLine();
+                    String[] columns = line.split(",");
+                    for (int i = 0; i < numColunas; i++) {
+                        matrizLida[rowIndex][i] = Double.parseDouble(columns[i]);
+                    }
+                    rowIndex++;
+                }
+            }
+
+            System.out.println("Matriz importada do CSV:");
+            for (int i = 0; i < numLinhas; i++) {
+                for (int j = 0; j < numColunas; j++) {
+                    System.out.print(matrizLida[i][j] + " ");
+                }
+                System.out.println();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro ao obter o ficheiro CSV: " + e.getMessage());
+        }
+    }
+
+
     /*
     public static void DecomposicaoPropria(){
         // Decomposição própria
