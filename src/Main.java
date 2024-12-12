@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         //Declaração de Variáveis
         int menuOption;
-        
+
 
         //Leitura da Opção do Menu e Redirecionamento para os diferentes casos
         do {
