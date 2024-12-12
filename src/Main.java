@@ -10,6 +10,7 @@ public class Main {
     private static double[][] matrizLida;
     static String caminhoCsv = "exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
+    static int k;
 
     public static void main(String[] args) {
         //Declaração de Variáveis
@@ -42,8 +43,15 @@ public class Main {
                     GetMatrixFromCSV();
                     break;
                 case 2:
-                    //DecomposicaoPropria();
-                    break;
+                    if(matrizLida != null){
+                        k = askNumberOfEigenvectors(matrizLida);
+                        //DecomposicaoPropria();
+                        break;
+                    }else {
+                        System.out.println("A matriz ainda não foi lida.");
+                        break;
+
+                    }
                 case 3:
                     //TODO: Implementar esta funcionalidade
                     System.out.println("Functionality 2");
@@ -151,15 +159,59 @@ public class Main {
         return true;
     }
 
+    private static int askNumberOfEigenvectors(double[][] matrix) {
+        int k = 0;
+
+        while (k <= 0 && k != -1) {
+            System.out.println("Qual é o número de vetores próprios (k)?");
+
+            if (scanner.hasNextInt()) {
+                k = scanner.nextInt();
+                if (k <= 0 && k != -1) {
+                    System.out.println("""
+                            Invalid number of eigenvectors.
+                               Valid inputs:
+                                    - A positive integer
+                                    - -1 to use all eigenvectors
+                            """);
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next();
+            }
+        }
+
+        if (k == -1) {
+            k = matrix.length;
+        }
+
+        return k;
+    }
+
     /**
-     * Função para imprimir uma matriz para efeitos de teste e visualização
+     * Função para imprimir uma matriz (object real matrix) para efeitos de teste e visualização
      *
      * @param matrix
      */
-    public static void printMatrix(RealMatrix matrix) {
+    public static void printRealMatrix(RealMatrix matrix) {
         for (int i = 0; i < matrix.getRowDimension(); i++) {
             for (int j = 0; j < matrix.getColumnDimension(); j++) {
-                System.out.print(matrix.getEntry(i, j) + " ");
+                System.out.printf(matrix.getEntry(i, j) + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * Função para imprimir uma matriz (double[][]) para efeitos de teste e visualização
+     *
+     * @param matrix
+     */
+    public static void printMatrix(double[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + " ");
+                System.out.printf("%.2f ", matrix[i][j]);
             }
             System.out.println();
         }
