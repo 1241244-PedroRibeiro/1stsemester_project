@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
-    private static double[][] matrizLida;
+    private static double[][] matrizLida, matrizP, matrizD;
     static String caminhoCsv = "out/production/lapr1-24-25_DIJ_04/exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
     static int k;
-
-
 
 
     public static void main(String[] args) {
@@ -51,15 +49,19 @@ public class Main {
                     GetMatrixFromCSV();
                     break;
                 case 2:
-                    if(matrizLida != null){
+                    if (matrizLida != null) {
                         k = askNumberOfEigenvectors(matrizLida);
-                        //DecomposicaoPropria();
-                        break;
-                    }else {
+
+                        RealMatrix[] resultado = decomposicaoPropria();
+                        matrizP = resultado[0].getData();
+                        matrizD = resultado[1].getData();
+
+                    } else {
                         System.out.println("A matriz ainda não foi lida.");
-                        break;
+
 
                     }
+                    break;
                 case 3:
                     //TODO: Implementar esta funcionalidade
                     System.out.println("Functionality 2");
@@ -163,28 +165,20 @@ public class Main {
     }
 
 
-
-
-
-    /*
-    public static void DecomposicaoPropria(){
+    public static RealMatrix[] decomposicaoPropria() {
         // Decomposição própria
-        EigenDecomposition eigenDecomposition = new EigenDecomposition(A);
+        RealMatrix[] result = new RealMatrix[2];
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(MatrixUtils.createRealMatrix(matrizLida));
 
         // Matriz dos vetores próprios (P)
-        RealMatrix P = eigenDecomposition.getV();
-
+        RealMatrix matrizP = eigenDecomposition.getV();
+        result[0] = matrizP;
         // Matriz diagonal dos autovalores (D)
-        RealMatrix D = MatrixUtils.createRealDiagonalMatrix(eigenDecomposition.getRealEigenvalues());
+        RealMatrix matrizD = MatrixUtils.createRealDiagonalMatrix(eigenDecomposition.getRealEigenvalues());
+        result[1] = matrizD;
 
-        System.out.println("Matriz P (vetores próprios (Características Principais)):");
-        printMatrix(P);
-
-        System.out.println("Matriz D (autovalores (Características Mais Significativas)):");
-        printMatrix(D);
-
+        return result;
     }
-    */
 
     /**
      * Função que faz a validação da matriz. Verifica se a matriz é quadrada, simétrica e se não contém valores negativos, retornando o erro específico caso exista.
@@ -278,7 +272,6 @@ public class Main {
     public static void printMatrix(double[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
                 System.out.printf("%.2f ", matrix[i][j]);
             }
             System.out.println();
@@ -289,10 +282,9 @@ public class Main {
         double[][] transposedmatrix = new double[k][k];
         for (int i = 0; i < k; i++) {
             for (int j = 0; j < k; j++) {
-                if(i==j){
+                if (i == j) {
                     transposedmatrix[i][j] = matrix[i][j];
-                }
-                else{
+                } else {
                     transposedmatrix[j][i] = matrix[i][j];
                 }
             }
@@ -300,11 +292,12 @@ public class Main {
 
         return transposedmatrix;
     }
+
     public static double[][] matrixMultiplication(double[][] P, double[][] D, int k) {
         double[][] calculatedMatrix = new double[k][k];
         for (int i = 0; i < k; i++) {
             for (int j = 0; j < k; j++) {
-                for(int l=0; l<k;l++){
+                for (int l = 0; l < k; l++) {
                     calculatedMatrix[i][j] += P[i][l] * D[l][j];
                 }
             }
