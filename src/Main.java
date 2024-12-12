@@ -210,9 +210,9 @@ public class Main {
         double[][] sortedD = new double[n][n];
         double[][] sortedP = new double[n][n];
         for (int i = 0; i < n; i++) {
-            sortedD[i][i] = diagonal[indices[i]]; // Atualiza diagonal
+            sortedD[i][i] = diagonal[indices[i]];
             for (int j = 0; j < n; j++) {
-                sortedP[j][i] = auxP[j][indices[i]]; // Reordena colunas de auxP
+                sortedP[j][i] = auxP[j][indices[i]];
             }
         }
 
