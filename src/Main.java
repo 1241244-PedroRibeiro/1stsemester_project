@@ -297,6 +297,7 @@ public class Main {
         double[][] calculatedMatrix = new double[P.length][D[0].length];
         for (int i = 0; i < P.length; i++) {
             for (int j = 0; j < D[0].length; j++) {
+
                 for (int l = 0; l < P[0].length; l++) {
                     calculatedMatrix[i][j] += P[i][l] * D[l][j];
                 }
