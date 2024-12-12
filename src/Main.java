@@ -3,11 +3,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 
 
+import java.io.*;
 import java.util.Scanner;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
@@ -304,6 +301,25 @@ public class Main {
 
         }
         return calculatedMatrix;
+    }
+
+    /**
+     * Função para calcular o erro absoluto médio entre duas matrizes, a original e a reconstruída
+     * @param original
+     * @param reconstructed
+     * @return erro absoluto médio
+     */
+    public static double calculateEAM(double[][] original, double[][] reconstructed) {
+        double sum = 0;
+        int rows = original.length;
+        int cols = original[0].length;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                sum += Math.abs(original[i][j] - reconstructed[i][j]);
+            }
+        }
+        return sum / (rows * cols);
     }
 
 }
