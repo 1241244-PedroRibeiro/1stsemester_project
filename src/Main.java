@@ -5,10 +5,11 @@ import org.apache.commons.math3.linear.MatrixUtils;
 
 import java.io.*;
 import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class Main {
-    private static double[][] matrizLida, matrizP, matrizD;
+    private static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk;
     static String caminhoCsv = "out/production/lapr1-24-25_DIJ_04/exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
     static int k;
@@ -53,10 +54,14 @@ public class Main {
                         matrizP = resultado[0].getData();
                         matrizD = resultado[1].getData();
 
+
+                        double[][][] decompostas = compressedMatrix();
+
+                        matrizPk = decompostas[0];
+                        matrizDk = decompostas[1];
+
                     } else {
                         System.out.println("A matriz ainda não foi lida.");
-
-
                     }
                     break;
                 case 3:
@@ -175,6 +180,58 @@ public class Main {
         result[1] = matrizD;
 
         return result;
+    }
+
+    public static double[][][] compressedMatrix() {
+        double[][] auxP = matrizP;
+        double[][] auxD = matrizD;
+
+        int n = matrizD.length;
+        double[] diagonal = new double[n];
+        for (int i = 0; i < n; i++) {
+            diagonal[i] = auxD[i][i];
+        }
+
+        Integer[] indices = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            indices[i] = i;
+        }
+
+        Arrays.sort(indices, (i, j) -> Double.compare(diagonal[j], diagonal[i]));
+
+        double[][] sortedD = new double[n][n];
+        double[][] sortedP = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            sortedD[i][i] = diagonal[indices[i]]; // Atualiza diagonal
+            for (int j = 0; j < n; j++) {
+                sortedP[j][i] = auxP[j][indices[i]]; // Reordena colunas de auxP
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            auxD[i][i] = sortedD[i][i];
+            for (int j = 0; j < n; j++) {
+                auxP[j][i] = sortedP[j][i];
+            }
+        }
+
+        double[][] finalPk = new double[k][auxP[0].length];
+        double[][] finalDk = new double[k][k];
+
+        for (int i = 0 ; i < k ; i++) {
+            for (int j = 0 ; j < auxP[0].length ; j++) {
+                finalPk[i][j] = auxP[i][j];
+            }
+        }
+
+        for (int i = 0 ; i < k ; i++) {
+            for (int j = 0 ; j < k ; j++) {
+                if (i == j) finalDk[i][j] = auxD[i][j];
+            }
+        }
+
+        return new double[][][] { finalPk, finalDk };
+
     }
 
     /**
