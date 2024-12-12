@@ -64,6 +64,12 @@ public class Main {
                         printMatrix(matrizDk);
                         */
 
+                        matrizAk = matrixMultiplication(matrixMultiplication(matrizPk,matrizDk),transpose(matrizPk));
+                        /*=======PRINTS DE TESTE======
+                        printMatrix(matrizAk);
+*/
+                        printMatrix(matrizAk);
+
                     } else {
 
                         System.out.println("A matriz ainda não foi lida.");
