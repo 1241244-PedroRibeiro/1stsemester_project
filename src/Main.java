@@ -7,8 +7,13 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.Arrays;
 
-
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 public class Main {
+    public static final String OUTPUT_PATH = "output";
     private static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk, matrizAk;
     static String caminhoCsv = "out/production/lapr1-24-25_DIJ_04/exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
@@ -67,9 +72,11 @@ public class Main {
                         matrizAk = matrixMultiplication(matrixMultiplication(matrizPk,matrizDk),transpose(matrizPk));
                         /*=======PRINTS DE TESTE======
                         printMatrix(matrizAk);
-*/
+                        */
+                        System.out.println("Matriz Reconstruída:");
                         printMatrix(matrizAk);
 
+                        saveMatrixToCSV(matrizAk);
                     } else {
 
                         System.out.println("A matriz ainda não foi lida.");
@@ -176,7 +183,6 @@ public class Main {
             throw new RuntimeException("Erro - leitura realizada incorretamente: " + e.getMessage());
         }
     }
-
 
     public static RealMatrix[] decomposicaoPropria() {
         // Decomposição própria
@@ -387,5 +393,43 @@ public class Main {
         }
         return sum / (rows * cols);
     }
+
+    public static void saveMatrixToCSV(double[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            System.out.println("Matriz inválida. Não foi possível salvar no CSV.");
+            return;
+        }
+
+
+        File outputDir = new File(OUTPUT_PATH);
+        if (!outputDir.exists()) {
+            if (outputDir.mkdir()) {
+                System.out.println("Pasta 'OutPut' criada com sucesso.");
+            } else {
+                System.out.println("Erro ao criar a pasta 'OutPut'. Verifique as permissões.");
+                return;
+            }
+        }
+
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String outputFilename = "matrix_" + timestamp + ".csv";
+        File outputFile = new File(outputDir, outputFilename);
+
+        try (PrintWriter writer = new PrintWriter(outputFile)) {
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[i].length; j++) {
+                    writer.print(matrix[i][j]);
+                    if (j < matrix[i].length - 1) {
+                        writer.print(",");
+                    }
+                }
+                writer.println();
+            }
+            System.out.println("Matriz salva no arquivo CSV com sucesso: " + outputFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Erro ao guardar a matriz no CSV: " + e.getMessage());
+        }
+    }
+
 
 }
