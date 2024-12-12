@@ -278,10 +278,10 @@ public class Main {
         }
     }
 
-    public static double[][] transpose(double[][] matrix, int k) {
-        double[][] transposedmatrix = new double[k][k];
-        for (int i = 0; i < k; i++) {
-            for (int j = 0; j < k; j++) {
+    public static double[][] transpose(double[][] matrix) {
+        double[][] transposedmatrix = new double[matrix[0].length][matrix.length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
                 if (i == j) {
                     transposedmatrix[i][j] = matrix[i][j];
                 } else {
@@ -293,11 +293,11 @@ public class Main {
         return transposedmatrix;
     }
 
-    public static double[][] matrixMultiplication(double[][] P, double[][] D, int k) {
-        double[][] calculatedMatrix = new double[k][k];
-        for (int i = 0; i < k; i++) {
-            for (int j = 0; j < k; j++) {
-                for (int l = 0; l < k; l++) {
+    public static double[][] matrixMultiplication(double[][] P, double[][] D) {
+        double[][] calculatedMatrix = new double[P.length][D[0].length];
+        for (int i = 0; i < P.length; i++) {
+            for (int j = 0; j < D[0].length; j++) {
+                for (int l = 0; l < P[0].length; l++) {
                     calculatedMatrix[i][j] += P[i][l] * D[l][j];
                 }
             }
