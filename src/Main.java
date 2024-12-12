@@ -12,6 +12,9 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
     static int k;
 
+
+
+
     public static void main(String[] args) {
         //Declaração de Variáveis
         int menuOption;
@@ -215,6 +218,22 @@ public class Main {
             }
             System.out.println();
         }
+    }
+
+    public static double[][] transpose(double[][] matrix) {
+        double[][] transposedmatrix = new double[matrix.length][matrix[0].length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if(i==j){
+                    transposedmatrix[i][j] = matrix[i][j];
+                }
+                else{
+                    transposedmatrix[j][i] = matrix[i][j];
+                }
+            }
+        }
+
+        return transposedmatrix;
     }
 
 }
