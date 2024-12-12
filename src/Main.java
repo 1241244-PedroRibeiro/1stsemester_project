@@ -23,6 +23,7 @@ public class Main {
         //Declaração de Variáveis
         int menuOption;
 
+
         //Leitura da Opção do Menu e Redirecionamento para os diferentes casos
         do {
             menuOption = -1;
@@ -284,10 +285,10 @@ public class Main {
         }
     }
 
-    public static double[][] transpose(double[][] matrix) {
-        double[][] transposedmatrix = new double[matrix.length][matrix[0].length];
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
+    public static double[][] transpose(double[][] matrix, int k) {
+        double[][] transposedmatrix = new double[k][k];
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < k; j++) {
                 if(i==j){
                     transposedmatrix[i][j] = matrix[i][j];
                 }
@@ -298,6 +299,18 @@ public class Main {
         }
 
         return transposedmatrix;
+    }
+    public static double[][] matrixMultiplication(double[][] P, double[][] D, int k) {
+        double[][] calculatedMatrix = new double[k][k];
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < k; j++) {
+                for(int l=0; l<k;l++){
+                    calculatedMatrix[i][j] += P[i][l] * D[l][j];
+                }
+            }
+
+        }
+        return calculatedMatrix;
     }
 
 }
