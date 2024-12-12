@@ -5,10 +5,14 @@ import org.apache.commons.math3.linear.MatrixUtils;
 
 import java.util.Scanner;
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
     private static double[][] matrizLida;
-    static String caminhoCsv = "exampleInputFunc1.csv";
+    static String caminhoCsv = "out/production/lapr1-24-25_DIJ_04/exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
 
 
@@ -89,8 +93,68 @@ public class Main {
     }
 
     public static void GetMatrixFromCSV() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(caminhoCsv));
+            String line = reader.readLine();
+            if (line == null) {
+                throw new IllegalArgumentException("Erro - O CSV está vazio.");
+            }
 
+            String[] values = line.split(",");
+            int columnCount = values.length;
+
+            int rowCount = 0;
+            while ((line = reader.readLine()) != null) {
+                rowCount++;
+            }
+
+            reader.close();
+            reader = new BufferedReader(new FileReader(caminhoCsv));
+
+            matrizLida = new double[rowCount][columnCount];
+
+            int currentRow = 0;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                String[] rowValues = line.split(",");
+                if (rowValues.length != columnCount) {
+                    throw new IllegalArgumentException("Erro - número de colunas na linha " + (currentRow + 1) + " não corresponde ao número de colunas.");
+                }
+
+                for (int i = 0; i < rowValues.length; i++) {
+                    try {
+                        matrizLida[currentRow][i] = Double.parseDouble(rowValues[i].trim());
+                    } catch (NumberFormatException e) {
+                        throw new NumberFormatException("Erro ao converter valor - Linha " + (currentRow + 1) + ", Coluna " + (i + 1) + ": '" + rowValues[i] + "'");
+                    }
+                }
+                currentRow++;
+            }
+
+            reader.close();
+
+            System.out.println("Matriz lida com sucesso:");
+            for (int i = 0; i < matrizLida.length; i++) {
+                for (int j = 0; j < matrizLida[i].length; j++) {
+                    System.out.print(matrizLida[i][j] + " ");
+                }
+                System.out.println();
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Erro - leitura do ficheiro CSV foi feita incorretamente: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro - leitura realizada incorretamente: " + e.getMessage());
+        }
     }
+
+
+
 
 
     /*
