@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 
 public class Main {
-    private static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk;
+    private static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk, matrizAk;
     static String caminhoCsv = "out/production/lapr1-24-25_DIJ_04/exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
     static int k;
@@ -59,8 +59,16 @@ public class Main {
 
                         matrizPk = decompostas[0];
                         matrizDk = decompostas[1];
+                        /*=======PRINTS DE TESTE======
+                        printMatrix(matrizPk);
+                        printMatrix(matrizDk);
+                        */
 
+                        //Multiplicação do Ak (Fórmula)
+                        /*matrizAk = matrixMultiplication(matrixMultiplication(matrizPk,matrizDk),transpose(matrizPk));
+                        printMatrix(matrizAk);*/
                     } else {
+
                         System.out.println("A matriz ainda não foi lida.");
                     }
                     break;
@@ -274,22 +282,24 @@ public class Main {
         }
         return true;
     }
-
     private static int askNumberOfEigenvectors(double[][] matrix) {
         int k = 0;
 
-        while (k <= 0 && k != -1) {
+        while (k <= 0 || k > matrix.length) {
             System.out.println("Qual é o número de vetores próprios (k)?");
 
             if (scanner.hasNextInt()) {
                 k = scanner.nextInt();
-                if (k <= 0 && k != -1) {
+                if (k <= 0) {
                     System.out.println("""
-                            Invalid number of eigenvectors.
-                               Valid inputs:
-                                    - A positive integer
-                                    - -1 to use all eigenvectors
-                            """);
+                        Invalid number of eigenvectors.
+                           Valid inputs:
+                                - A positive integer
+                                - -1 to use all eigenvectors
+                        """);
+                } else if (k > matrix.length) {
+                    System.out.printf("The maximum number of eigenvectors is %d. Setting k to %d.%n", matrix.length, matrix.length);
+                    k = matrix.length;
                 }
             } else {
                 System.out.println("Invalid input. Please enter a number.");
@@ -304,6 +314,7 @@ public class Main {
         return k;
     }
 
+
     /**
      * Função para imprimir uma matriz (object real matrix) para efeitos de teste e visualização
      *
@@ -317,7 +328,6 @@ public class Main {
             System.out.println();
         }
     }
-
     /**
      * Função para imprimir uma matriz (double[][]) para efeitos de teste e visualização
      *
@@ -331,7 +341,6 @@ public class Main {
             System.out.println();
         }
     }
-
     public static double[][] transpose(double[][] matrix) {
         double[][] transposedmatrix = new double[matrix[0].length][matrix.length];
         for (int i = 0; i < matrix.length; i++) {
@@ -346,7 +355,6 @@ public class Main {
 
         return transposedmatrix;
     }
-
     public static double[][] matrixMultiplication(double[][] P, double[][] D) {
         double[][] calculatedMatrix = new double[P.length][D[0].length];
         for (int i = 0; i < P.length; i++) {
@@ -360,7 +368,6 @@ public class Main {
         }
         return calculatedMatrix;
     }
-
     /**
      * Função para calcular o erro absoluto médio entre duas matrizes, a original e a reconstruída
      * @param original
