@@ -64,9 +64,6 @@ public class Main {
                         printMatrix(matrizDk);
                         */
 
-                        //Multiplicação do Ak (Fórmula)
-                        /*matrizAk = matrixMultiplication(matrixMultiplication(matrizPk,matrizDk),transpose(matrizPk));
-                        printMatrix(matrizAk);*/
                     } else {
 
                         System.out.println("A matriz ainda não foi lida.");
@@ -223,11 +220,11 @@ public class Main {
             }
         }
 
-        double[][] finalPk = new double[k][auxP[0].length];
+        double[][] finalPk = new double[auxP[0].length][k];
         double[][] finalDk = new double[k][k];
 
-        for (int i = 0 ; i < k ; i++) {
-            for (int j = 0 ; j < auxP[0].length ; j++) {
+        for (int i = 0 ; i < auxP[0].length ; i++) {
+            for (int j = 0 ; j < k ; j++) {
                 finalPk[i][j] = auxP[i][j];
             }
         }
@@ -238,7 +235,7 @@ public class Main {
             }
         }
 
-        return new double[][][] { finalPk, finalDk };
+        return new double[][][] { finalPk,finalDk };
 
     }
 
@@ -313,8 +310,6 @@ public class Main {
 
         return k;
     }
-
-
     /**
      * Função para imprimir uma matriz (object real matrix) para efeitos de teste e visualização
      *
