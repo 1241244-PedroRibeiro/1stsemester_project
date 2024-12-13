@@ -86,6 +86,58 @@ public class Main {
                 case 3:
                     //TODO: Implementar esta funcionalidade
                     System.out.println("Functionality 2");
+                    System.out.print("Digite o número de imagens (n) que deseja processar: ");
+
+                    File pasta = new File(IMAGE_FOLDER);
+                    int n = scanner.nextInt();
+                    File[] arquivos = pasta.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
+
+                    if (arquivos == null) {
+                        System.err.println("Erro ao listar arquivos na pasta ou pasta vazia.");
+                        return;
+                    }
+
+                    int limite = Math.min(n, arquivos.length);
+
+                    int tamanhoMatriz = 0;
+                    try {
+                        File primeiroArquivo = arquivos[0];
+                        tamanhoMatriz = obterTamanhoMatriz(primeiroArquivo);
+                    } catch (IOException e) {
+                        System.err.println("Erro ao determinar o tamanho da matriz.");
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    double[][] matrizVetores = new double[tamanhoMatriz][limite];
+
+                    for (int i = 0; i < limite; i++) {
+                        File arquivoCSV = arquivos[i];
+                        try {
+                            double[] vetor = converterCSVparaVetor(arquivoCSV, tamanhoMatriz);
+
+                            for (int j = 0; j < vetor.length; j++) {
+                                matrizVetores[j][i] = vetor[j];
+                            }
+                        } catch (IOException e) {
+                            System.err.println("Erro ao processar o arquivo: " + arquivoCSV.getName());
+                            e.printStackTrace();
+                        }
+                    }
+
+                    double[] mediaImagens = calcularMedia(matrizVetores, limite);
+
+                    double[][] matrizA = new double[tamanhoMatriz][limite];
+                    for (int i = 0; i < limite; i++) {
+                        for (int j = 0; j < tamanhoMatriz; j++) {
+                            matrizA[j][i] = matrizVetores[j][i] - mediaImagens[j];
+                        }
+                    }
+                    double[][] matrizATransposta = transpose(matrizA);
+                    double[][] prematrizCovariancia = DivideMatrizByLimit(matrixMultiplication(matrizATransposta, matrizA), limite);
+
+                    printMatrix(prematrizCovariancia);
+
                     break;
                 case 4:
                     //TODO: Implementar esta funcionalidade
@@ -562,5 +614,27 @@ public class Main {
         }
     }
 
+    public static double[] calcularMedia(double[][] matrizVetores, int n) {
+        double[] media = new double[matrizVetores.length];
 
+        for (int i = 0; i < matrizVetores.length; i++) {
+            double soma = 0;
+            for (int j = 0; j < n; j++) {
+                soma += matrizVetores[i][j];
+            }
+            media[i] = soma / n;
+        }
+
+        return media;
+    }
+
+    private static double[][] DivideMatrizByLimit(double[][] matriz, int limite) {
+        for (int i = 0; i < limite; i++) {
+            for (int j = 0; j < limite; j++) {
+                matriz[i][j] /= limite;
+            }
+
+        }
+        return matriz;
+    }
 }
