@@ -178,8 +178,7 @@ public class Main {
 
     public static double[][] GetMatrixFromCSV(String caminhoCsv) {
         double[][] matrix = null;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(caminhoCsv));
+        try (BufferedReader reader = new BufferedReader(new FileReader(caminhoCsv))) {
             String line = reader.readLine();
             if (line == null) {
                 throw new IllegalArgumentException("Erro - O CSV está vazio.");
@@ -188,40 +187,43 @@ public class Main {
             String[] values = line.split(",");
             int columnCount = values.length;
 
-            int rowCount = 0;
+            int rowCount = 1;
             while ((line = reader.readLine()) != null) {
-                rowCount++;
+                if (!line.trim().isEmpty()) {
+                    rowCount++;
+                }
             }
 
             reader.close();
-            reader = new BufferedReader(new FileReader(caminhoCsv));
+            BufferedReader newReader = new BufferedReader(new FileReader(caminhoCsv));
 
             matrix = new double[rowCount][columnCount];
-
             int currentRow = 0;
-            while ((line = reader.readLine()) != null) {
+
+            while ((line = newReader.readLine()) != null) {
                 line = line.trim();
-
-                if (line.isEmpty()) {
-                    continue;
-                }
-
-                String[] rowValues = line.split(",");
-                if (rowValues.length != columnCount) {
-                    throw new IllegalArgumentException("Erro - número de colunas na linha " + (currentRow + 1) + " não corresponde ao número de colunas.");
-                }
-
-                for (int i = 0; i < rowValues.length; i++) {
-                    try {
-                        matrix[currentRow][i] = Double.parseDouble(rowValues[i].trim());
-                    } catch (NumberFormatException e) {
-                        throw new NumberFormatException("Erro ao converter valor - Linha " + (currentRow + 1) + ", Coluna " + (i + 1) + ": '" + rowValues[i] + "'");
+                if (!line.isEmpty()) {
+                    String[] rowValues = line.split(",");
+                    if (rowValues.length != columnCount) {
+                        throw new IllegalArgumentException(
+                                "Erro - número de colunas na linha " + (currentRow + 1) + " não corresponde ao esperado."
+                        );
                     }
+
+                    for (int i = 0; i < columnCount; i++) {
+                        try {
+                            matrix[currentRow][i] = Double.parseDouble(rowValues[i].trim());
+                        } catch (NumberFormatException e) {
+                            throw new NumberFormatException(
+                                    "Erro ao converter valor - Linha " + (currentRow + 1) + ", Coluna " + (i + 1) + ": '" + rowValues[i] + "'"
+                            );
+                        }
+                    }
+                    currentRow++;
                 }
-                currentRow++;
             }
 
-            reader.close();
+            newReader.close();
 
             System.out.println("Matriz lida com sucesso:");
             for (int i = 0; i < matrix.length; i++) {
@@ -238,6 +240,7 @@ public class Main {
         }
         return matrix;
     }
+
 
     public static RealMatrix[] decomposicaoPropria() {
         // Decomposição própria
