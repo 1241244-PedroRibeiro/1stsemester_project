@@ -40,14 +40,14 @@ public class Main {
                 }
             }
 
-            System.out.println("\nYou selected option: " + menuOption);
-
             switch (menuOption) {
                 case 1:
+                    showMenuTitle(1);
                     String filePath = selectFileToRead();
                     matrizLida = GetMatrixFromCSV(filePath);
                     break;
                 case 2:
+                    showMenuTitle(2);
                     if (matrizLida != null) {
                         k = askNumberOfEigenvectors(matrizLida);
                         RealMatrix[] resultado = decomposicaoPropria();
@@ -77,6 +77,7 @@ public class Main {
                     }
                     break;
                 case 3:
+                    showMenuTitle(3);
                     String folderPath = selectFolderToRead();
 
                     System.out.print("Digite o número de imagens que deseja processar: ");
@@ -102,12 +103,14 @@ public class Main {
 
                     break;
                 case 4:
+                    showMenuTitle(4);
                     //TODO: Implementar esta funcionalidade
-                    System.out.println("Functionality 3");
+
                     break;
                 case 5:
+                    showMenuTitle(5);
+                    showDevelopmentTeam();
                     //TODO: Implementar esta funcionalidade
-                    System.out.println("Know Development Team");
                     break;
                 case 0:
                     System.out.println("Closing application...");
@@ -119,24 +122,8 @@ public class Main {
         scanner.close();
     }
 
-    public static void showMenuOptions() {
-        System.out.println("""
-                
-                    ╔══════════════════════════════════════════════╗
-                    ║                 MENU OPTIONS                 ║
-                    ╠══════════════════════════════════════════════╣
-                    ║                                              ║
-                    ║   1. Import matrix from csv file             ║
-                    ║   2. Functionality 1                         ║
-                    ║   3. Functionality 2                         ║
-                    ║   4. Functionality 1                         ║
-                    ║   5. Know Development Team                   ║
-                    ║   0. Exit                                    ║
-                    ║                                              ║
-                    ╚══════════════════════════════════════════════╝
-                """);
-        System.out.print("     Choose Option: ");
-    }
+
+
 
     public static double[][] GetMatrixFromCSV(String caminhoCsv) {
         double[][] matrix = null;
@@ -681,5 +668,85 @@ public class Main {
 
         }
         return matriz;
+    }
+
+
+
+    public static void showMenuOptions() {
+        System.out.println("""
+                
+                  ╔══════════════════════════════════════════════╗
+                  ║                 MENU OPTIONS                 ║
+                  ╠══════════════════════════════════════════════╣
+                  ║                                              ║
+                  ║   1. Import matrix from csv file             ║
+                  ║   2. Functionality 1                         ║
+                  ║   3. Functionality 2                         ║
+                  ║   4. Functionality 1                         ║
+                  ║   5. Know Development Team                   ║
+                  ║   0. Exit                                    ║
+                  ║                                              ║
+                  ╚══════════════════════════════════════════════╝
+                """);
+        System.out.print("     Choose Option: ");
+    }
+
+    public static void showMenuTitle(int uiNumber) {
+        switch (uiNumber) {
+            case 1:
+                System.out.println("""
+                        
+                          ╔══════════════════════════════════════════════╗
+                          ║        1. Import matrix from csv file        ║
+                          ╚══════════════════════════════════════════════╝
+                        """);
+                break;
+            case 2:
+                System.out.println("""
+                        
+                          ╔══════════════════════════════════════════════╗
+                          ║              2. Functionality 1              ║
+                          ╚══════════════════════════════════════════════╝
+                        """);
+                break;
+            case 3:
+                System.out.println("""
+                        
+                          ╔══════════════════════════════════════════════╗
+                          ║              3. Functionality 2              ║
+                          ╚══════════════════════════════════════════════╝
+                        """);
+                break;
+            case 4:
+                System.out.println("""
+                        
+                          ╔══════════════════════════════════════════════╗
+                          ║              4. Functionality 3              ║
+                          ╚══════════════════════════════════════════════╝
+                        """);
+                break;
+            case 5:
+                System.out.println("""
+                        
+                          ╔══════════════════════════════════════════════╗
+                          ║           5. Know Development Team           ║
+                          ╚══════════════════════════════════════════════╝
+                        """);
+                break;
+
+        }
+    }
+
+    public static void showDevelopmentTeam() {
+        System.out.println("""
+                    LAPR1 - Projeto Integrador
+                    Grupo 04 - BitMinds
+                
+                    Desenvolvido por:
+                        Pedro Costa     - 1221790
+                        Pedro Ribeiro   - 1241244
+                        Afonso Mota     - 1241225
+                        Diogo Oliveira  - 1241883
+                """);
     }
 }
