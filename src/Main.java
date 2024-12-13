@@ -14,17 +14,13 @@ import java.util.Date;
 
 public class Main {
     public static final String OUTPUT_PATH = "output";
-    private static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk, matrizAk;
-    public static final String IMAGE_FOLDER = "resources/exemploMatrizesImagensCSVFuncionalidades2e3";
-    static String caminhoCsv = "resources/exampleInputFunc1.csv";
+    public static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk, matrizAk;
     static Scanner scanner = new Scanner(System.in);
     static int k;
-
 
     public static void main(String[] args) {
         //Declaração de Variáveis
         int menuOption;
-
 
         //Leitura da Opção do Menu e Redirecionamento para os diferentes casos
         do {
@@ -48,18 +44,15 @@ public class Main {
 
             switch (menuOption) {
                 case 1:
-                    //TODO: Implementar esta funcionalidade
-                    System.out.println("Import matrix from csv file");
-                    matrizLida = GetMatrixFromCSV(caminhoCsv);
+                    String filePath = selectFileToRead();
+                    matrizLida = GetMatrixFromCSV(filePath);
                     break;
                 case 2:
                     if (matrizLida != null) {
                         k = askNumberOfEigenvectors(matrizLida);
-
                         RealMatrix[] resultado = decomposicaoPropria();
                         matrizP = resultado[0].getData();
                         matrizD = resultado[1].getData();
-
 
                         double[][][] decompostas = compressedMatrix();
 
@@ -84,47 +77,16 @@ public class Main {
                     }
                     break;
                 case 3:
-                    //TODO: Implementar esta funcionalidade
-                    System.out.println("Functionality 2");
-                    System.out.print("Digite o número de imagens (n) que deseja processar: ");
+                    String folderPath = selectFolderToRead();
 
-                    File pasta = new File(IMAGE_FOLDER);
-                    int n = scanner.nextInt();
-                    File[] arquivos = pasta.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
+                    System.out.print("Digite o número de imagens que deseja processar: ");
+                    int numberOfEigenFaces = scanner.nextInt();
 
-                    if (arquivos == null) {
-                        System.err.println("Erro ao listar arquivos na pasta ou pasta vazia.");
-                        return;
-                    }
+                    File[] arquivos = getCsvFiles(folderPath, numberOfEigenFaces);
+                    int limite = Math.min(numberOfEigenFaces, arquivos.length);
+                    int tamanhoMatriz = getMaxMatrixSize(arquivos);
 
-                    int limite = Math.min(n, arquivos.length);
-
-                    int tamanhoMatriz = 0;
-                    try {
-                        File primeiroArquivo = arquivos[0];
-                        tamanhoMatriz = obterTamanhoMatriz(primeiroArquivo);
-                    } catch (IOException e) {
-                        System.err.println("Erro ao determinar o tamanho da matriz.");
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    double[][] matrizVetores = new double[tamanhoMatriz][limite];
-
-                    for (int i = 0; i < limite; i++) {
-                        File arquivoCSV = arquivos[i];
-                        try {
-                            double[] vetor = converterCSVparaVetor(arquivoCSV, tamanhoMatriz);
-
-                            for (int j = 0; j < vetor.length; j++) {
-                                matrizVetores[j][i] = vetor[j];
-                            }
-                        } catch (IOException e) {
-                            System.err.println("Erro ao processar o arquivo: " + arquivoCSV.getName());
-                            e.printStackTrace();
-                        }
-                    }
-
+                    double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz, limite);
                     double[] mediaImagens = calcularMedia(matrizVetores, limite);
 
                     double[][] matrizA = new double[tamanhoMatriz][limite];
@@ -134,9 +96,9 @@ public class Main {
                         }
                     }
                     double[][] matrizATransposta = transpose(matrizA);
-                    double[][] prematrizCovariancia = DivideMatrizByLimit(matrixMultiplication(matrizATransposta, matrizA), limite);
+                    double[][] matrizCovariancia = divideMatrizByLimit(matrixMultiplication(matrizATransposta, matrizA), limite);
 
-                    printMatrix(prematrizCovariancia);
+                    printMatrix(matrizCovariancia);
 
                     break;
                 case 4:
@@ -160,20 +122,20 @@ public class Main {
     public static void showMenuOptions() {
         System.out.println("""
                 
-                ===============================================
-                |                MENU OPTIONS                 |
-                ===============================================
-                |                                             |
-                |   1. Import matrix from csv file            |
-                |   2. Functionality 1                        |
-                |   3. Functionality 2                        |
-                |   4. Functionality 1                        |
-                |   5. Know Development Team                  |
-                |   0. Exit                                   |
-                |                                             |
-                ===============================================
+                    ╔══════════════════════════════════════════════╗
+                    ║                 MENU OPTIONS                 ║
+                    ╠══════════════════════════════════════════════╣
+                    ║                                              ║
+                    ║   1. Import matrix from csv file             ║
+                    ║   2. Functionality 1                         ║
+                    ║   3. Functionality 2                         ║
+                    ║   4. Functionality 1                         ║
+                    ║   5. Know Development Team                   ║
+                    ║   0. Exit                                    ║
+                    ║                                              ║
+                    ╚══════════════════════════════════════════════╝
                 """);
-        System.out.print("  Choose Option: ");
+        System.out.print("     Choose Option: ");
     }
 
     public static double[][] GetMatrixFromCSV(String caminhoCsv) {
@@ -255,6 +217,42 @@ public class Main {
         result[1] = matrizD;
 
         return result;
+    }
+
+    public static int getMaxMatrixSize(File[] arquivos) {
+        int tamanhoMatriz = 0;
+        for (File arquivo : arquivos) {
+            try {
+                int tamanhoAtual = obterTamanhoMatriz(arquivo);
+                if (tamanhoAtual > tamanhoMatriz) {
+                    tamanhoMatriz = tamanhoAtual;
+                }
+            } catch (IOException e) {
+                System.err.println("Erro ao determinar o tamanho da matriz para o arquivo: " + arquivo.getName());
+                e.printStackTrace();
+            }
+        }
+        return tamanhoMatriz;
+    }
+
+    public static double[][] processCsvFiles(File[] arquivos, int tamanhoMatriz, int limite) {
+        double[][] matrizVetores = new double[tamanhoMatriz][limite];
+
+        for (int i = 0; i < limite; i++) {
+            File arquivoCSV = arquivos[i];
+            try {
+                double[] vetor = converterCSVparaVetor(arquivoCSV, tamanhoMatriz);
+
+                for (int j = 0; j < vetor.length; j++) {
+                    matrizVetores[j][i] = vetor[j];
+                }
+            } catch (IOException e) {
+                System.err.println("Erro ao processar o arquivo: " + arquivoCSV.getName());
+                e.printStackTrace();
+            }
+        }
+
+        return matrizVetores;
     }
 
     public static double[][][] compressedMatrix() {
@@ -350,7 +348,7 @@ public class Main {
         return true;
     }
 
-    private static int askNumberOfEigenvectors(double[][] matrix) {
+    public static int askNumberOfEigenvectors(double[][] matrix) {
         int k = 0;
 
         while (k <= 0 || k > matrix.length) {
@@ -439,6 +437,44 @@ public class Main {
         return calculatedMatrix;
     }
 
+    public static String selectFolderToRead() {
+        Scanner scanner = new Scanner(System.in);
+        String folderPath = null;
+        boolean isValid = false;
+
+        while (!isValid) {
+            System.out.println("Enter the path of the folder: ");
+            folderPath = scanner.nextLine();
+            File folder = new File(folderPath);
+
+            if (folder.exists() && folder.isDirectory()) {
+                isValid = true;
+            } else {
+                System.out.println("Invalid folder path. Please enter a valid path.");
+            }
+        }
+        return folderPath;
+    }
+
+    public static String selectFileToRead() {
+        Scanner scanner = new Scanner(System.in);
+        String filePath = null;
+        boolean isValid = false;
+
+        while (!isValid) {
+            System.out.println("Enter the path of the file: ");
+            filePath = scanner.nextLine();
+            File file = new File(filePath);
+
+            if (file.exists() && file.isFile() && filePath.endsWith(".csv")) {
+                isValid = true;
+            } else {
+                System.out.println("Invalid file path. Ensure the file exist and has a .csv extension.");
+            }
+        }
+        return filePath;
+    }
+
     /**
      * Função para calcular o erro absoluto médio entre duas matrizes, a original e a reconstruída
      *
@@ -497,7 +533,7 @@ public class Main {
     }
     //TODO: =================== TESTAR METODOS getCsvFiles,readImagesFromFolder,getVectorFromMatrix ================
 
-    private static File[] getCsvFiles(String folderPath, int numberOfFiles) {
+    public static File[] getCsvFiles(String folderPath, int numberOfFiles) {
         try {
             File folder = new File(folderPath);
 
@@ -533,13 +569,19 @@ public class Main {
             return new File[0];
         }
     }
-    // matrix to vector
-    public static double[][] readImagesFromFolder(String folderPath, int numberOfEigenFaces) {
+
+
+    /*public static double[][] readImagesFromFolder(String folderPath, int numberOfEigenFaces) {
         File[] files = getCsvFiles(folderPath, numberOfEigenFaces);
 
         if (files == null) {
             System.out.println("Erro ao ler a pasta de imagens.");
             return null;
+        }
+
+        if (files.length < numberOfEigenFaces) {
+            numberOfEigenFaces = files.length;
+            System.out.println("O número de imagens a serem processadas foi ajustado para " + numberOfEigenFaces + "pois a pasta contém apenas " + numberOfEigenFaces + " imagens.");
         }
 
         double[][] imagesMatrix = new double[256 * 256][numberOfEigenFaces];
@@ -555,7 +597,7 @@ public class Main {
         return imagesMatrix;
     }
 
-    private static double[] getVectorFromMatrix(double[][] matrix) {
+    public static double[] getVectorFromMatrix(double[][] matrix) {
         if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
             System.out.println("A matriz está vazia ou nula.");
             return null;
@@ -576,8 +618,8 @@ public class Main {
         }
 
         return vector;
-    }
-   
+    }*/
+
 
     public static int obterTamanhoMatriz(File arquivoCSV) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
@@ -631,7 +673,7 @@ public class Main {
         return media;
     }
 
-    private static double[][] DivideMatrizByLimit(double[][] matriz, int limite) {
+    public static double[][] divideMatrizByLimit(double[][] matriz, int limite) {
         for (int i = 0; i < limite; i++) {
             for (int j = 0; j < limite; j++) {
                 matriz[i][j] /= limite;
