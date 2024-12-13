@@ -440,34 +440,7 @@ public class Main {
             System.out.println("Erro ao guardar a matriz no CSV: " + e.getMessage());
         }
     }
-
-    // matrix to vector
-    public static double[][] readImagesFromFolder(String folderPath, int numberOfEigenFaces) {
-        File[] files = getCsvFiles(folderPath, numberOfEigenFaces);
-
-        if (files == null) {
-            System.out.println("Erro ao ler a pasta de imagens.");
-            return null;
-        }
-
-        double[][] imagesMatrix = new double[256 * 256][numberOfEigenFaces];
-        double[] currentVector;
-
-        for (int j = 0; j < numberOfEigenFaces; j++) {
-            currentVector = getVectorFromMatrix(GetMatrixFromCSV(files[j].getAbsolutePath()));
-
-            for (int i = 0; i < currentVector.length; i++) {
-                imagesMatrix[i][j] = currentVector[i];
-            }
-        }
-        return imagesMatrix;
-    }
-
-    private static double[] getVectorFromMatrix(double[][] matrix) {
-        //TODO: Implementar esta funcionalidade
-
-        return null;
-    }
+    //TODO: =================== TESTAR METODOS getCsvFiles,readImagesFromFolder,getVectorFromMatrix ================
 
     private static File[] getCsvFiles(String folderPath, int numberOfFiles) {
         try {
@@ -505,6 +478,49 @@ public class Main {
             return new File[0];
         }
     }
+    // matrix to vector
+    public static double[][] readImagesFromFolder(String folderPath, int numberOfEigenFaces) {
+        File[] files = getCsvFiles(folderPath, numberOfEigenFaces);
 
+        if (files == null) {
+            System.out.println("Erro ao ler a pasta de imagens.");
+            return null;
+        }
+
+        double[][] imagesMatrix = new double[256 * 256][numberOfEigenFaces];
+        double[] currentVector;
+
+        for (int j = 0; j < numberOfEigenFaces; j++) {
+            currentVector = getVectorFromMatrix(GetMatrixFromCSV(files[j].getAbsolutePath()));
+
+            for (int i = 0; i < currentVector.length; i++) {
+                imagesMatrix[i][j] = currentVector[i];
+            }
+        }
+        return imagesMatrix;
+    }
+
+    private static double[] getVectorFromMatrix(double[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            System.out.println("A matriz está vazia ou nula.");
+            return null;
+        }
+
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int size = rows * cols;
+
+        double[] vector = new double[size];
+
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                vector[index] = matrix[i][j];
+                index++;
+            }
+        }
+
+        return vector;
+    }
 
 }
