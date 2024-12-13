@@ -522,5 +522,45 @@ public class Main {
 
         return vector;
     }
+   
+
+    public static int obterTamanhoMatriz(File arquivoCSV) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
+            String linha = br.readLine();
+            if (linha != null) {
+                String[] valores = linha.split(",");
+                return valores.length * valores.length;
+            } else {
+                throw new IOException("Arquivo vazio ou formato inválido.");
+            }
+        }
+    }
+
+    public static double[] converterCSVparaVetor(File arquivoCSV, int tamanhoMatriz) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
+            double[] vetor = new double[tamanhoMatriz];
+            String linha;
+            int indice = 0;
+
+            while ((linha = br.readLine()) != null) {
+                String[] valores = linha.split(",");
+                for (String valor : valores) {
+                    try {
+                        vetor[indice++] = Double.parseDouble(valor.trim());
+                    } catch (NumberFormatException e) {
+                        System.err.println("Valor inválido no CSV: " + valor);
+                        throw e;
+                    }
+                }
+            }
+
+            if (indice != vetor.length) {
+                throw new IOException("O arquivo CSV não contém o número esperado de elementos.");
+            }
+
+            return vetor;
+        }
+    }
+
 
 }
