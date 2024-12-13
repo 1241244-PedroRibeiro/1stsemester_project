@@ -2,7 +2,6 @@ import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 
-
 import java.io.*;
 import java.util.Scanner;
 import java.util.Arrays;
@@ -12,10 +11,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 public class Main {
     public static final String OUTPUT_PATH = "output";
     private static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk, matrizAk;
-    static String caminhoCsv = "out/production/lapr1-24-25_DIJ_04/exampleInputFunc1.csv";
+    public static final String IMAGE_FOLDER = "resources/exemploMatrizesImagensCSVFuncionalidades2e3";
+    static String caminhoCsv = "resources/exampleInputFunc1.csv";
     static Scanner scanner = new Scanner(System.in);
     static int k;
 
@@ -49,7 +50,7 @@ public class Main {
                 case 1:
                     //TODO: Implementar esta funcionalidade
                     System.out.println("Import matrix from csv file");
-                    GetMatrixFromCSV();
+                    matrizLida = GetMatrixFromCSV(caminhoCsv);
                     break;
                 case 2:
                     if (matrizLida != null) {
@@ -69,7 +70,7 @@ public class Main {
                         printMatrix(matrizDk);
                         */
 
-                        matrizAk = matrixMultiplication(matrixMultiplication(matrizPk,matrizDk),transpose(matrizPk));
+                        matrizAk = matrixMultiplication(matrixMultiplication(matrizPk, matrizDk), transpose(matrizPk));
                         /*=======PRINTS DE TESTE======
                         printMatrix(matrizAk);
                         */
@@ -123,7 +124,8 @@ public class Main {
         System.out.print("  Choose Option: ");
     }
 
-    public static void GetMatrixFromCSV() {
+    public static double[][] GetMatrixFromCSV(String caminhoCsv) {
+        double[][] matrix = null;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(caminhoCsv));
             String line = reader.readLine();
@@ -142,7 +144,7 @@ public class Main {
             reader.close();
             reader = new BufferedReader(new FileReader(caminhoCsv));
 
-            matrizLida = new double[rowCount][columnCount];
+            matrix = new double[rowCount][columnCount];
 
             int currentRow = 0;
             while ((line = reader.readLine()) != null) {
@@ -159,7 +161,7 @@ public class Main {
 
                 for (int i = 0; i < rowValues.length; i++) {
                     try {
-                        matrizLida[currentRow][i] = Double.parseDouble(rowValues[i].trim());
+                        matrix[currentRow][i] = Double.parseDouble(rowValues[i].trim());
                     } catch (NumberFormatException e) {
                         throw new NumberFormatException("Erro ao converter valor - Linha " + (currentRow + 1) + ", Coluna " + (i + 1) + ": '" + rowValues[i] + "'");
                     }
@@ -170,9 +172,9 @@ public class Main {
             reader.close();
 
             System.out.println("Matriz lida com sucesso:");
-            for (int i = 0; i < matrizLida.length; i++) {
-                for (int j = 0; j < matrizLida[i].length; j++) {
-                    System.out.print(matrizLida[i][j] + " ");
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[i].length; j++) {
+                    System.out.print(matrix[i][j] + " ");
                 }
                 System.out.println();
             }
@@ -182,6 +184,7 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException("Erro - leitura realizada incorretamente: " + e.getMessage());
         }
+        return matrix;
     }
 
     public static RealMatrix[] decomposicaoPropria() {
@@ -235,19 +238,19 @@ public class Main {
         double[][] finalPk = new double[auxP[0].length][k];
         double[][] finalDk = new double[k][k];
 
-        for (int i = 0 ; i < auxP[0].length ; i++) {
-            for (int j = 0 ; j < k ; j++) {
+        for (int i = 0; i < auxP[0].length; i++) {
+            for (int j = 0; j < k; j++) {
                 finalPk[i][j] = auxP[i][j];
             }
         }
 
-        for (int i = 0 ; i < k ; i++) {
-            for (int j = 0 ; j < k ; j++) {
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < k; j++) {
                 if (i == j) finalDk[i][j] = auxD[i][j];
             }
         }
 
-        return new double[][][] { finalPk,finalDk };
+        return new double[][][]{finalPk, finalDk};
 
     }
 
@@ -291,6 +294,7 @@ public class Main {
         }
         return true;
     }
+
     private static int askNumberOfEigenvectors(double[][] matrix) {
         int k = 0;
 
@@ -301,11 +305,11 @@ public class Main {
                 k = scanner.nextInt();
                 if (k <= 0) {
                     System.out.println("""
-                        Invalid number of eigenvectors.
-                           Valid inputs:
-                                - A positive integer
-                                - -1 to use all eigenvectors
-                        """);
+                            Invalid number of eigenvectors.
+                               Valid inputs:
+                                    - A positive integer
+                                    - -1 to use all eigenvectors
+                            """);
                 } else if (k > matrix.length) {
                     System.out.printf("The maximum number of eigenvectors is %d. Setting k to %d.%n", matrix.length, matrix.length);
                     k = matrix.length;
@@ -322,6 +326,7 @@ public class Main {
 
         return k;
     }
+
     /**
      * Função para imprimir uma matriz (object real matrix) para efeitos de teste e visualização
      *
@@ -335,6 +340,7 @@ public class Main {
             System.out.println();
         }
     }
+
     /**
      * Função para imprimir uma matriz (double[][]) para efeitos de teste e visualização
      *
@@ -348,6 +354,7 @@ public class Main {
             System.out.println();
         }
     }
+
     public static double[][] transpose(double[][] matrix) {
         double[][] transposedmatrix = new double[matrix[0].length][matrix.length];
         for (int i = 0; i < matrix.length; i++) {
@@ -362,6 +369,7 @@ public class Main {
 
         return transposedmatrix;
     }
+
     public static double[][] matrixMultiplication(double[][] P, double[][] D) {
         double[][] calculatedMatrix = new double[P.length][D[0].length];
         for (int i = 0; i < P.length; i++) {
@@ -375,8 +383,10 @@ public class Main {
         }
         return calculatedMatrix;
     }
+
     /**
      * Função para calcular o erro absoluto médio entre duas matrizes, a original e a reconstruída
+     *
      * @param original
      * @param reconstructed
      * @return erro absoluto médio
@@ -428,6 +438,71 @@ public class Main {
             System.out.println("Matriz salva no arquivo CSV com sucesso: " + outputFile.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Erro ao guardar a matriz no CSV: " + e.getMessage());
+        }
+    }
+
+    // matrix to vector
+    public static double[][] readImagesFromFolder(String folderPath, int numberOfEigenFaces) {
+        File[] files = getCsvFiles(folderPath, numberOfEigenFaces);
+
+        if (files == null) {
+            System.out.println("Erro ao ler a pasta de imagens.");
+            return null;
+        }
+
+        double[][] imagesMatrix = new double[256 * 256][numberOfEigenFaces];
+        double[] currentVector;
+
+        for (int j = 0; j < numberOfEigenFaces; j++) {
+            currentVector = getVectorFromMatrix(GetMatrixFromCSV(files[j].getAbsolutePath()));
+
+            for (int i = 0; i < currentVector.length; i++) {
+                imagesMatrix[i][j] = currentVector[i];
+            }
+        }
+        return imagesMatrix;
+    }
+
+    private static double[] getVectorFromMatrix(double[][] matrix) {
+        //TODO: Implementar esta funcionalidade
+
+        return null;
+    }
+
+    private static File[] getCsvFiles(String folderPath, int numberOfFiles) {
+        try {
+            File folder = new File(folderPath);
+
+            if (!folder.exists() || !folder.isDirectory()) {
+                throw new IOException("Pasta não encontrada: " + folderPath);
+            }
+
+            File[] files = folder.listFiles();
+            int count = 0;
+
+            for (int i = 0; i < files.length && count < numberOfFiles; i++) {
+                if (files[i].getName().endsWith(".csv")) {
+                    count++;
+                }
+            }
+
+            if (count == 0) {
+                throw new IOException("Nenhum arquivo CSV encontrado na pasta: " + folderPath);
+            }
+
+            File[] csvFiles = new File[Math.min(count, numberOfFiles)];
+            int index = 0;
+
+            for (int i = 0; i < files.length && index < numberOfFiles; i++) {
+                if (files[i].getName().endsWith(".csv")) {
+                    csvFiles[index++] = files[i];
+                }
+            }
+            return csvFiles;
+
+        } catch (IOException e) {
+            System.out.println("Erro: " + e.getMessage());
+            return new File[0];
         }
     }
 
