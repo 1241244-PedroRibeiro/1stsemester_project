@@ -670,6 +670,32 @@ public class Main {
         return matriz;
     }
 
+    public static double[][] normalizeVectors(double[][] matriz){
+        int linhas = matriz.length;
+        int colunas = matriz[0].length;
+        double[][] matrizNormalizada=new double[linhas][colunas];
+        for(int j=0; j<colunas; j++){
+            double magnitude=0.0;
+            for(int i=0; i<linhas; i++){
+                magnitude+=matriz[i][j]*matriz[i][j];
+            }
+            magnitude=Math.sqrt(magnitude);
+            if(magnitude!=0){
+                for(int i=0;i<linhas;i++){
+                    matrizNormalizada[i][j]=matriz[i][j]/magnitude;
+                }
+            }
+            else{
+                for (int i = 0; i < linhas; i++) {
+                    matrizNormalizada[i][j] = Double.NaN;
+                }
+                System.out.printf("Aviso: A matriz de vetores na coluna %d tem magnitude=0\n",j);
+            }
+        }
+
+        return matrizNormalizada;
+    }
+
 
 
     public static void showMenuOptions() {
