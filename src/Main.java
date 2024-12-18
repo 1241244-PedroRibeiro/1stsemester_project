@@ -83,7 +83,7 @@ public class Main {
                     System.out.print("Digite o número de imagens que deseja processar: ");
                     int numberOfEigenFaces = scanner.nextInt();
 
-                    File[] arquivos = getCsvFiles(folderPath, numberOfEigenFaces);
+                    File[] arquivos = getCsvFiles(folderPath);
                     int limite = Math.min(numberOfEigenFaces, arquivos.length);
                     int tamanhoMatriz = getMaxMatrixSize(arquivos);
 
@@ -520,7 +520,7 @@ public class Main {
     }
     //TODO: =================== TESTAR METODOS getCsvFiles,readImagesFromFolder,getVectorFromMatrix ================
 
-    public static File[] getCsvFiles(String folderPath, int numberOfFiles) {
+    public static File[] getCsvFiles(String folderPath) {
         try {
             File folder = new File(folderPath);
 
@@ -528,27 +528,33 @@ public class Main {
                 throw new IOException("Pasta não encontrada: " + folderPath);
             }
 
+            // Filtra arquivos CSV manualmente
             File[] files = folder.listFiles();
-            int count = 0;
+            if (files == null || files.length == 0) {
+                throw new IOException("A pasta está vazia ou não contém arquivos válidos: " + folderPath);
+            }
 
-            for (int i = 0; i < files.length && count < numberOfFiles; i++) {
-                if (files[i].getName().endsWith(".csv")) {
-                    count++;
+            // Contagem de arquivos CSV
+            int csvCount = 0;
+            for (File file : files) {
+                if (file.getName().endsWith(".csv")) {
+                    csvCount++;
                 }
             }
 
-            if (count == 0) {
+            if (csvCount == 0) {
                 throw new IOException("Nenhum arquivo CSV encontrado na pasta: " + folderPath);
             }
 
-            File[] csvFiles = new File[Math.min(count, numberOfFiles)];
+            // Cria um array para armazenar os arquivos CSV
+            File[] csvFiles = new File[csvCount];
             int index = 0;
-
-            for (int i = 0; i < files.length && index < numberOfFiles; i++) {
-                if (files[i].getName().endsWith(".csv")) {
-                    csvFiles[index++] = files[i];
+            for (File file : files) {
+                if (file.getName().endsWith(".csv")) {
+                    csvFiles[index++] = file;
                 }
             }
+
             return csvFiles;
 
         } catch (IOException e) {
