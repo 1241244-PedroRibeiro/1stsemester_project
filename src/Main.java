@@ -719,29 +719,28 @@ public class Main {
         return matriz;
     }
 
-    public static double[][] normalizeVectors(double[][] matriz) {
-        int linhas = matriz.length;
-        int colunas = matriz[0].length;
-        double[][] matrizNormalizada = new double[linhas][colunas];
-        for (int j = 0; j < colunas; j++) {
-            double magnitude = 0.0;
-            for (int i = 0; i < linhas; i++) {
-                magnitude += matriz[i][j] * matriz[i][j];
+    private static double[][] normalizarVetoresC(double[][] matrizVetoresPropriosC) {
+        int numLinhas = matrizVetoresPropriosC.length;      // Número de linhas
+        int numColunas = matrizVetoresPropriosC[0].length; // Número de colunas (número de vetores próprios)
+
+        double[][] matrizEigenFaces = new double[numLinhas][numColunas];
+
+        // Normaliza cada coluna (vetor próprio)
+        for (int j = 0; j < numColunas; j++) {
+            double soma = 0;
+
+            // Calcula a norma do vetor (coluna j)
+            for (int i = 0; i < numLinhas; i++) {
+                soma += Math.pow(matrizVetoresPropriosC[i][j], 2);
             }
-            magnitude = Math.sqrt(magnitude);
-            if (magnitude != 0) {
-                for (int i = 0; i < linhas; i++) {
-                    matrizNormalizada[i][j] = matriz[i][j] / magnitude;
-                }
-            } else {
-                for (int i = 0; i < linhas; i++) {
-                    matrizNormalizada[i][j] = Double.NaN;
-                }
-                System.out.printf("Aviso: A matriz de vetores na coluna %d tem magnitude=0\n", j);
+            double norma = Math.sqrt(soma);
+
+            // Normaliza a coluna j
+            for (int i = 0; i < numLinhas; i++) {
+                matrizEigenFaces[i][j] = matrizVetoresPropriosC[i][j] / norma;
             }
         }
-
-        return matrizNormalizada;
+        return matrizEigenFaces;
     }
 
 
