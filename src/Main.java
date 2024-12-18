@@ -719,6 +719,18 @@ public class Main {
         return matriz;
     }
 
+    private static double[][] obterVetoresProprios(double[][] matrizATA) {
+        RealMatrix matriz = MatrixUtils.createRealMatrix(matrizATA);
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(matriz);
+
+        double[][] vetoresProprios = eigenDecomposition.getV().getData();
+        double[] valoresProprios = eigenDecomposition.getRealEigenvalues();
+
+        ordenarVetoresProprios(valoresProprios, vetoresProprios);
+
+        return vetoresProprios;
+    }
+
     private static double[][] normalizarVetoresC(double[][] matrizVetoresPropriosC) {
         int numLinhas = matrizVetoresPropriosC.length;      // Número de linhas
         int numColunas = matrizVetoresPropriosC[0].length; // Número de colunas (número de vetores próprios)
