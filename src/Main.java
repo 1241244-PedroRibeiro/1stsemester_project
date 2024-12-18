@@ -14,6 +14,7 @@ import java.util.Date;
 
 public class Main {
     public static final String OUTPUT_PATH = "output";
+    public static final String OUTPUT_PATH_F2 = "output/imagensReconstruidas";
     public static double[][] matrizLida, matrizP, matrizD, matrizPk, matrizDk, matrizAk;
     static Scanner scanner = new Scanner(System.in);
     static int k;
@@ -115,6 +116,7 @@ public class Main {
 
                     double[][] matrizEigenFaces = normalizarVetoresC(matrizVetoresPropriosC);
 
+                    reconstruirImagens(arquivos, matrizA, matrizEigenFaces, mediaImagens, numEigenFaces, tamanhoMatriz);
 
                     break;
                 case 4:
@@ -135,6 +137,86 @@ public class Main {
         } while (menuOption != 0);
 
         scanner.close();
+    }
+
+    private static void reconstruirImagens(File[] arquivos, double[][] matrizA, double[][] matrizEigenFaces, double[] mediaImagens, int numEigenFaces, int tamanhoMatriz) {
+
+        File outputFolder = new File(OUTPUT_PATH_F2);
+
+        // Criar diretório se não existir
+        if (!outputFolder.exists()) {
+            outputFolder.mkdirs();
+        }
+
+        for (int i = 0; i < arquivos.length; i++) {
+
+            double[] phi = obterPhiNaPosicao(matrizA, i);
+
+            double[] arrayDaSoma = new double[matrizEigenFaces.length];
+            double[] imagemReconstruida = new double[matrizEigenFaces.length];
+
+            for (int j = 0; j < numEigenFaces; j++) {
+                double[] ujTransposto = obterUjTransposto(matrizEigenFaces, j);
+                double peso = calcularPeso(ujTransposto, phi);
+                double[] uj = obterVetorDaMatrizNaPosicao(matrizEigenFaces, j);
+
+                //multiplica vetor uj pelo peso
+                for (int k = 0; k < uj.length; k++) {
+                    uj[k] *= peso;
+                }
+
+                //soma o vetor uj ao arrayDaSoma
+                for (int k = 0; k < uj.length; k++) {
+                    arrayDaSoma[k] += uj[k];
+                }
+            }
+
+            //somar arrayDaSoma à media
+            for (int j = 0; j < mediaImagens.length; j++) {
+                imagemReconstruida[j] = mediaImagens[j] + arrayDaSoma[j];
+            }
+
+        }
+    }
+
+    private static double[] obterVetorDaMatrizNaPosicao(double[][] matrizEigenFaces, int j) {
+        double[] vetor = new double[matrizEigenFaces.length];
+
+        for (int i = 0; i < matrizEigenFaces.length; i++) {
+            vetor[i] = matrizEigenFaces[i][j];
+        }
+        return vetor;
+    }
+
+    private static double calcularPeso(double[] ujTransposto, double[] phi) {
+
+        double peso = 0.0;
+
+        for (int i = 0; i < ujTransposto.length; i++) {
+            peso += ujTransposto[i] * phi[i];
+        }
+
+        return peso;
+    }
+
+    private static double[] obterUjTransposto(double[][] matrizEigenFaces, int j) {
+        double[] ujTransposto = new double[matrizEigenFaces.length];
+        for (int i = 0; i < matrizEigenFaces.length; i++) {
+            ujTransposto[i] = matrizEigenFaces[i][j];
+        }
+        return ujTransposto;
+    }
+
+    private static double[] obterPhiNaPosicao(double[][] matrizA, int index) {
+        double[] phi = new double[matrizA.length];
+
+        //este metodo coloca a coluna i de matriz A em phi
+
+        for (int i = 0; i < matrizA.length; i++) {
+            phi[i] = matrizA[i][index];
+        }
+
+        return phi;
     }
 
     private static double[][] calcularVetoresPropriosC(double[][] matrizA, double[][] vetoresPropriosATA, int numEigenFaces) {
@@ -736,6 +818,7 @@ public class Main {
         }
         System.out.println("]");
     }
+
     private static void ordenarVetoresProprios(double[] valoresProprios, double[][] vetoresProprios) {
 
         for (int i = 0; i < valoresProprios.length; i++) {
@@ -752,6 +835,7 @@ public class Main {
             }
         }
     }
+
     public static double[][] divideMatrizByLimit(double[][] matriz, int limite) {
         for (int i = 0; i < limite; i++) {
             for (int j = 0; j < limite; j++) {
