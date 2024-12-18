@@ -1,3 +1,5 @@
+package Utils;
+
 public class Matrix_Utils {
     public static double[][] transpose(double[][] matrix) {
         double[][] transposedmatrix = new double[matrix[0].length][matrix.length];

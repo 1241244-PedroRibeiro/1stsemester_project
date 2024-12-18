@@ -1,3 +1,9 @@
+package Domain;
+
+import Utils.File_Utils;
+import Utils.GreyscaleImageWriter;
+import Utils.Matrix_Utils;
+import Utils.UI_Utils;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -81,6 +87,7 @@ public class Main {
                     File[] arquivos = File_Utils.getCsvFiles(folderPath);
 
                     int tamanhoMatriz = File_Utils.getNumberOfLines(arquivos[0]);
+                    System.out.println("Tamanho da Matriz: " + tamanhoMatriz + "x" + tamanhoMatriz);
 
                     double[][] matrizVetores = File_Utils.processCsvFiles(arquivos, tamanhoMatriz);
 

@@ -1,3 +1,7 @@
+package Utils;
+
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -57,6 +61,22 @@ public class UI_Utils {
                         """);
                 break;
         }
+    }
+
+    public static void showTestTitle(String testName) {
+        System.out.print("""
+                ════════════════════
+                Test:""");
+        System.out.println(" " + testName);
+    }
+
+    public static void showTestResult(boolean result) {
+        if (result) {
+            System.out.println("Result: Passed!");
+        } else {
+            System.out.println("Result: Failed!");
+        }
+        System.out.println("════════════════════");
     }
 
     public static void showDevelopmentTeam() {

@@ -1,58 +1,58 @@
+package Utils;
+
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Scanner;
 
 public class File_Utils {
     public static File[] getCsvFiles(String folderPath) {
-        try {
-            File folder = new File(folderPath);
+    File folder = new File(folderPath);
 
-            if (!folder.exists() || !folder.isDirectory()) {
-                throw new IOException("Pasta não encontrada: " + folderPath);
-            }
+    if (!folder.exists() || !folder.isDirectory()) {
+        System.out.println("Erro: Pasta não encontrada ou não é um diretório: " + folderPath);
+        return new File[0];
+    }
 
-            // Filtra arquivos CSV manualmente
-            File[] files = folder.listFiles();
-            if (files == null || files.length == 0) {
-                throw new IOException("A pasta está vazia ou não contém arquivos válidos: " + folderPath);
-            }
+    // Filtra arquivos CSV manualmente
+    File[] files = folder.listFiles();
+    if (files == null || files.length == 0) {
+        System.out.println("Erro: A pasta está vazia ou não contém arquivos válidos: " + folderPath);
+        return new File[0];
+    }
 
-            // Contagem de arquivos CSV
-            int csvCount = 0;
-            for (File file : files) {
-                if (file.getName().endsWith(".csv")) {
-                    csvCount++;
-                }
-            }
-
-            if (csvCount == 0) {
-                throw new IOException("Nenhum arquivo CSV encontrado na pasta: " + folderPath);
-            }
-
-            // Cria um array para armazenar os arquivos CSV
-            File[] csvFiles = new File[csvCount];
-            int index = 0;
-            for (File file : files) {
-                if (file.getName().endsWith(".csv")) {
-                    csvFiles[index++] = file;
-                }
-            }
-
-            return csvFiles;
-
-        } catch (IOException e) {
-            System.out.println("Erro: " + e.getMessage());
-            return new File[0];
+    // Contagem de arquivos CSV
+    int csvCount = 0;
+    for (File file : files) {
+        if (file.getName().endsWith(".csv")) {
+            csvCount++;
         }
     }
+
+    if (csvCount == 0) {
+        System.out.println("Erro: Nenhum arquivo CSV encontrado na pasta: " + folderPath);
+        return new File[0];
+    }
+
+    // Cria um array para armazenar os arquivos CSV
+    File[] csvFiles = new File[csvCount];
+    int index = 0;
+    for (File file : files) {
+        if (file.getName().endsWith(".csv")) {
+            csvFiles[index++] = file;
+        }
+    }
+
+    return csvFiles;
+}
+
 
     public static int getNumberOfLines(File csvFile) {
         int lineCount = 0;
         try (Scanner scanner = new Scanner(csvFile)) {
             while (scanner.hasNextLine()) {
-                scanner.nextLine();
-                lineCount++;
+                String line = scanner.nextLine().trim();
+                if (!line.isEmpty()) {
+                    lineCount++;
+                }
             }
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + csvFile.getName() + " - " + e.getMessage());
