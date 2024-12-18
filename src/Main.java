@@ -694,7 +694,22 @@ public class Main {
         }
         System.out.println("]");
     }
+    private static void ordenarVetoresProprios(double[] valoresProprios, double[][] vetoresProprios) {
 
+        for (int i = 0; i < valoresProprios.length; i++) {
+            for (int j = i + 1; j < valoresProprios.length; j++) {
+                if (valoresProprios[i] < valoresProprios[j]) {
+                    double temp = valoresProprios[i];
+                    valoresProprios[i] = valoresProprios[j];
+                    valoresProprios[j] = temp;
+
+                    double[] tempVector = vetoresProprios[i];
+                    vetoresProprios[i] = vetoresProprios[j];
+                    vetoresProprios[j] = tempVector;
+                }
+            }
+        }
+    }
     public static double[][] divideMatrizByLimit(double[][] matriz, int limite) {
         for (int i = 0; i < limite; i++) {
             for (int j = 0; j < limite; j++) {
