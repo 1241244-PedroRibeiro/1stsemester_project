@@ -87,9 +87,9 @@ public class Main {
                     int limite = Math.min(numberOfEigenFaces, arquivos.length);
                     int tamanhoMatriz = getMaxMatrixSize(arquivos);
 
-                    double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz, limite);
+                    double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz);
                     printMatrix(matrizVetores);
-                    double[] mediaImagens = calcularMedia(matrizVetores, limite);
+                    double[] mediaImagens = calcularMedia(matrizVetores);
 
                     double[][] matrizA = new double[tamanhoMatriz][limite];
                     for (int i = 0; i < limite; i++) {
@@ -122,8 +122,6 @@ public class Main {
 
         scanner.close();
     }
-
-
 
 
     public static double[][] GetMatrixFromCSV(String caminhoCsv) {
@@ -625,6 +623,7 @@ public class Main {
             }
         }
     }
+
     private static int getNumberOfLines(File csvFile) {
         int lineCount = 0;
         try (Scanner scanner = new Scanner(csvFile)) {
@@ -668,18 +667,32 @@ public class Main {
         return vetor;
     }
 
-    public static double[] calcularMedia(double[][] matrizVetores, int n) {
-        double[] media = new double[matrizVetores.length];
+    public static double[] calcularMedia(double[][] matrizVetores) {
+        int numLinhas = matrizVetores.length;
+        int numColunas = matrizVetores[0].length;
 
-        for (int i = 0; i < matrizVetores.length; i++) {
-            double soma = 0;
-            for (int j = 0; j < n; j++) {
+        double[] vetorMedio = new double[numLinhas];
+
+        for (int i = 0; i < numLinhas; i++) {
+            double soma = 0.0;
+            for (int j = 0; j < numColunas; j++) {
                 soma += matrizVetores[i][j];
             }
-            media[i] = soma / n;
+            vetorMedio[i] = soma / numColunas;
         }
 
-        return media;
+        return vetorMedio;
+    }
+
+    private static void printVetorMedia(double[] mediaImagens) {
+        System.out.print("\nVetor µ: [");
+        for (int i = 0; i < mediaImagens.length; i++) {
+            System.out.print(String.format("%.2f", mediaImagens[i]).replace(',', '.'));
+            if (i < mediaImagens.length - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
     }
 
     public static double[][] divideMatrizByLimit(double[][] matriz, int limite) {
@@ -691,32 +704,30 @@ public class Main {
         return matriz;
     }
 
-    public static double[][] normalizeVectors(double[][] matriz){
+    public static double[][] normalizeVectors(double[][] matriz) {
         int linhas = matriz.length;
         int colunas = matriz[0].length;
-        double[][] matrizNormalizada=new double[linhas][colunas];
-        for(int j=0; j<colunas; j++){
-            double magnitude=0.0;
-            for(int i=0; i<linhas; i++){
-                magnitude+=matriz[i][j]*matriz[i][j];
+        double[][] matrizNormalizada = new double[linhas][colunas];
+        for (int j = 0; j < colunas; j++) {
+            double magnitude = 0.0;
+            for (int i = 0; i < linhas; i++) {
+                magnitude += matriz[i][j] * matriz[i][j];
             }
-            magnitude=Math.sqrt(magnitude);
-            if(magnitude!=0){
-                for(int i=0;i<linhas;i++){
-                    matrizNormalizada[i][j]=matriz[i][j]/magnitude;
+            magnitude = Math.sqrt(magnitude);
+            if (magnitude != 0) {
+                for (int i = 0; i < linhas; i++) {
+                    matrizNormalizada[i][j] = matriz[i][j] / magnitude;
                 }
-            }
-            else{
+            } else {
                 for (int i = 0; i < linhas; i++) {
                     matrizNormalizada[i][j] = Double.NaN;
                 }
-                System.out.printf("Aviso: A matriz de vetores na coluna %d tem magnitude=0\n",j);
+                System.out.printf("Aviso: A matriz de vetores na coluna %d tem magnitude=0\n", j);
             }
         }
 
         return matrizNormalizada;
     }
-
 
 
     public static void showMenuOptions() {
