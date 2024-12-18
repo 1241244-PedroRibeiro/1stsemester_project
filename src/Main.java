@@ -40,24 +40,35 @@ public class Main {
                     UI_Utils.showMenuTitle(1);
                     String filePath = UI_Utils.selectFileToRead();
 
-                    double[][] matrizLida = File_Utils.GetMatrixFromCSV(filePath);
+
+                    double[][] matrizLida = File_Utils.getMatrixFromCSV(filePath);
+
                     if (matrizLida != null) {
-                        int k = askNumberOfEigenvectors(matrizLida);
-                        RealMatrix[] resultado = decomposicaoPropria(matrizLida);
-                        double[][] matrizP = resultado[0].getData();
-                        double[][] matrizD = resultado[1].getData();
 
-                        double[][][] decompostas = compressedMatrix(matrizP, matrizD, k);
+                        if (validateMatrix(matrizLida)) {
+                            System.out.println("\nMatriz Lida:");
+                            UI_Utils.printMatrix(matrizLida);
 
-                        double[][] matrizPk = decompostas[0];
-                        double[][] matrizDk = decompostas[1];
+                            int k = askNumberOfEigenvectors(matrizLida);
+                            RealMatrix[] resultado = decomposicaoPropria(matrizLida);
+                            double[][] matrizP = resultado[0].getData();
+                            double[][] matrizD = resultado[1].getData();
 
-                        double[][] matrizAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrizPk, matrizDk), Matrix_Utils.transpose(matrizPk));
+                            double[][][] decompostas = compressedMatrix(matrizP, matrizD, k);
 
-                        System.out.println("\nMatriz Reconstruída:");
-                        UI_Utils.printMatrix(matrizAk);
+                            double[][] matrizPk = decompostas[0];
+                            double[][] matrizDk = decompostas[1];
 
-                        File_Utils.saveMatrixToCSV(matrizAk, OUTPUT_PATH);
+                            double[][] matrizAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrizPk, matrizDk), Matrix_Utils.transpose(matrizPk));
+
+                            System.out.println("\nMatriz Reconstruída:");
+                            UI_Utils.printMatrix(matrizAk);
+
+                            File_Utils.saveMatrixToCSV(matrizAk, OUTPUT_PATH);
+
+                        } else {
+                            System.out.println("\nIntroduza uma matriz válida.");
+                        }
                     } else {
 
                         System.out.println("A matriz ainda não foi lida.");

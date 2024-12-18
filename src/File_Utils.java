@@ -109,12 +109,13 @@ public class File_Utils {
         return vetor;
     }
 
-    public static double[][] GetMatrixFromCSV(String caminhoCsv) {
+    public static double[][] getMatrixFromCSV(String caminhoCsv) {
         double[][] matrix = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(caminhoCsv))) {
             String line = reader.readLine();
             if (line == null) {
-                throw new IllegalArgumentException("Erro - O CSV está vazio.");
+                System.out.println("Erro - O CSV está vazio.");
+                return null;
             }
 
             String[] values = line.split(",");
@@ -138,18 +139,16 @@ public class File_Utils {
                 if (!line.isEmpty()) {
                     String[] rowValues = line.split(",");
                     if (rowValues.length != columnCount) {
-                        throw new IllegalArgumentException(
-                                "Erro - número de colunas na linha " + (currentRow + 1) + " não corresponde ao esperado."
-                        );
+                        System.out.println("Erro - número de colunas na linha " + (currentRow + 1) + " não corresponde ao esperado.");
+                        System.out.println("A matriz não é quadrada.");
+                        return null;
                     }
 
                     for (int i = 0; i < columnCount; i++) {
                         try {
                             matrix[currentRow][i] = Double.parseDouble(rowValues[i].trim());
                         } catch (NumberFormatException e) {
-                            throw new NumberFormatException(
-                                    "Erro ao converter valor - Linha " + (currentRow + 1) + ", Coluna " + (i + 1) + ": '" + rowValues[i] + "'"
-                            );
+                            System.out.println("Erro ao converter valor - Linha " + (currentRow + 1) + ", Coluna " + (i + 1) + ": '" + rowValues[i] + "'");
                         }
                     }
                     currentRow++;
@@ -158,14 +157,10 @@ public class File_Utils {
 
             newReader.close();
 
-            System.out.println("\nMatriz lida com sucesso:");
-
-            UI_Utils.printMatrix(matrix);
-
         } catch (IOException e) {
-            throw new RuntimeException("Erro - leitura do ficheiro CSV foi feita incorretamente: " + e.getMessage());
+            System.out.println("Erro - leitura do ficheiro CSV foi feita incorretamente: " + e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException("Erro - leitura realizada incorretamente: " + e.getMessage());
+            System.out.println("Erro - leitura realizada incorretamente: " + e.getMessage());
         }
         return matrix;
     }
