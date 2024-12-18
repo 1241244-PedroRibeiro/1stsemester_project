@@ -88,6 +88,7 @@ public class Main {
                     int tamanhoMatriz = getMaxMatrixSize(arquivos);
 
                     double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz, limite);
+                    printMatrix(matrizVetores);
                     double[] mediaImagens = calcularMedia(matrizVetores, limite);
 
                     double[][] matrizA = new double[tamanhoMatriz][limite];
@@ -222,10 +223,10 @@ public class Main {
         return tamanhoMatriz;
     }
 
-    public static double[][] processCsvFiles(File[] arquivos, int tamanhoMatriz, int limite) {
-        double[][] matrizVetores = new double[tamanhoMatriz][limite];
+    public static double[][] processCsvFiles(File[] arquivos, int tamanhoMatriz) {
+        double[][] matrizVetores = new double[tamanhoMatriz * tamanhoMatriz][arquivos.length];
 
-        for (int i = 0; i < limite; i++) {
+        for (int i = 0; i < arquivos.length; i++) {
             File arquivoCSV = arquivos[i];
             try {
                 double[] vetor = converterCSVparaVetor(arquivoCSV, tamanhoMatriz);
@@ -238,7 +239,6 @@ public class Main {
                 e.printStackTrace();
             }
         }
-
         return matrizVetores;
     }
 
@@ -639,29 +639,33 @@ public class Main {
     }
 
     public static double[] converterCSVparaVetor(File arquivoCSV, int tamanhoMatriz) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
-            double[] vetor = new double[tamanhoMatriz];
-            String linha;
-            int indice = 0;
+        BufferedReader br = new BufferedReader(new FileReader(arquivoCSV));
 
-            while ((linha = br.readLine()) != null) {
-                String[] valores = linha.split(",");
-                for (String valor : valores) {
-                    try {
-                        vetor[indice++] = Double.parseDouble(valor.trim());
-                    } catch (NumberFormatException e) {
-                        System.err.println("Valor inválido no CSV: " + valor);
-                        throw e;
-                    }
+        double[] vetor = new double[tamanhoMatriz * tamanhoMatriz];
+        int index = 0;
+
+        String linha;
+
+        while ((linha = br.readLine()) != null) {
+            if (linha.trim().isEmpty()) {
+                continue;
+            }
+
+            String[] elementos = linha.split(",");
+
+            for (String elemento : elementos) {
+                if (index < vetor.length) {
+                    vetor[index] = Double.parseDouble(elemento.trim());
+                    index++;
                 }
             }
-
-            if (indice != vetor.length) {
-                throw new IOException("O arquivo CSV não contém o número esperado de elementos.");
-            }
-
-            return vetor;
         }
+        br.close();
+
+        if (index != tamanhoMatriz * tamanhoMatriz) {
+            throw new IllegalArgumentException("O número de elementos no CSV não corresponde ao tamanho da matriz especificado.");
+        }
+        return vetor;
     }
 
     public static double[] calcularMedia(double[][] matrizVetores, int n) {
@@ -683,7 +687,6 @@ public class Main {
             for (int j = 0; j < limite; j++) {
                 matriz[i][j] /= limite;
             }
-
         }
         return matriz;
     }
