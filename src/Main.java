@@ -176,6 +176,8 @@ public class Main {
                 imagemReconstruida[j] = mediaImagens[j] + arrayDaSoma[j];
             }
 
+            saveImageAsPNG(imagemReconstruida, tamanhoMatriz, i);
+
         }
     }
 
@@ -197,6 +199,25 @@ public class Main {
         }
 
         return peso;
+    }
+
+    private static void saveImageAsPNG(double[] vetorImagem, int tamanhoMatriz, int contador) {
+        int[][] array = new int[tamanhoMatriz][tamanhoMatriz];
+        for (int i = 0; i < tamanhoMatriz; i++) {
+            for (int j = 0; j < tamanhoMatriz; j++) {
+                int pixelValue = (int) Math.round(vetorImagem[i * tamanhoMatriz + j]);
+                // Clamp the pixel value to be between 0 and 255
+                pixelValue = Math.max(0, Math.min(255, pixelValue));
+                array[i][j] = pixelValue;
+            }
+        }
+
+        GreyscaleImageWriter writer = new GreyscaleImageWriter();
+        try {
+            writer.writeArrayAsImage(array, "output/imagensReconstruidas/imagem_reconstruida_" + contador + ".png");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar a imagem como PNG: " + e.getMessage());
+        }
     }
 
     private static double[] obterUjTransposto(double[][] matrizEigenFaces, int j) {
