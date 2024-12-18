@@ -625,6 +625,18 @@ public class Main {
             }
         }
     }
+    private static int getNumberOfLines(File csvFile) {
+        int lineCount = 0;
+        try (Scanner scanner = new Scanner(csvFile)) {
+            while (scanner.hasNextLine()) {
+                scanner.nextLine();
+                lineCount++;
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo: " + csvFile.getName() + " - " + e.getMessage());
+        }
+        return lineCount;
+    }
 
     public static double[] converterCSVparaVetor(File arquivoCSV, int tamanhoMatriz) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
