@@ -80,27 +80,41 @@ public class Main {
                     showMenuTitle(3);
                     String folderPath = selectFolderToRead();
 
-                    System.out.print("Digite o número de imagens que deseja processar: ");
-                    int numberOfEigenFaces = scanner.nextInt();
-
                     File[] arquivos = getCsvFiles(folderPath);
-                    int limite = Math.min(numberOfEigenFaces, arquivos.length);
-                    int tamanhoMatriz = getMaxMatrixSize(arquivos);
+
+                    int tamanhoMatriz = getNumberOfLines(arquivos[0]);
 
                     double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz);
-                    printMatrix(matrizVetores);
+
                     double[] mediaImagens = calcularMedia(matrizVetores);
 
-                    double[][] matrizA = new double[tamanhoMatriz][limite];
-                    for (int i = 0; i < limite; i++) {
-                        for (int j = 0; j < tamanhoMatriz; j++) {
+                    printVetorMedia(mediaImagens);
+
+                    double[][] matrizA = new double[tamanhoMatriz * tamanhoMatriz][arquivos.length];
+
+                    for (int i = 0; i < arquivos.length; i++) {
+                        for (int j = 0; j < tamanhoMatriz * tamanhoMatriz; j++) {
                             matrizA[j][i] = matrizVetores[j][i] - mediaImagens[j];
                         }
                     }
-                    double[][] matrizATransposta = transpose(matrizA);
-                    double[][] matrizCovariancia = divideMatrizByLimit(matrixMultiplication(matrizATransposta, matrizA), limite);
 
-                    printMatrix(matrizCovariancia);
+                    System.out.println("\nDimensões da Matriz (A) Φ: Linhas = " + matrizA.length + ", Colunas = " + matrizA[0].length);
+
+                    double[][] matrizATransposta = transpose(matrizA);
+                    double[][] matrizATA = matrixMultiplication(matrizATransposta, matrizA);
+
+                    System.out.println("Matriz Aᵀ x A:");
+                    printMatrix(matrizATA);
+
+                    double[][] vetoresPropriosATA = obterVetoresProprios(matrizATA);
+
+                    System.out.println("Qual o número de Eigenfaces que pretende utilizar?");
+                    int numEigenFaces = scanner.nextInt();
+
+                    double[][] matrizVetoresPropriosC = calcularVetoresPropriosC(matrizA, vetoresPropriosATA, numEigenFaces);
+
+                    double[][] matrizEigenFaces = normalizarVetoresC(matrizVetoresPropriosC);
+
 
                     break;
                 case 4:
@@ -121,6 +135,34 @@ public class Main {
         } while (menuOption != 0);
 
         scanner.close();
+    }
+
+    private static double[][] calcularVetoresPropriosC(double[][] matrizA, double[][] vetoresPropriosATA, int numEigenFaces) {
+        int numLinhasA = matrizA.length;
+        int numColunasA = matrizA[0].length;
+
+        double[][] matrizVetoresPropriosC = new double[numLinhasA][numEigenFaces];
+
+        for (int i = 0; i < numEigenFaces; i++) {
+            double[] vetorProprio = new double[numColunasA];
+
+            for (int j = 0; j < numColunasA; j++) {
+                vetorProprio[j] = vetoresPropriosATA[j][i];
+            }
+
+            double[] vetorProprioC = new double[numLinhasA];
+
+            for (int j = 0; j < numLinhasA; j++) {
+                for (int k = 0; k < numColunasA; k++) {
+                    vetorProprioC[j] += matrizA[j][k] * vetorProprio[k];
+                }
+            }
+
+            for (int j = 0; j < numLinhasA; j++) {
+                matrizVetoresPropriosC[j][i] = vetorProprioC[j];
+            }
+        }
+        return matrizVetoresPropriosC;
     }
 
 
