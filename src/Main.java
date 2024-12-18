@@ -83,12 +83,13 @@ public class Main {
                     System.out.print("Digite o número de imagens que deseja processar: ");
                     int numberOfEigenFaces = scanner.nextInt();
 
-                    File[] arquivos = getCsvFiles(folderPath, numberOfEigenFaces);
+                    File[] arquivos = getCsvFiles(folderPath);
                     int limite = Math.min(numberOfEigenFaces, arquivos.length);
                     int tamanhoMatriz = getMaxMatrixSize(arquivos);
 
-                    double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz, limite);
-                    double[] mediaImagens = calcularMedia(matrizVetores, limite);
+                    double[][] matrizVetores = processCsvFiles(arquivos, tamanhoMatriz);
+                    printMatrix(matrizVetores);
+                    double[] mediaImagens = calcularMedia(matrizVetores);
 
                     double[][] matrizA = new double[tamanhoMatriz][limite];
                     for (int i = 0; i < limite; i++) {
@@ -121,8 +122,6 @@ public class Main {
 
         scanner.close();
     }
-
-
 
 
     public static double[][] GetMatrixFromCSV(String caminhoCsv) {
@@ -222,10 +221,10 @@ public class Main {
         return tamanhoMatriz;
     }
 
-    public static double[][] processCsvFiles(File[] arquivos, int tamanhoMatriz, int limite) {
-        double[][] matrizVetores = new double[tamanhoMatriz][limite];
+    public static double[][] processCsvFiles(File[] arquivos, int tamanhoMatriz) {
+        double[][] matrizVetores = new double[tamanhoMatriz * tamanhoMatriz][arquivos.length];
 
-        for (int i = 0; i < limite; i++) {
+        for (int i = 0; i < arquivos.length; i++) {
             File arquivoCSV = arquivos[i];
             try {
                 double[] vetor = converterCSVparaVetor(arquivoCSV, tamanhoMatriz);
@@ -238,7 +237,6 @@ public class Main {
                 e.printStackTrace();
             }
         }
-
         return matrizVetores;
     }
 
@@ -520,7 +518,7 @@ public class Main {
     }
     //TODO: =================== TESTAR METODOS getCsvFiles,readImagesFromFolder,getVectorFromMatrix ================
 
-    public static File[] getCsvFiles(String folderPath, int numberOfFiles) {
+    public static File[] getCsvFiles(String folderPath) {
         try {
             File folder = new File(folderPath);
 
@@ -528,27 +526,33 @@ public class Main {
                 throw new IOException("Pasta não encontrada: " + folderPath);
             }
 
+            // Filtra arquivos CSV manualmente
             File[] files = folder.listFiles();
-            int count = 0;
+            if (files == null || files.length == 0) {
+                throw new IOException("A pasta está vazia ou não contém arquivos válidos: " + folderPath);
+            }
 
-            for (int i = 0; i < files.length && count < numberOfFiles; i++) {
-                if (files[i].getName().endsWith(".csv")) {
-                    count++;
+            // Contagem de arquivos CSV
+            int csvCount = 0;
+            for (File file : files) {
+                if (file.getName().endsWith(".csv")) {
+                    csvCount++;
                 }
             }
 
-            if (count == 0) {
+            if (csvCount == 0) {
                 throw new IOException("Nenhum arquivo CSV encontrado na pasta: " + folderPath);
             }
 
-            File[] csvFiles = new File[Math.min(count, numberOfFiles)];
+            // Cria um array para armazenar os arquivos CSV
+            File[] csvFiles = new File[csvCount];
             int index = 0;
-
-            for (int i = 0; i < files.length && index < numberOfFiles; i++) {
-                if (files[i].getName().endsWith(".csv")) {
-                    csvFiles[index++] = files[i];
+            for (File file : files) {
+                if (file.getName().endsWith(".csv")) {
+                    csvFiles[index++] = file;
                 }
             }
+
             return csvFiles;
 
         } catch (IOException e) {
@@ -620,56 +624,136 @@ public class Main {
         }
     }
 
-    public static double[] converterCSVparaVetor(File arquivoCSV, int tamanhoMatriz) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(arquivoCSV))) {
-            double[] vetor = new double[tamanhoMatriz];
-            String linha;
-            int indice = 0;
+    private static int getNumberOfLines(File csvFile) {
+        int lineCount = 0;
+        try (Scanner scanner = new Scanner(csvFile)) {
+            while (scanner.hasNextLine()) {
+                scanner.nextLine();
+                lineCount++;
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo: " + csvFile.getName() + " - " + e.getMessage());
+        }
+        return lineCount;
+    }
 
-            while ((linha = br.readLine()) != null) {
-                String[] valores = linha.split(",");
-                for (String valor : valores) {
-                    try {
-                        vetor[indice++] = Double.parseDouble(valor.trim());
-                    } catch (NumberFormatException e) {
-                        System.err.println("Valor inválido no CSV: " + valor);
-                        throw e;
-                    }
+    public static double[] converterCSVparaVetor(File arquivoCSV, int tamanhoMatriz) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(arquivoCSV));
+
+        double[] vetor = new double[tamanhoMatriz * tamanhoMatriz];
+        int index = 0;
+
+        String linha;
+
+        while ((linha = br.readLine()) != null) {
+            if (linha.trim().isEmpty()) {
+                continue;
+            }
+
+            String[] elementos = linha.split(",");
+
+            for (String elemento : elementos) {
+                if (index < vetor.length) {
+                    vetor[index] = Double.parseDouble(elemento.trim());
+                    index++;
                 }
             }
-
-            if (indice != vetor.length) {
-                throw new IOException("O arquivo CSV não contém o número esperado de elementos.");
-            }
-
-            return vetor;
         }
+        br.close();
+
+        if (index != tamanhoMatriz * tamanhoMatriz) {
+            throw new IllegalArgumentException("O número de elementos no CSV não corresponde ao tamanho da matriz especificado.");
+        }
+        return vetor;
     }
 
-    public static double[] calcularMedia(double[][] matrizVetores, int n) {
-        double[] media = new double[matrizVetores.length];
+    public static double[] calcularMedia(double[][] matrizVetores) {
+        int numLinhas = matrizVetores.length;
+        int numColunas = matrizVetores[0].length;
 
-        for (int i = 0; i < matrizVetores.length; i++) {
-            double soma = 0;
-            for (int j = 0; j < n; j++) {
+        double[] vetorMedio = new double[numLinhas];
+
+        for (int i = 0; i < numLinhas; i++) {
+            double soma = 0.0;
+            for (int j = 0; j < numColunas; j++) {
                 soma += matrizVetores[i][j];
             }
-            media[i] = soma / n;
+            vetorMedio[i] = soma / numColunas;
         }
 
-        return media;
+        return vetorMedio;
     }
 
+    private static void printVetorMedia(double[] mediaImagens) {
+        System.out.print("\nVetor µ: [");
+        for (int i = 0; i < mediaImagens.length; i++) {
+            System.out.print(String.format("%.2f", mediaImagens[i]).replace(',', '.'));
+            if (i < mediaImagens.length - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
+    }
+    private static void ordenarVetoresProprios(double[] valoresProprios, double[][] vetoresProprios) {
+
+        for (int i = 0; i < valoresProprios.length; i++) {
+            for (int j = i + 1; j < valoresProprios.length; j++) {
+                if (valoresProprios[i] < valoresProprios[j]) {
+                    double temp = valoresProprios[i];
+                    valoresProprios[i] = valoresProprios[j];
+                    valoresProprios[j] = temp;
+
+                    double[] tempVector = vetoresProprios[i];
+                    vetoresProprios[i] = vetoresProprios[j];
+                    vetoresProprios[j] = tempVector;
+                }
+            }
+        }
+    }
     public static double[][] divideMatrizByLimit(double[][] matriz, int limite) {
         for (int i = 0; i < limite; i++) {
             for (int j = 0; j < limite; j++) {
                 matriz[i][j] /= limite;
             }
-
         }
         return matriz;
     }
 
+    private static double[][] obterVetoresProprios(double[][] matrizATA) {
+        RealMatrix matriz = MatrixUtils.createRealMatrix(matrizATA);
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(matriz);
+
+        double[][] vetoresProprios = eigenDecomposition.getV().getData();
+        double[] valoresProprios = eigenDecomposition.getRealEigenvalues();
+
+        ordenarVetoresProprios(valoresProprios, vetoresProprios);
+
+        return vetoresProprios;
+    }
+
+    private static double[][] normalizarVetoresC(double[][] matrizVetoresPropriosC) {
+        int numLinhas = matrizVetoresPropriosC.length;      // Número de linhas
+        int numColunas = matrizVetoresPropriosC[0].length; // Número de colunas (número de vetores próprios)
+
+        double[][] matrizEigenFaces = new double[numLinhas][numColunas];
+
+        // Normaliza cada coluna (vetor próprio)
+        for (int j = 0; j < numColunas; j++) {
+            double soma = 0;
+
+            // Calcula a norma do vetor (coluna j)
+            for (int i = 0; i < numLinhas; i++) {
+                soma += Math.pow(matrizVetoresPropriosC[i][j], 2);
+            }
+            double norma = Math.sqrt(soma);
+
+            // Normaliza a coluna j
+            for (int i = 0; i < numLinhas; i++) {
+                matrizEigenFaces[i][j] = matrizVetoresPropriosC[i][j] / norma;
+            }
+        }
+        return matrizEigenFaces;
+    }
 
 
     public static void showMenuOptions() {
