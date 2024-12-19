@@ -17,7 +17,7 @@ public class GreyscaleImageWriter {
             for (int x = 0; x < width; x++) {
                 int intensity = array[y][x];
                 if (intensity < 0 || intensity > 255) {
-                    throw new IllegalArgumentException("Pixel intensity must be between 0 and 255.");
+                    throw new IllegalArgumentException("A intensidade do pixel deve estar entre 0 e 255.");
                 }
                 int rgb = (intensity << 16) | (intensity << 8) | intensity; // Set the same value for R, G, B
                 image.setRGB(x, y, rgb);

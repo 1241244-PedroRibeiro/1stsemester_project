@@ -66,7 +66,7 @@ public class File_Utils_Test {
         File csvFile = new File(F1_CSV_FILE);
         int tamanhoMatriz = 8;
         try {
-            double[] vetor = File_Utils.converterCSVparaVetor(csvFile, tamanhoMatriz);
+            double[] vetor = File_Utils.converterCSVtoVetor(csvFile, tamanhoMatriz);
             boolean result = vetor.length == tamanhoMatriz * tamanhoMatriz;
             UI_Utils.showTestResult(result);
 
@@ -130,7 +130,7 @@ public class File_Utils_Test {
         File csvFile = new File("invalid_path/sample.csv");
         int tamanhoMatriz = 3;
         try {
-            double[] vetor = File_Utils.converterCSVparaVetor(csvFile, tamanhoMatriz);
+            double[] vetor = File_Utils.converterCSVtoVetor(csvFile, tamanhoMatriz);
             System.out.println("Result: Failed!");
         } catch (IOException e) {
             System.out.println("Result: Passed!");
@@ -179,7 +179,7 @@ public class File_Utils_Test {
         File csvFile = new File("resources/test_data/teste_matrizes_funcionalidades2e3/resources/test_data/matriz_com_letras.csv");
         int tamanhoMatriz = 3;
         try {
-            double[] vetor = File_Utils.converterCSVparaVetor(csvFile, tamanhoMatriz);
+            double[] vetor = File_Utils.converterCSVtoVetor(csvFile, tamanhoMatriz);
             System.out.println("Result: Failed!");
         } catch (IOException | NumberFormatException e) {
             System.out.println("Result: Passed!");
