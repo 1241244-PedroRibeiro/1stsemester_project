@@ -47,80 +47,81 @@ public class Main {
                     String filePath = UI_Utils.selectFileToRead();
 
 
-                    double[][] matrizLida = File_Utils.getMatrixFromCSV(filePath);
+                    double[][] readMatrix = File_Utils.getMatrixFromCSV(filePath);
 
-                    if (matrizLida != null) {
+                    if (readMatrix != null) {
 
-                        if (validateMatrix(matrizLida)) {
-                            System.out.println("\nMatriz Lida:");
-                            UI_Utils.printMatrix(matrizLida);
+                        if (validateMatrix(readMatrix)) {
+                            System.out.println("\nRead Matrix:");
+                            UI_Utils.printMatrix(readMatrix);
 
-                            int k = askNumberOfEigenvectors(matrizLida);
-                            RealMatrix[] resultado = decomposicaoPropria(matrizLida);
-                            double[][] matrizP = resultado[0].getData();
-                            double[][] matrizD = resultado[1].getData();
+                            int k = askNumberOfEigenvectors(readMatrix);
+                            RealMatrix[] result = ownDecomposition(readMatrix);
 
-                            double[][][] decompostas = compressedMatrix(matrizP, matrizD, k);
+                            double[][] matrixP = result[0].getData();
+                            double[][] matrixD = result[1].getData();
 
-                            double[][] matrizPk = decompostas[0];
-                            double[][] matrizDk = decompostas[1];
+                            double[][][] decomposed = compressedMatrix(matrixP, matrixD, k);
 
-                            double[][] matrizAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrizPk, matrizDk), Matrix_Utils.transpose(matrizPk));
+                            double[][] matrixPk = decomposed[0];
+                            double[][] matrixDk = decomposed[1];
 
-                            System.out.println("\nMatriz Reconstruída:");
-                            UI_Utils.printMatrix(matrizAk);
+                            double[][] matrixAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrixPk, matrixDk), Matrix_Utils.transpose(matrixPk));
 
-                            File_Utils.saveMatrixToCSV(matrizAk, OUTPUT_PATH);
+                            System.out.println("\nReconstructed Matrix\n:");
+                            UI_Utils.printMatrix(matrixAk);
+
+                            File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
 
                         } else {
-                            System.out.println("\nIntroduza uma matriz válida.");
+                            System.out.println("\nPlease enter a valid array.");
                         }
                     } else {
 
-                        System.out.println("A matriz ainda não foi lida.");
+                        System.out.println("The matrix has not yet been read.");
                     }
                     break;
                 case 2:
                     UI_Utils.showMenuTitle(2);
                     String folderPath = UI_Utils.selectFolderToRead();
 
-                    File[] arquivos = File_Utils.getCsvFiles(folderPath);
+                    File[] files = File_Utils.getCsvFiles(folderPath);
 
-                    int tamanhoMatriz = File_Utils.getNumberOfLines(arquivos[0]);
-                    System.out.println("Tamanho da Matriz: " + tamanhoMatriz + "x" + tamanhoMatriz);
+                    int matrixSize = File_Utils.getNumberOfLines(files[0]);
+                    System.out.println("Matrix Size: " + matrixSize + "x" + matrixSize);
 
-                    double[][] matrizVetores = File_Utils.processCsvFiles(arquivos, tamanhoMatriz);
+                    double[][] matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
 
-                    double[] mediaImagens = calcularMedia(matrizVetores);
+                    double[] averageImages = calculateAverage(matrixVectors);
 
-                    UI_Utils.printVetorMedia(mediaImagens);
+                    UI_Utils.printVetorMedia(averageImages);
 
-                    double[][] matrizA = new double[tamanhoMatriz * tamanhoMatriz][arquivos.length];
+                    double[][] matrixA = new double[matrixSize * matrixSize][files.length];
 
-                    for (int i = 0; i < arquivos.length; i++) {
-                        for (int j = 0; j < tamanhoMatriz * tamanhoMatriz; j++) {
-                            matrizA[j][i] = matrizVetores[j][i] - mediaImagens[j];
+                    for (int i = 0; i < files.length; i++) {
+                        for (int j = 0; j < matrixSize * matrixSize; j++) {
+                            matrixA[j][i] = matrixVectors[j][i] - averageImages[j];
                         }
                     }
 
-                    System.out.println("\nDimensões da Matriz (A) Φ: Linhas = " + matrizA.length + ", Colunas = " + matrizA[0].length + "\n");
+                    System.out.println("\nMatrix Dimensions (A) Φ: Lines = " + matrixA.length + ", Columns = " + matrixA[0].length + "\n");
 
-                    double[][] matrizATransposta = Matrix_Utils.transpose(matrizA);
-                    double[][] matrizATA = Matrix_Utils.matrixMultiplication(matrizATransposta, matrizA);
+                    double[][] transposedMatrixA = Matrix_Utils.transpose(matrixA);
+                    double[][] matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
 
-                    System.out.println("Matriz Aᵀ x A:");
-                    UI_Utils.printMatrix(matrizATA);
+                    System.out.println("Matrix Aᵀ x A:");
+                    UI_Utils.printMatrix(matrixATA);
 
-                    double[][] vetoresPropriosATA = obterVetoresProprios(matrizATA);
+                    double[][] eigenVectorsATA = getEigenVectors(matrixATA);
 
-                    System.out.println("\nQual o número de Eigenfaces que pretende utilizar?");
+                    System.out.println("\nHow many Eigenfaces do you want to use?");
                     int numEigenFaces = scanner.nextInt();
 
-                    double[][] matrizVetoresPropriosC = calcularVetoresPropriosC(matrizA, vetoresPropriosATA, numEigenFaces);
+                    double[][] matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
 
-                    double[][] matrizEigenFaces = normalizarVetoresC(matrizVetoresPropriosC);
+                    double[][] matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
 
-                    reconstruirImagens(matrizVetores, arquivos, matrizA, matrizEigenFaces, mediaImagens, numEigenFaces, tamanhoMatriz);
+                    rebuildImage(matrixVectors, files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize);
 
                     break;
                 case 3:
@@ -143,67 +144,67 @@ public class Main {
         scanner.close();
     }
 
-    public static void reconstruirImagens(double[][] matrizOrginal, File[] arquivos, double[][] matrizA, double[][] matrizEigenFaces, double[] mediaImagens, int numEigenFaces, int tamanhoMatriz) {
+    public static void rebuildImage(double[][] orginalMatrix, File[] files, double[][] matrixA, double[][] eigenFacesMatrix, double[] averageImages, int numEigenFaces, int MatrixSize) {
         File outputFolder = new File(OUTPUT_PATH_F2);
 
         if (!outputFolder.exists()) {
             outputFolder.mkdirs();
         }
 
-        for (int i = 0; i < arquivos.length; i++) {
+        for (int i = 0; i < files.length; i++) {
 
-            double[] phi = obterPhiNaPosicao(matrizA, i);
+            double[] phi = getPhiInPosition(matrixA, i);
 
-            double[] arrayDaSoma = new double[matrizEigenFaces.length];
-            double[] imagemReconstruida = new double[matrizEigenFaces.length];
+            double[] sumArray = new double[eigenFacesMatrix.length];
+            double[] reconstructedImage = new double[eigenFacesMatrix.length];
 
             for (int j = 0; j < numEigenFaces; j++) {
-                double[] ujTransposto = obterUjTransposto(matrizEigenFaces, j);
-                double peso = calcularPeso(ujTransposto, phi);
-                double[] uj = obterVetorDaMatrizNaPosicao(matrizEigenFaces, j);
+                double[] ujTransposed = getUjTransposed(eigenFacesMatrix, j);
+                double weight = calculateWeight(ujTransposed, phi);
+                double[] uj = getMatrixVectorAtPosition(eigenFacesMatrix, j);
 
-                //multiplica vetor uj pelo peso
+                //Multiply vector uj by weight
                 for (int k = 0; k < uj.length; k++) {
-                    uj[k] *= peso;
+                    uj[k] *= weight;
                 }
 
-                //soma o vetor uj ao arrayDaSoma
+                //add the vector uj to the arrayDaSoma
                 for (int k = 0; k < uj.length; k++) {
-                    arrayDaSoma[k] += uj[k];
+                    sumArray[k] += uj[k];
                 }
             }
 
-            //somar arrayDaSoma à media
-            for (int j = 0; j < mediaImagens.length; j++) {
-                imagemReconstruida[j] = mediaImagens[j] + arrayDaSoma[j];
+            //add arrayDaSoma to the average
+            for (int j = 0; j < averageImages.length; j++) {
+                reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-            saveImageAsPNG(imagemReconstruida, tamanhoMatriz, i);
+            saveImageAsPNG(reconstructedImage, MatrixSize, i);
         }
     }
 
-    public static double[] obterVetorDaMatrizNaPosicao(double[][] matrizEigenFaces, int j) {
-        double[] vetor = new double[matrizEigenFaces.length];
+    public static double[] getMatrixVectorAtPosition(double[][] matrixEigenFaces, int j) {
+        double[] vector = new double[matrixEigenFaces.length];
 
-        for (int i = 0; i < matrizEigenFaces.length; i++) {
-            vetor[i] = matrizEigenFaces[i][j];
+        for (int i = 0; i < matrixEigenFaces.length; i++) {
+            vector[i] = matrixEigenFaces[i][j];
         }
-        return vetor;
+        return vector;
     }
 
-    public static double calcularPeso(double[] ujTransposto, double[] phi) {
-        double peso = 0.0;
+    public static double calculateWeight(double[] ujTransposed, double[] phi) {
+        double weight = 0.0;
 
-        for (int i = 0; i < ujTransposto.length; i++) {
-            peso += ujTransposto[i] * phi[i];
+        for (int i = 0; i < ujTransposed.length; i++) {
+            weight += ujTransposed[i] * phi[i];
         }
-        return peso;
+        return weight;
     }
 
-    public static void saveImageAsPNG(double[] vetorImagem, int tamanhoMatriz, int contador) {
-        int[][] array = new int[tamanhoMatriz][tamanhoMatriz];
-        for (int i = 0; i < tamanhoMatriz; i++) {
-            for (int j = 0; j < tamanhoMatriz; j++) {
-                int pixelValue = (int) Math.round(vetorImagem[i * tamanhoMatriz + j]);
+    public static void saveImageAsPNG(double[] imageVector, int matrixSize, int counter) {
+        int[][] array = new int[matrixSize][matrixSize];
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixSize; j++) {
+                int pixelValue = (int) Math.round(imageVector[i * matrixSize + j]);
 
                 pixelValue = Math.max(0, Math.min(255, pixelValue));
                 array[i][j] = pixelValue;
@@ -212,79 +213,78 @@ public class Main {
 
         GreyscaleImageWriter writer = new GreyscaleImageWriter();
         try {
-            writer.writeArrayAsImage(array, OUTPUT_PATH_F2 + "/imagem_reconstruida_" + contador + ".png");
+            writer.writeArrayAsImage(array, OUTPUT_PATH_F2 + "/imagem_reconstruida_" + counter + ".png");
         } catch (IOException e) {
-            System.err.println("Erro ao salvar a imagem como PNG: " + e.getMessage());
+            System.err.println("Error saving image as PNG: " + e.getMessage());
         }
     }
 
-    public static double[] obterUjTransposto(double[][] matrizEigenFaces, int j) {
-        double[] ujTransposto = new double[matrizEigenFaces.length];
-        for (int i = 0; i < matrizEigenFaces.length; i++) {
-            ujTransposto[i] = matrizEigenFaces[i][j];
+    public static double[] getUjTransposed(double[][] EigenFacesmatrix, int j) {
+        double[] ujTransposed = new double[EigenFacesmatrix.length];
+        for (int i = 0; i < EigenFacesmatrix.length; i++) {
+            ujTransposed[i] = EigenFacesmatrix[i][j];
         }
-        return ujTransposto;
+        return ujTransposed;
     }
 
-    public static double[] obterPhiNaPosicao(double[][] matrizA, int index) {
-        double[] phi = new double[matrizA.length];
+    public static double[] getPhiInPosition(double[][] matrixA, int index) {
+        double[] phi = new double[matrixA.length];
 
-        //este metodo coloca a coluna i de matriz A em phi
-        for (int i = 0; i < matrizA.length; i++) {
-            phi[i] = matrizA[i][index];
+        //This method places column i of matrix A in phi
+        for (int i = 0; i < matrixA.length; i++) {
+            phi[i] = matrixA[i][index];
         }
         return phi;
     }
 
-    public static double[][] calcularVetoresPropriosC(double[][] matrizA, double[][] vetoresPropriosATA, int numEigenFaces) {
-        int numLinhasA = matrizA.length;
-        int numColunasA = matrizA[0].length;
+    public static double[][] calculateEigenVectorsC(double[][] matrixA, double[][] eigenVectorsATA, int numEigenFaces) {
+        int numLinesA = matrixA.length;
+        int numColumnsA = matrixA[0].length;
 
-        double[][] matrizVetoresPropriosC = new double[numLinhasA][numEigenFaces];
+        double[][] eigenVectorsMatrixC = new double[numLinesA][numEigenFaces];
 
         for (int i = 0; i < numEigenFaces; i++) {
-            double[] vetorProprio = new double[numColunasA];
+            double[] eigenVector = new double[numColumnsA];
 
-            for (int j = 0; j < numColunasA; j++) {
-                vetorProprio[j] = vetoresPropriosATA[j][i];
+            for (int j = 0; j < numColumnsA; j++) {
+                eigenVector[j] = eigenVectorsATA[j][i];
             }
 
-            double[] vetorProprioC = new double[numLinhasA];
+            double[] eigenVectorC = new double[numLinesA];
 
-            for (int j = 0; j < numLinhasA; j++) {
-                for (int k = 0; k < numColunasA; k++) {
-                    vetorProprioC[j] += matrizA[j][k] * vetorProprio[k];
+            for (int j = 0; j < numLinesA; j++) {
+                for (int k = 0; k < numColumnsA; k++) {
+                    eigenVectorC[j] += matrixA[j][k] * eigenVector[k];
                 }
             }
 
-            for (int j = 0; j < numLinhasA; j++) {
-                matrizVetoresPropriosC[j][i] = vetorProprioC[j];
+            for (int j = 0; j < numLinesA; j++) {
+                eigenVectorsMatrixC[j][i] = eigenVectorC[j];
             }
         }
-        return matrizVetoresPropriosC;
+        return eigenVectorsMatrixC;
     }
 
-    public static RealMatrix[] decomposicaoPropria(double[][] matrizLida) {
-        // Decomposição própria
+    public static RealMatrix[] ownDecomposition(double[][] matrixRead) {
+        // Own decomposition
         RealMatrix[] result = new RealMatrix[2];
-        EigenDecomposition eigenDecomposition = new EigenDecomposition(MatrixUtils.createRealMatrix(matrizLida));
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(MatrixUtils.createRealMatrix(matrixRead));
 
-        // Matriz dos vetores próprios (P)
-        RealMatrix matrizP = eigenDecomposition.getV();
-        result[0] = matrizP;
-        // Matriz diagonal dos autovalores (D)
-        RealMatrix matrizD = MatrixUtils.createRealDiagonalMatrix(eigenDecomposition.getRealEigenvalues());
-        result[1] = matrizD;
+        // Eigenvector matrix (P)
+        RealMatrix matrixP = eigenDecomposition.getV();
+        result[0] = matrixP;
+        // Diagonal matrix of eigenvalues ​​(D)
+        RealMatrix matrixD = MatrixUtils.createRealDiagonalMatrix(eigenDecomposition.getRealEigenvalues());
+        result[1] = matrixD;
 
         return result;
     }
 
+    public static double[][][] compressedMatrix(double[][] matrixP, double[][] matrixD, int k) {
+        double[][] auxP = matrixP;
+        double[][] auxD = matrixD;
 
-    public static double[][][] compressedMatrix(double[][] matrizP, double[][] matrizD, int k) {
-        double[][] auxP = matrizP;
-        double[][] auxD = matrizD;
-
-        int n = matrizD.length;
+        int n = matrixD.length;
         double[] diagonal = new double[n];
         for (int i = 0; i < n; i++) {
             diagonal[i] = auxD[i][i];
@@ -329,19 +329,18 @@ public class Main {
         }
 
         return new double[][][]{finalPk, finalDk};
-
     }
 
     /**
-     * Função que faz a validação da matriz. Verifica se a matriz é quadrada, simétrica e se não contém valores negativos, retornando o erro específico caso exista.
+     * Function that validates the matrix. Checks if the matrix is square, symmetric and does not contain negative values, returning the specific error if it exists.
      *
      * @param matrix
-     * @return verdadeiro se a matriz é válida ou falso se não for
+     * @return true if the matrix is valid or false if it is not
      */
     public static boolean validateMatrix(double[][] matrix) {
 
         if (matrix.length != matrix[0].length) {
-            System.out.println("A matriz não é quadrada.");
+            System.out.println("The matrix is not square.");
             return false;
         }
 
@@ -352,17 +351,17 @@ public class Main {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] != matrix[j][i]) {
-                    System.out.println("A matriz não é simétrica.");
+                    System.out.println("The matrix is not symmetric.");
                     return false;
                 }
                 if (matrix[i][j] < 0) {
                     hasNegatives = true;
-                    negativeValues[negativeIndex++] = "Linha: " + i + ", Coluna: " + j + " (" + matrix[i][j] + ")";
+                    negativeValues[negativeIndex++] = "Line: " + i + ", Column: " + j + " (" + matrix[i][j] + ")";
                 }
             }
         }
         if (hasNegatives) {
-            System.out.println("A matriz contém valores negativos.");
+            System.out.println("The array contains negative values.");
             for (int i = 0; i < negativeValues.length; i++) {
                 if (negativeValues[i] != null) {
                     System.out.println(negativeValues[i]);
@@ -377,24 +376,24 @@ public class Main {
         int k = 0;
 
         while (k <= 0 || k > matrix.length) {
-            System.out.println("\nQual é o número de vetores próprios (k)?");
+            System.out.println("\nWhat is the number of eigenvectors (k)?");
 
             if (scanner.hasNextInt()) {
                 k = scanner.nextInt();
 
                 if (k == -1) {
                     k = matrix.length;
-                    System.out.println("Opção -1: Utilizando todos os vetores próprios.");
+                    System.out.println("Option -1: Using all eigenvectors.");
                     return k;
                 }
 
                 if (k <= 0) {
                     System.out.println("""
-                            Invalid number of eigenvectors.
-                               Valid inputs:
-                                    - A positive integer
-                                    - -1 to use all eigenvectors
-                            """);
+                        Invalid number of eigenvectors.
+                           Valid inputs:
+                                - A positive integer
+                                - -1 to use all eigenvectors
+                        """);
                 } else if (k > matrix.length) {
                     System.out.printf("The maximum number of eigenvectors is %d. Setting k to %d.%n", matrix.length, matrix.length);
                     k = matrix.length;
@@ -407,13 +406,12 @@ public class Main {
         return k;
     }
 
-
     /**
-     * Função para calcular o erro absoluto médio entre duas matrizes, a original e a reconstruída
+     * Function to calculate the average absolute error between two matrices, the original and the reconstructed one
      *
      * @param original
      * @param reconstructed
-     * @return erro absoluto médio
+     * @return mean absolute error
      */
     public static double calculateEAM(double[][] original, double[][] reconstructed) {
         double sum = 0;
@@ -428,80 +426,79 @@ public class Main {
         return sum / (rows * cols);
     }
 
+    public static double[] calculateAverage(double[][] vectorMatrix) {
+        int numRows = vectorMatrix.length;
+        int numCols = vectorMatrix[0].length;
 
-    public static double[] calcularMedia(double[][] matrizVetores) {
-        int numLinhas = matrizVetores.length;
-        int numColunas = matrizVetores[0].length;
+        double[] averageVector = new double[numRows];
 
-        double[] vetorMedio = new double[numLinhas];
-
-        for (int i = 0; i < numLinhas; i++) {
-            double soma = 0.0;
-            for (int j = 0; j < numColunas; j++) {
-                soma += matrizVetores[i][j];
+        for (int i = 0; i < numRows; i++) {
+            double sum = 0.0;
+            for (int j = 0; j < numCols; j++) {
+                sum += vectorMatrix[i][j];
             }
-            vetorMedio[i] = soma / numColunas;
+            averageVector[i] = sum / numCols;
         }
 
-        return vetorMedio;
+        return averageVector;
     }
 
-    public static void ordenarVetoresProprios(double[] valoresProprios, double[][] vetoresProprios) {
+    public static void sortEigenvectors(double[] eigenvalues, double[][] eigenvectors) {
 
-        for (int i = 0; i < valoresProprios.length; i++) {
-            for (int j = i + 1; j < valoresProprios.length; j++) {
-                if (valoresProprios[i] < valoresProprios[j]) {
-                    double temp = valoresProprios[i];
-                    valoresProprios[i] = valoresProprios[j];
-                    valoresProprios[j] = temp;
+        for (int i = 0; i < eigenvalues.length; i++) {
+            for (int j = i + 1; j < eigenvalues.length; j++) {
+                if (eigenvalues[i] < eigenvalues[j]) {
+                    double temp = eigenvalues[i];
+                    eigenvalues[i] = eigenvalues[j];
+                    eigenvalues[j] = temp;
 
-                    double[] tempVector = vetoresProprios[i];
-                    vetoresProprios[i] = vetoresProprios[j];
-                    vetoresProprios[j] = tempVector;
+                    double[] tempVector = eigenvectors[i];
+                    eigenvectors[i] = eigenvectors[j];
+                    eigenvectors[j] = tempVector;
                 }
             }
         }
     }
 
-    public static double[][] obterVetoresProprios(double[][] matrizATA) {
-        RealMatrix matriz = MatrixUtils.createRealMatrix(matrizATA);
-        EigenDecomposition eigenDecomposition = new EigenDecomposition(matriz);
+    public static double[][] getEigenVectors(double[][] matrixATA) {
+        RealMatrix matrix = MatrixUtils.createRealMatrix(matrixATA);
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(matrix);
 
-        double[][] vetoresProprios = eigenDecomposition.getV().getData();
-        double[] valoresProprios = eigenDecomposition.getRealEigenvalues();
+        double[][] eigenvectors = eigenDecomposition.getV().getData();
+        double[] eigenvalues = eigenDecomposition.getRealEigenvalues();
 
-        System.out.println("\nValores Próprios:");
-        for (double valor : valoresProprios) {
-            System.out.println(valor);
+        System.out.println("\nEigenvalues:");
+        for (double value : eigenvalues) {
+            System.out.println(value);
         }
 
+        sortEigenvectors(eigenvalues, eigenvectors);
 
-        ordenarVetoresProprios(valoresProprios, vetoresProprios);
-
-        return vetoresProprios;
+        return eigenvectors;
     }
 
-    public static double[][] normalizarVetoresC(double[][] matrizVetoresPropriosC) {
-        int numLinhas = matrizVetoresPropriosC.length;      // Número de linhas
-        int numColunas = matrizVetoresPropriosC[0].length; // Número de colunas (número de vetores próprios)
 
-        double[][] matrizEigenFaces = new double[numLinhas][numColunas];
+    public static double[][] normalizeVectorsC(double[][] eigenvectorMatrixC) {
+        int numRows = eigenvectorMatrixC.length;      // Number of rows
+        int numCols = eigenvectorMatrixC[0].length;  // Number of columns (number of eigenvectors)
 
-        // Normaliza cada coluna (vetor próprio)
-        for (int j = 0; j < numColunas; j++) {
-            double soma = 0;
+        double[][] eigenFacesMatrix = new double[numRows][numCols];
 
-            // Calcula a norma do vetor (coluna j)
-            for (int i = 0; i < numLinhas; i++) {
-                soma += Math.pow(matrizVetoresPropriosC[i][j], 2);
+        // Normalize each column (eigenvector)
+        for (int j = 0; j < numCols; j++) {
+            double sum = 0;
+
+            // Calculate the norm of the vector (column j)
+            for (int i = 0; i < numRows; i++) {
+                sum += Math.pow(eigenvectorMatrixC[i][j], 2);
             }
-            double norma = Math.sqrt(soma);
+            double norm = Math.sqrt(sum);
 
-            // Normaliza a coluna j
-            for (int i = 0; i < numLinhas; i++) {
-                matrizEigenFaces[i][j] = matrizVetoresPropriosC[i][j] / norma;
+            // Normalize column j
+            for (int i = 0; i < numRows; i++) {
+                eigenFacesMatrix[i][j] = eigenvectorMatrixC[i][j] / norm;
             }
         }
-        return matrizEigenFaces;
+        return eigenFacesMatrix;
     }
 }
