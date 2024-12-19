@@ -33,10 +33,10 @@ public class Main {
                 if (scanner.hasNextInt()) {
                     menuOption = scanner.nextInt();
                     if (menuOption < 0 || menuOption > 5) {
-                        System.out.println("Invalid option. Please choose a valid option.");
+                        System.out.println("Opção inválida. Escolha uma opção válida.");
                     }
                 } else {
-                    System.out.println("Invalid input. Please enter a number.");
+                    System.out.println("Entrada inválida. Insira um número.");
                     scanner.next();
                 }
             }
@@ -52,7 +52,7 @@ public class Main {
                     if (readMatrix != null) {
 
                         if (validateMatrix(readMatrix)) {
-                            System.out.println("\nRead Matrix:");
+                            System.out.println("\nMatriz Lida:");
                             UI_Utils.printMatrix(readMatrix);
 
                             int k = askNumberOfEigenvectors(readMatrix);
@@ -68,17 +68,17 @@ public class Main {
 
                             double[][] matrixAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrixPk, matrixDk), Matrix_Utils.transpose(matrixPk));
 
-                            System.out.println("\nReconstructed Matrix\n:");
+                            System.out.println("\nMatriz Reconstruída\n:");
                             UI_Utils.printMatrix(matrixAk);
 
                             File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
 
                         } else {
-                            System.out.println("\nPlease enter a valid array.");
+                            System.out.println("\nInsira uma matriz válida.");
                         }
                     } else {
 
-                        System.out.println("The matrix has not yet been read.");
+                        System.out.println("A matriz ainda não foi lida.");
                     }
                     break;
                 case 2:
@@ -88,7 +88,7 @@ public class Main {
                     File[] files = File_Utils.getCsvFiles(folderPath);
 
                     int matrixSize = File_Utils.getNumberOfLines(files[0]);
-                    System.out.println("Matrix Size: " + matrixSize + "x" + matrixSize);
+                    System.out.println("Tamanho da Matriz: " + matrixSize + "x" + matrixSize);
 
                     double[][] matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
 
@@ -104,17 +104,17 @@ public class Main {
                         }
                     }
 
-                    System.out.println("\nMatrix Dimensions (A) Φ: Lines = " + matrixA.length + ", Columns = " + matrixA[0].length + "\n");
+                    System.out.println("\nDimensões da Matriz (A) Φ: Linhas = " + matrixA.length + ", Colunas = " + matrixA[0].length + "\n");
 
                     double[][] transposedMatrixA = Matrix_Utils.transpose(matrixA);
                     double[][] matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
 
-                    System.out.println("Matrix Aᵀ x A:");
+                    System.out.println("Matriz Aᵀ x A:");
                     UI_Utils.printMatrix(matrixATA);
 
                     double[][] eigenVectorsATA = getEigenVectors(matrixATA);
 
-                    System.out.println("\nHow many Eigenfaces do you want to use?");
+                    System.out.println("\nQuantos Eigenfaces deseja usar?");
                     int numEigenFaces = scanner.nextInt();
 
                     double[][] matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
@@ -135,7 +135,7 @@ public class Main {
                     //TODO: Implementar esta funcionalidade
                     break;
                 case 0:
-                    System.out.println("Closing application...");
+                    System.out.println("A fechar aplicação...");
                     break;
             }
 
@@ -215,7 +215,7 @@ public class Main {
         try {
             writer.writeArrayAsImage(array, OUTPUT_PATH_F2 + "/imagem_reconstruida_" + counter + ".png");
         } catch (IOException e) {
-            System.err.println("Error saving image as PNG: " + e.getMessage());
+            System.err.println("Erro ao salvar imagem como PNG: " + e.getMessage());
         }
     }
 
@@ -340,7 +340,7 @@ public class Main {
     public static boolean validateMatrix(double[][] matrix) {
 
         if (matrix.length != matrix[0].length) {
-            System.out.println("The matrix is not square.");
+            System.out.println("A matriz não é quadrada.");
             return false;
         }
 
@@ -351,17 +351,17 @@ public class Main {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] != matrix[j][i]) {
-                    System.out.println("The matrix is not symmetric.");
+                    System.out.println("A matriz não é simétrica.");
                     return false;
                 }
                 if (matrix[i][j] < 0) {
                     hasNegatives = true;
-                    negativeValues[negativeIndex++] = "Line: " + i + ", Column: " + j + " (" + matrix[i][j] + ")";
+                    negativeValues[negativeIndex++] = "Linha: " + i + ", Coluna: " + j + " (" + matrix[i][j] + ")";
                 }
             }
         }
         if (hasNegatives) {
-            System.out.println("The array contains negative values.");
+            System.out.println("A matriz contém valores negativos.");
             for (int i = 0; i < negativeValues.length; i++) {
                 if (negativeValues[i] != null) {
                     System.out.println(negativeValues[i]);
@@ -376,30 +376,30 @@ public class Main {
         int k = 0;
 
         while (k <= 0 || k > matrix.length) {
-            System.out.println("\nWhat is the number of eigenvectors (k)?");
+            System.out.println("\nQual é o número de vetores próprios (k)?");
 
             if (scanner.hasNextInt()) {
                 k = scanner.nextInt();
 
                 if (k == -1) {
                     k = matrix.length;
-                    System.out.println("Option -1: Using all eigenvectors.");
+                    System.out.println("Opção -1: Usando todos os Vetores Próprios.");
                     return k;
                 }
 
                 if (k <= 0) {
                     System.out.println("""
-                        Invalid number of eigenvectors.
-                           Valid inputs:
-                                - A positive integer
-                                - -1 to use all eigenvectors
+                        Número inválido de autovetores.
+                           Entradas válidas:
+                                - Um número inteiro positivo
+                                - -1 para usar todos os vetores próprios
                         """);
                 } else if (k > matrix.length) {
-                    System.out.printf("The maximum number of eigenvectors is %d. Setting k to %d.%n", matrix.length, matrix.length);
+                    System.out.printf("O número máximo de vetores próprios é %d. A definir k para %d.%n", matrix.length, matrix.length);
                     k = matrix.length;
                 }
             } else {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("Entrada inválida. Insira um número.");
                 scanner.next();
             }
         }
@@ -467,7 +467,7 @@ public class Main {
         double[][] eigenvectors = eigenDecomposition.getV().getData();
         double[] eigenvalues = eigenDecomposition.getRealEigenvalues();
 
-        System.out.println("\nEigenvalues:");
+        System.out.println("\nVetores Próprios:");
         for (double value : eigenvalues) {
             System.out.println(value);
         }
