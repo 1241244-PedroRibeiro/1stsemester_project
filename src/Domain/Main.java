@@ -18,7 +18,10 @@ import java.io.IOException;
 
 public class Main {
     public static final String OUTPUT_PATH = "output/funcionalidade_1";
-    public static final String OUTPUT_PATH_F2 = "output/funcionalidade_2/imagensReconstruidas";
+    public static final String OUTPUT_PATH_F2_REBUILT_IMAGES = "output/funcionalidade_2/imagensReconstruidas";
+    public static final String OUTPUT_PATH_F2_EIGENFACES = "output/funcionalidade_2/eigenfaces";
+    public static final String FILE_EIGENFACE_PATTERN = "eigenface_";
+    public static final String FILE_RECONSTRUCTED_IMAGE_PATTERN = "imagem_reconstruida_";
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -110,7 +113,8 @@ public class Main {
                     numEigenFaces = scanner.nextInt();
                     matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
                     matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
-                    rebuildImage(matrixVectors, files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize);
+                    //saveEigenFaces(matrixEigenFaces, matrixSize);
+                    rebuildImages(files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize, matrixVectors);
 
                     break;
                 case 3:
@@ -159,8 +163,8 @@ public class Main {
         return matrixA;
     }
 
-    public static void rebuildImage(double[][] orginalMatrix, File[] files, double[][] matrixA, double[][] eigenFacesMatrix, double[] averageImages, int numEigenFaces, int MatrixSize) {
-        File outputFolder = new File(OUTPUT_PATH_F2);
+    public static void rebuildImages(File[] files, double[][] matrixA, double[][] eigenFacesMatrix, double[] averageImages, int numEigenFaces, int matrixSize, double[][] matrixVectors) {
+        File outputFolder = new File(OUTPUT_PATH_F2_REBUILT_IMAGES);
 
         if (!outputFolder.exists()) {
             outputFolder.mkdirs();
@@ -170,10 +174,12 @@ public class Main {
             double[] phi = getPhiInPosition(matrixA, i);
             double[] sumArray = new double[eigenFacesMatrix.length];
             double[] reconstructedImage = new double[eigenFacesMatrix.length];
+            double[] weightsVector = new double[numEigenFaces];
 
             for (int j = 0; j < numEigenFaces; j++) {
                 double[] ujTransposed = getUjTransposed(eigenFacesMatrix, j);
                 double weight = calculateWeight(ujTransposed, phi);
+                weightsVector[j] = weight;
                 double[] uj = getMatrixVectorAtPosition(eigenFacesMatrix, j);
 
                 //Multiply vector uj by weight
@@ -191,25 +197,31 @@ public class Main {
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-            saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2, MatrixSize, i);
-            saveImageAsJPG(OUTPUT_PATH_F2, reconstructedImage, MatrixSize, i);
+            System.out.println("n elementos imagem reconstruida" + reconstructedImage.length);
+            saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
+            saveImageAsJPG(OUTPUT_PATH_F2_REBUILT_IMAGES, reconstructedImage, matrixSize, i);
         }
     }
 
-    private static void saveIntMatrixToCSV(double[] reconstructedImage, String outputPath, int matrixSize, int counter) {
-        try {
-            PrintWriter writer = new PrintWriter(outputPath + "/imagem_reconstruida_" + counter + ".csv");
-            for (int i = 0; i < matrixSize; i++) {
-                for (int j = 0; j < matrixSize; j++) {
-                    int pixelValue = (int) Math.round(reconstructedImage[i * matrixSize + j]);
-                    writer.print(pixelValue);
-                    if (j < matrixSize - 1) {
+    private static void saveIntMatrixToCSV(double[] vector, String outputPath, int matrixSize, int counter, String filePattern) {
+        int[][] matrix = new int[matrixSize][matrixSize];
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixSize; j++) {
+                matrix[i][j] = (int) Math.round(vector[i * matrixSize + j]);
+            }
+        }
+
+        File outputFile = new File(outputPath + "/" + filePattern + counter + ".csv");
+        try (PrintWriter writer = new PrintWriter(outputFile)) {
+            for (int[] row : matrix) {
+                for (int j = 0; j < row.length; j++) {
+                    writer.print(row[j]);
+                    if (j < row.length - 1) {
                         writer.print(",");
                     }
                 }
                 writer.println();
             }
-            writer.close();
         } catch (IOException e) {
             System.err.println("Erro ao salvar imagem como CSV: " + e.getMessage());
         }
