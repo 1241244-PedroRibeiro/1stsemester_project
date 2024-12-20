@@ -18,7 +18,7 @@ import java.io.IOException;
 public class Main {
     public static final String OUTPUT_PATH = "output/funcionalidade_1";
     public static final String OUTPUT_PATH_F2 = "output/funcionalidade_2/imagensReconstruidas";
-    static Scanner scanner = new Scanner(System.in);
+    public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
 
@@ -178,7 +178,7 @@ public class Main {
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-            saveImageAsPNG(reconstructedImage, MatrixSize, i);
+            saveImageAsPNG(OUTPUT_PATH_F2, reconstructedImage, MatrixSize, i);
         }
     }
 
@@ -200,7 +200,7 @@ public class Main {
         return weight;
     }
 
-    public static void saveImageAsPNG(double[] imageVector, int matrixSize, int counter) {
+    public static void saveImageAsPNG(String savePath, double[] imageVector, int matrixSize, int counter) {
         int[][] array = new int[matrixSize][matrixSize];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = 0; j < matrixSize; j++) {
@@ -213,7 +213,7 @@ public class Main {
 
         GreyscaleImageWriter writer = new GreyscaleImageWriter();
         try {
-            writer.writeArrayAsImage(array, OUTPUT_PATH_F2 + "/imagem_reconstruida_" + counter + ".png");
+            writer.writeArrayAsImage(array, savePath + "/imagem_reconstruida_" + counter + ".png");
         } catch (IOException e) {
             System.err.println("Erro ao salvar imagem como PNG: " + e.getMessage());
         }
@@ -389,11 +389,11 @@ public class Main {
 
                 if (k <= 0) {
                     System.out.println("""
-                        Número inválido de autovetores.
-                           Entradas válidas:
-                                - Um número inteiro positivo
-                                - -1 para usar todos os vetores próprios
-                        """);
+                            Número inválido de autovetores.
+                               Entradas válidas:
+                                    - Um número inteiro positivo
+                                    - -1 para usar todos os vetores próprios
+                            """);
                 } else if (k > matrix.length) {
                     System.out.printf("O número máximo de vetores próprios é %d. A definir k para %d.%n", matrix.length, matrix.length);
                     k = matrix.length;
