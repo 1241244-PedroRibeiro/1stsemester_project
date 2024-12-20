@@ -8,6 +8,7 @@ import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.Arrays;
 
@@ -21,6 +22,14 @@ public class Main {
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+
+
+        double[][] matrixVectors, matrixA, matrixATA, transposedMatrixA, eigenVectorsATA, matrixEigenVectorsC, matrixEigenFaces;
+        double[] averageImages;
+        String filePath, folderPath;
+        File[] files;
+        int matrixSize, numEigenFaces;
+
 
         int menuOption;
 
@@ -44,7 +53,7 @@ public class Main {
             switch (menuOption) {
                 case 1:
                     UI_Utils.showMenuTitle(1);
-                    String filePath = UI_Utils.selectFileToRead();
+                    filePath = UI_Utils.selectFileToRead();
 
 
                     double[][] readMatrix = File_Utils.getMatrixFromCSV(filePath);
@@ -83,65 +92,71 @@ public class Main {
                     break;
                 case 2:
                     UI_Utils.showMenuTitle(2);
-                    String folderPath = UI_Utils.selectFolderToRead();
 
-                    File[] files = File_Utils.getCsvFiles(folderPath);
-
-                    int matrixSize = File_Utils.getNumberOfLines(files[0]);
-                    System.out.println("Tamanho da Matriz: " + matrixSize + "x" + matrixSize);
-
-                    double[][] matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
-
-                    double[] averageImages = calculateAverage(matrixVectors);
-
+                    folderPath = UI_Utils.selectFolderToRead();
+                    files = File_Utils.getCsvFiles(folderPath);
+                    matrixSize = File_Utils.getNumberOfLines(files[0]);
+                    matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
+                    averageImages = calculateAverage(matrixVectors);
                     UI_Utils.printVetorMedia(averageImages);
-
-                    double[][] matrixA = new double[matrixSize * matrixSize][files.length];
-
-                    for (int i = 0; i < files.length; i++) {
-                        for (int j = 0; j < matrixSize * matrixSize; j++) {
-                            matrixA[j][i] = matrixVectors[j][i] - averageImages[j];
-                        }
-                    }
-
+                    matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
                     System.out.println("\nDimensões da Matriz (A) Φ: Linhas = " + matrixA.length + ", Colunas = " + matrixA[0].length + "\n");
-
-                    double[][] transposedMatrixA = Matrix_Utils.transpose(matrixA);
-                    double[][] matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
-
+                    transposedMatrixA = Matrix_Utils.transpose(matrixA);
+                    matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
                     System.out.println("Matriz Aᵀ x A:");
                     UI_Utils.printMatrix(matrixATA);
-
-                    double[][] eigenVectorsATA = getEigenVectors(matrixATA);
-
+                    eigenVectorsATA = getEigenVectors(matrixATA);
                     System.out.println("\nQuantos Eigenfaces deseja usar?");
-                    int numEigenFaces = scanner.nextInt();
-
-                    double[][] matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
-
-                    double[][] matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
-
+                    numEigenFaces = scanner.nextInt();
+                    matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
+                    matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
                     rebuildImage(matrixVectors, files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize);
 
                     break;
                 case 3:
                     UI_Utils.showMenuTitle(3);
-                    //TODO: Implementar esta funcionalidade
+
+                    folderPath = UI_Utils.selectFolderToRead();
+                    files = File_Utils.getCsvFiles(folderPath);
+                    matrixSize = File_Utils.getNumberOfLines(files[0]);
+                    matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
+                    averageImages = calculateAverage(matrixVectors);
+                    UI_Utils.printVetorMedia(averageImages);
+                    matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
+                    transposedMatrixA = Matrix_Utils.transpose(matrixA);
+                    matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
+                    UI_Utils.printMatrix(matrixATA);
+                    eigenVectorsATA = getEigenVectors(matrixATA);
+                    System.out.println("\nQuantos Eigenfaces deseja usar?");
+                    numEigenFaces = scanner.nextInt();
+                    matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
+                    matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
 
                     break;
                 case 4:
                     UI_Utils.showMenuTitle(4);
                     UI_Utils.showDevelopmentTeam();
-                    //TODO: Implementar esta funcionalidade
                     break;
                 case 0:
-                    System.out.println("A fechar aplicação...");
+                    System.out.println("A fechar a aplicação...");
                     break;
             }
 
         } while (menuOption != 0);
 
         scanner.close();
+    }
+
+    private static double[][] calculateMatrixA(int lines, int rows, double[][] matrixVectors, double[] averageImages) {
+        double[][] matrixA = new double[lines][rows];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < lines; j++) {
+                matrixA[j][i] = matrixVectors[j][i] - averageImages[j];
+            }
+        }
+
+        return matrixA;
     }
 
     public static void rebuildImage(double[][] orginalMatrix, File[] files, double[][] matrixA, double[][] eigenFacesMatrix, double[] averageImages, int numEigenFaces, int MatrixSize) {
@@ -152,9 +167,7 @@ public class Main {
         }
 
         for (int i = 0; i < files.length; i++) {
-
             double[] phi = getPhiInPosition(matrixA, i);
-
             double[] sumArray = new double[eigenFacesMatrix.length];
             double[] reconstructedImage = new double[eigenFacesMatrix.length];
 
@@ -168,19 +181,40 @@ public class Main {
                     uj[k] *= weight;
                 }
 
-                //add the vector uj to the arrayDaSoma
+                //add the vector uj to the sumArray
                 for (int k = 0; k < uj.length; k++) {
                     sumArray[k] += uj[k];
                 }
             }
 
-            //add arrayDaSoma to the average
+            //add sumArray to the average
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-            saveImageAsPNG(OUTPUT_PATH_F2, reconstructedImage, MatrixSize, i);
+            saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2, MatrixSize, i);
+            saveImageAsJPG(OUTPUT_PATH_F2, reconstructedImage, MatrixSize, i);
         }
     }
+
+    private static void saveIntMatrixToCSV(double[] reconstructedImage, String outputPath, int matrixSize, int counter) {
+        try {
+            PrintWriter writer = new PrintWriter(outputPath + "/imagem_reconstruida_" + counter + ".csv");
+            for (int i = 0; i < matrixSize; i++) {
+                for (int j = 0; j < matrixSize; j++) {
+                    int pixelValue = (int) Math.round(reconstructedImage[i * matrixSize + j]);
+                    writer.print(pixelValue);
+                    if (j < matrixSize - 1) {
+                        writer.print(",");
+                    }
+                }
+                writer.println();
+            }
+            writer.close();
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar imagem como CSV: " + e.getMessage());
+        }
+    }
+
 
     public static double[] getMatrixVectorAtPosition(double[][] matrixEigenFaces, int j) {
         double[] vector = new double[matrixEigenFaces.length];
@@ -191,6 +225,7 @@ public class Main {
         return vector;
     }
 
+
     public static double calculateWeight(double[] ujTransposed, double[] phi) {
         double weight = 0.0;
 
@@ -200,7 +235,7 @@ public class Main {
         return weight;
     }
 
-    public static void saveImageAsPNG(String savePath, double[] imageVector, int matrixSize, int counter) {
+    public static void saveImageAsJPG(String savePath, double[] imageVector, int matrixSize, int counter) {
         int[][] array = new int[matrixSize][matrixSize];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = 0; j < matrixSize; j++) {
@@ -213,9 +248,9 @@ public class Main {
 
         GreyscaleImageWriter writer = new GreyscaleImageWriter();
         try {
-            writer.writeArrayAsImage(array, savePath + "/imagem_reconstruida_" + counter + ".png");
+            writer.writeArrayAsImage(array, savePath + "/imagem_reconstruida_" + counter + ".jpg");
         } catch (IOException e) {
-            System.err.println("Erro ao salvar imagem como PNG: " + e.getMessage());
+            System.err.println("Erro ao salvar imagem como JPG: " + e.getMessage());
         }
     }
 

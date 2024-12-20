@@ -10,8 +10,6 @@ public class File_Utils_Test {
 
     public static final String F1_CSV_FILE = "resources/exampleInputFunc1.csv";
     public static final String F2_CORRECT_TEST_DATA_FOLDER = "resources/exemploMatrizesImagensCSVFuncionalidades2e3";
-    public static final String TEST_OUTPUT_FOLDER = "output/test_out";
-    public static final String TEST_INPUT_FOLDER = "resources/test_data";
 
     public static void main(String[] args) {
         testGetCsvFiles();

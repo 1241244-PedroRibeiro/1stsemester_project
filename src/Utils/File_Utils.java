@@ -5,44 +5,44 @@ import java.util.Scanner;
 
 public class File_Utils {
     public static File[] getCsvFiles(String folderPath) {
-    File folder = new File(folderPath);
+        File folder = new File(folderPath);
 
-    if (!folder.exists() || !folder.isDirectory()) {
-        System.out.println("Erro: Pasta não encontrada ou não é um diretório: " + folderPath);
-        return new File[0];
-    }
-
-    // Filter CSV files manually
-    File[] files = folder.listFiles();
-    if (files == null || files.length == 0) {
-        System.out.println("Erro: A pasta está vazia ou não contém arquivos válidos: " + folderPath);
-        return new File[0];
-    }
-
-    // CSV file count
-    int csvCount = 0;
-    for (File file : files) {
-        if (file.getName().endsWith(".csv")) {
-            csvCount++;
+        if (!folder.exists() || !folder.isDirectory()) {
+            System.out.println("Erro: Pasta não encontrada ou não é um diretório: " + folderPath);
+            return new File[0];
         }
-    }
 
-    if (csvCount == 0) {
-        System.out.println("Erro: Nenhum arquivo CSV encontrado na pasta: " + folderPath);
-        return new File[0];
-    }
-
-    // Create an array to store CSV files
-    File[] csvFiles = new File[csvCount];
-    int index = 0;
-    for (File file : files) {
-        if (file.getName().endsWith(".csv")) {
-            csvFiles[index++] = file;
+        // Filter CSV files manually
+        File[] files = folder.listFiles();
+        if (files == null || files.length == 0) {
+            System.out.println("Erro: A pasta está vazia ou não contém arquivos válidos: " + folderPath);
+            return new File[0];
         }
-    }
 
-    return csvFiles;
-}
+        // CSV file count
+        int csvCount = 0;
+        for (File file : files) {
+            if (file.getName().endsWith(".csv")) {
+                csvCount++;
+            }
+        }
+
+        if (csvCount == 0) {
+            System.out.println("Erro: Nenhum arquivo CSV encontrado na pasta: " + folderPath);
+            return new File[0];
+        }
+
+        // Create an array to store CSV files
+        File[] csvFiles = new File[csvCount];
+        int index = 0;
+        for (File file : files) {
+            if (file.getName().endsWith(".csv")) {
+                csvFiles[index++] = file;
+            }
+        }
+
+        return csvFiles;
+    }
 
 
     public static int getNumberOfLines(File csvFile) {
@@ -201,6 +201,8 @@ public class File_Utils {
             System.out.println("Erro ao guardar a matriz no CSV: " + e.getMessage());
         }
     }
+
+
 
 
 }
