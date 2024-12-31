@@ -8,6 +8,8 @@ import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.Arrays;
@@ -135,6 +137,73 @@ public class Main {
                     numEigenFaces = scanner.nextInt();
                     matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
                     matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
+                    // Pedir ao utilizador para introduzir o caminho para a nova imagem
+                    System.out.println("Enter the path of the new image (CSV format): ");
+                    scanner.nextLine();
+                    String newImagePath = scanner.nextLine();
+                    double[][] matrizLida = File_Utils.getMatrixFromCSV(newImagePath);
+
+                    // Pedir ao utilizador para introduzir o caminho para a base de imagens
+                    System.out.println("Enter the path of the image database folder: ");
+                    String imageDatabasePath = scanner.nextLine();
+
+                    // Ler a nova imagem
+                    double[][] newImage = File_Utils.getMatrixFromCSV(newImagePath);
+
+                    int imageSize = File_Utils.getNumberOfLines(files[0]);
+                    double[][] imageVectors = File_Utils.processCsvFiles(files, imageSize);
+
+                    // Calcular Φnova
+                    double[] phiNova = new double[imageSize * imageSize];
+                    for (int i = 0; i < phiNova.length; i++) {
+                        phiNova[i] = newImage[i / imageSize][i % imageSize] - averageImages[i];
+                    }
+
+                    double[] omegaNova = new double[numEigenFaces];
+
+                    for (int j = 0; j < numEigenFaces; j++) {
+                        double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
+                        omegaNova[j] = calculateWeight(ujTransposto, phiNova);
+                    }
+
+                    double[][] omegaMatrixDatabase = new double[files.length][numEigenFaces];
+
+                    for (int i = 0; i < files.length; i++) {
+                        double[] phi = getPhiInPosition(matrixA, i);
+                        double[] omegaVectorDatabase = new double[numEigenFaces];
+                        for (int j = 0; j < numEigenFaces; j++) {
+                            double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
+                            double peso = calculateWeight(ujTransposto, phi);
+                            omegaVectorDatabase[j] = peso;
+                        }
+                        omegaMatrixDatabase[i] = omegaVectorDatabase;
+                    }
+
+                    double[] distances = new double[omegaMatrixDatabase.length];
+                    for (int i = 0; i < omegaMatrixDatabase.length; i++) {
+                        distances[i] = calcularDistanciaEuclidiana(omegaNova, omegaMatrixDatabase[i]);
+                    }
+
+                    for (int i = 0; i < distances.length; i++) {
+                        System.out.println("Distance to Ω" + i + ": " + distances[i]);
+                    }
+
+                    System.out.println("Number of eigenfaces used: " + numEigenFaces);
+                    System.out.println("Ωnova: " + Arrays.toString(omegaNova));
+                    for (int i = 0; i < files.length; i++) {
+                        System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
+                    }
+
+                    int closestImageIndex = 0;
+                    double minDistance = distances[0];
+                    for (int i = 1; i < distances.length; i++) {
+                        if (distances[i] < minDistance) {
+                            minDistance = distances[i];
+                            closestImageIndex = i;
+                        }
+                    }
+
+                    getImageAsJPG(files[closestImageIndex], "output/funcionalidade_3/closest_image.jpg");
 
                     break;
                 case 4:
@@ -149,6 +218,37 @@ public class Main {
         } while (menuOption != 0);
 
         scanner.close();
+    }
+
+    public static double calcularDistanciaEuclidiana(double[] vetor1, double[] vetor2) {
+        double soma = 0.0;
+        for (int i = 0; i < vetor1.length; i++) {
+            soma += Math.pow(vetor1[i] - vetor2[i], 2);
+        }
+        return Math.sqrt(soma);
+    }
+
+    public static void getImageAsJPG(File csvFile, String outputPath) {
+        try {
+            double[][] imageMatrix = File_Utils.getMatrixFromCSV(csvFile.getAbsolutePath());
+            int imageSize = imageMatrix.length;
+            BufferedImage image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_3BYTE_BGR);
+
+            for (int i = 0; i < imageSize; i++) {
+                for (int j = 0; j < imageSize; j++) {
+                    int pixelValue = (int) Math.round(imageMatrix[j][i]); // Adjusted to set pixels column by column
+                    pixelValue = Math.max(0, Math.min(255, pixelValue));
+                    int rgb = (pixelValue << 16) | (pixelValue << 8) | pixelValue;
+                    image.setRGB(i, j, rgb);
+                }
+            }
+
+            File output = new File(outputPath);
+            ImageIO.write(image, "jpg", output);
+            System.out.println("Image saved as JPG: " + output.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error saving image as JPG: " + e.getMessage());
+        }
     }
 
     private static double[][] calculateMatrixA(int lines, int rows, double[][] matrixVectors, double[] averageImages) {
