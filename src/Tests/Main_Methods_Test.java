@@ -287,7 +287,7 @@ public class Main_Methods_Test {
             outputDir.mkdirs();
         }
 
-        Main.saveImageAsJPG(outputPath,vetorImagem, tamanhoMatriz, contador);
+        Main.saveImageAsJPG(outputPath,vetorImagem, tamanhoMatriz, contador, "/imagem_reconstruida_");
 
         File outputFile = new File(outputPath + "/imagem_reconstruida_" + contador + ".png");
         boolean result = outputFile.exists();

@@ -20,14 +20,14 @@ import java.io.IOException;
 
 public class Main {
     public static final String OUTPUT_PATH = "output/funcionalidade_1";
-    public static final String OUTPUT_PATH_F2_REBUILT_IMAGES = "output/funcionalidade_2/imagensReconstruidas";
-    public static final String OUTPUT_PATH_F2_EIGENFACES = "output/funcionalidade_2/eigenfaces";
+    public static final String OUTPUT_PATH_F2_REBUILT_IMAGES = "output/funcionalidade_2/imagensReconstruidas/";
+    public static final String OUTPUT_PATH_F2_EIGENFACES = "output/funcionalidade_2/eigenfaces/";
     public static final String FILE_EIGENFACE_PATTERN = "eigenface_";
+    public static final String FILE_EIGENFACE_TRANSFORMED_PATTERN = "eigenface_transformada_";
     public static final String FILE_RECONSTRUCTED_IMAGE_PATTERN = "imagem_reconstruida_";
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-
 
         double[][] matrixVectors, matrixA, matrixATA, transposedMatrixA, eigenVectorsATA, matrixEigenVectorsC, matrixEigenFaces;
         double[] averageImages;
@@ -116,6 +116,7 @@ public class Main {
                     matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
                     matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
                     //saveEigenFaces(matrixEigenFaces, matrixSize);
+                    saveEigenFaces(matrixEigenFaces, matrixSize, numEigenFaces);
                     rebuildImages(files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize, matrixVectors);
 
                     break;
@@ -297,11 +298,70 @@ public class Main {
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
+            printVector(reconstructedImage);
+            System.out.println("iiiiiiiiiiiiiiiiiiiiii");
+
+
             System.out.println("n elementos imagem reconstruida" + reconstructedImage.length);
             saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
-            saveImageAsJPG(OUTPUT_PATH_F2_REBUILT_IMAGES, reconstructedImage, matrixSize, i);
+            saveImageAsJPG(OUTPUT_PATH_F2_REBUILT_IMAGES, reconstructedImage, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
         }
     }
+
+    public static void printVector(double[] vector) {
+        System.out.print("[");
+        for (int i = 0; i < vector.length; i++) {
+            System.out.print(vector[i]);
+            if (i < vector.length - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
+    }
+
+    public static void saveEigenFaces(double[][] eigenFacesMatrix, int matrixSize, int numEigenFaces) {
+        File outputFolder = new File(OUTPUT_PATH_F2_EIGENFACES);
+
+        if (!outputFolder.exists()) {
+            outputFolder.mkdirs();
+        }
+
+        for (int i = 0; i < numEigenFaces; i++) {
+            double[] eigenFace = getMatrixVectorAtPosition(eigenFacesMatrix, i);
+            saveIntMatrixToCSV(eigenFace, OUTPUT_PATH_F2_EIGENFACES, matrixSize, i, FILE_EIGENFACE_PATTERN);
+            double[] pixelScaledEigenFaces = pixelScalingEigenFaces(eigenFace);
+            saveIntMatrixToCSV(pixelScaledEigenFaces, OUTPUT_PATH_F2_EIGENFACES, matrixSize, i, FILE_EIGENFACE_TRANSFORMED_PATTERN);
+            saveImageAsJPG(OUTPUT_PATH_F2_EIGENFACES, pixelScaledEigenFaces, matrixSize, i, FILE_EIGENFACE_PATTERN);
+        }
+    }
+
+    public static double[] pixelScalingEigenFaces(double[] eigenFace) {
+        // Inicializamos as variáveis para o mínimo e máximo
+        double min = eigenFace[0];
+        double max = eigenFace[0];
+
+        // Encontrar o valor mínimo e máximo no vetor
+        for (int i = 1; i < eigenFace.length; i++) {
+            if (eigenFace[i] < min) {
+                min = eigenFace[i];
+            }
+            if (eigenFace[i] > max) {
+                max = eigenFace[i];
+            }
+        }
+
+        // Array para armazenar os valores escalados
+        double[] scaledEigenFace = new double[eigenFace.length];
+
+        // Escalar os valores para o intervalo [0, 255]
+        for (int i = 0; i < eigenFace.length; i++) {
+            scaledEigenFace[i] = 255 * (eigenFace[i] - min) / (max - min);
+        }
+
+        return scaledEigenFace;
+    }
+
+
 
     private static void saveIntMatrixToCSV(double[] vector, String outputPath, int matrixSize, int counter, String filePattern) {
         int[][] matrix = new int[matrixSize][matrixSize];
@@ -347,7 +407,7 @@ public class Main {
         return weight;
     }
 
-    public static void saveImageAsJPG(String savePath, double[] imageVector, int matrixSize, int counter) {
+    public static void saveImageAsJPG(String savePath, double[] imageVector, int matrixSize, int counter, String filePattern) {
         int[][] array = new int[matrixSize][matrixSize];
         for (int i = 0; i < matrixSize; i++) {
             for (int j = 0; j < matrixSize; j++) {
@@ -360,7 +420,7 @@ public class Main {
 
         GreyscaleImageWriter writer = new GreyscaleImageWriter();
         try {
-            writer.writeArrayAsImage(array, savePath + "/imagem_reconstruida_" + counter + ".jpg");
+            writer.writeArrayAsImage(array, savePath + filePattern + counter + ".jpg");
         } catch (IOException e) {
             System.err.println("Erro ao salvar imagem como JPG: " + e.getMessage());
         }
