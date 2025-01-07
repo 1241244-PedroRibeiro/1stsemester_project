@@ -105,17 +105,17 @@ public class Main {
                     averageImages = calculateAverage(matrixVectors);
                     UI_Utils.printVetorMedia(averageImages);
                     matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
-                    System.out.println("\nDimensões da Matriz (A) Φ: Linhas = " + matrixA.length + ", Colunas = " + matrixA[0].length + "\n");
                     transposedMatrixA = Matrix_Utils.transpose(matrixA);
                     matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
-                    System.out.println("Matriz Aᵀ x A:");
-                    UI_Utils.printMatrix(matrixATA);
+                    double[][] covarianceMatrix = Matrix_Utils.calculateCovarianceMatrix(matrixATA, matrixVectors[0].length);
+                    System.out.println("Covariance Matrix:");
+                    UI_Utils.printMatrix(covarianceMatrix);
                     eigenVectorsATA = getEigenVectors(matrixATA);
                     System.out.println("\nQuantos Eigenfaces deseja usar?");
                     numEigenFaces = scanner.nextInt();
                     matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
                     matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
-                    //saveEigenFaces(matrixEigenFaces, matrixSize);
+                    System.out.println("\nNúmero de Eigenfaces utilizadas: " + numEigenFaces + "\n");
                     saveEigenFaces(matrixEigenFaces, matrixSize, numEigenFaces);
                     rebuildImages(files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize, matrixVectors);
 
@@ -298,11 +298,15 @@ public class Main {
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-            printVector(reconstructedImage);
-            System.out.println("iiiiiiiiiiiiiiiiiiiiii");
+
+            System.out.println("Vetor dos pesos da imagem " + i + ": ");
+            printVector(weightsVector);
+
+            double[] originalImageVector = getMatrixVectorAtPosition(matrixVectors, i);
+            double eam = calculateEAM(originalImageVector, reconstructedImage);
+            System.out.printf("Mean Absolute Error (EAM) for image %d: %.2f%n%n", i, eam);
 
 
-            System.out.println("n elementos imagem reconstruida" + reconstructedImage.length);
             saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
             saveImageAsJPG(OUTPUT_PATH_F2_REBUILT_IMAGES, reconstructedImage, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
         }
@@ -311,7 +315,7 @@ public class Main {
     public static void printVector(double[] vector) {
         System.out.print("[");
         for (int i = 0; i < vector.length; i++) {
-            System.out.print(vector[i]);
+            System.out.printf("%.2f",vector[i]);
             if (i < vector.length - 1) {
                 System.out.print(", ");
             }
@@ -361,6 +365,15 @@ public class Main {
         return scaledEigenFace;
     }
 
+    public static double calculateEAM(double[] original, double[] reconstructed) {
+        double sum = 0;
+        int length = original.length;
+
+        for (int i = 0; i < length; i++) {
+            sum += Math.abs(original[i] - reconstructed[i]);
+        }
+        return sum / length;
+    }
 
 
     private static void saveIntMatrixToCSV(double[] vector, String outputPath, int matrixSize, int counter, String filePattern) {
@@ -673,11 +686,6 @@ public class Main {
 
         double[][] eigenvectors = eigenDecomposition.getV().getData();
         double[] eigenvalues = eigenDecomposition.getRealEigenvalues();
-
-        System.out.println("\nVetores Próprios:");
-        for (double value : eigenvalues) {
-            System.out.println(value);
-        }
 
         sortEigenvectors(eigenvalues, eigenvectors);
 
