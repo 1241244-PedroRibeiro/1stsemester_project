@@ -138,21 +138,18 @@ public class Main {
                     numEigenFaces = scanner.nextInt();
                     matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
                     matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
+
+
                     // Pedir ao utilizador para introduzir o caminho para a nova imagem
                     System.out.println("Enter the path of the new image (CSV format): ");
                     scanner.nextLine();
                     String newImagePath = scanner.nextLine();
-                    double[][] matrizLida = File_Utils.getMatrixFromCSV(newImagePath);
 
-                    // Pedir ao utilizador para introduzir o caminho para a base de imagens
-                    System.out.println("Enter the path of the image database folder: ");
-                    String imageDatabasePath = scanner.nextLine();
 
                     // Ler a nova imagem
                     double[][] newImage = File_Utils.getMatrixFromCSV(newImagePath);
 
                     int imageSize = File_Utils.getNumberOfLines(files[0]);
-                    double[][] imageVectors = File_Utils.processCsvFiles(files, imageSize);
 
                     // Calcular Φnova
                     double[] phiNova = new double[imageSize * imageSize];
@@ -195,16 +192,24 @@ public class Main {
                         System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
                     }
 
-                    int closestImageIndex = 0;
+                    int[] closestImageIndices = new int[distances.length];
+                    int count = 0;
                     double minDistance = distances[0];
+                    closestImageIndices[count++] = 0;
+
                     for (int i = 1; i < distances.length; i++) {
                         if (distances[i] < minDistance) {
                             minDistance = distances[i];
-                            closestImageIndex = i;
+                            count = 0;
+                            closestImageIndices[count++] = i;
+                        } else if (distances[i] == minDistance) {
+                            closestImageIndices[count++] = i;
                         }
                     }
 
-                    getImageAsJPG(files[closestImageIndex], "output/funcionalidade_3/closest_image.jpg");
+                    for (int i = 0; i < count; i++) {
+                        getImageAsJPG(files[closestImageIndices[i]], "output/funcionalidade_3/closest_image_" + closestImageIndices[i] + ".jpg");
+                    }
 
                     break;
                 case 4:
