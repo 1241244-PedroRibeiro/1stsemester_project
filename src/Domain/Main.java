@@ -26,204 +26,220 @@ public class Main {
     public static final String FILE_EIGENFACE_TRANSFORMED_PATTERN = "eigenface_transformada_";
     public static final String FILE_RECONSTRUCTED_IMAGE_PATTERN = "imagem_reconstruida_";
     public static Scanner scanner = new Scanner(System.in);
-
+    public static boolean interactive;
+    public static StringBuilder txtContent;
     public static void main(String[] args) {
 
-        double[][] matrixVectors, matrixA, matrixATA, transposedMatrixA, eigenVectorsATA, matrixEigenVectorsC, matrixEigenFaces;
-        double[] averageImages;
         String filePath, folderPath;
-        File[] files;
-        int matrixSize, numEigenFaces;
+        int numEigenFaces,menuOption;
 
+        //MODO NAO INTERATIVO
+        if(args.length>0){
+            interactive=false;
+            txtContent = new StringBuilder();
 
-        int menuOption;
+        }
+        else{
+            interactive=true;
+            do {
+                menuOption = -1;
 
-        do {
-            menuOption = -1;
+                while (menuOption < 0 || menuOption > 5) {
+                    UI_Utils.showMenuOptions();
 
-            while (menuOption < 0 || menuOption > 5) {
-                UI_Utils.showMenuOptions();
-
-                if (scanner.hasNextInt()) {
-                    menuOption = scanner.nextInt();
-                    if (menuOption < 0 || menuOption > 5) {
-                        System.out.println("Opção inválida. Escolha uma opção válida.");
-                    }
-                } else {
-                    System.out.println("Entrada inválida. Insira um número.");
-                    scanner.next();
-                }
-            }
-
-            switch (menuOption) {
-                case 1:
-                    UI_Utils.showMenuTitle(1);
-                    filePath = UI_Utils.selectFileToRead();
-
-
-                    double[][] readMatrix = File_Utils.getMatrixFromCSV(filePath);
-
-                    if (readMatrix != null) {
-
-                        if (validateMatrix(readMatrix)) {
-                            System.out.println("\nMatriz Lida:");
-                            UI_Utils.printMatrix(readMatrix);
-
-                            int k = askNumberOfEigenvectors(readMatrix);
-                            RealMatrix[] result = ownDecomposition(readMatrix);
-
-                            double[][] matrixP = result[0].getData();
-                            double[][] matrixD = result[1].getData();
-
-                            double[][][] decomposed = compressedMatrix(matrixP, matrixD, k);
-
-                            double[][] matrixPk = decomposed[0];
-                            double[][] matrixDk = decomposed[1];
-
-                            double[][] matrixAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrixPk, matrixDk), Matrix_Utils.transpose(matrixPk));
-
-                            System.out.println("\nMatriz Reconstruída\n:");
-                            UI_Utils.printMatrix(matrixAk);
-
-                            File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
-
-                        } else {
-                            System.out.println("\nInsira uma matriz válida.");
+                    if (scanner.hasNextInt()) {
+                        menuOption = scanner.nextInt();
+                        if (menuOption < 0 || menuOption > 5) {
+                            System.out.println("Opção inválida. Escolha uma opção válida.");
                         }
                     } else {
-
-                        System.out.println("A matriz ainda não foi lida.");
+                        System.out.println("Entrada inválida. Insira um número.");
+                        scanner.next();
                     }
-                    break;
-                case 2:
-                    UI_Utils.showMenuTitle(2);
+                }
+                switch (menuOption) {
+                    case 1:
+                        UI_Utils.showMenuTitle(1);
+                        filePath = UI_Utils.selectFileToRead();
+                        double[][] readMatrix = File_Utils.getMatrixFromCSV(filePath);
+                        if (readMatrix != null) {
+                            if (validateMatrix(readMatrix)) {
+                                int k = askNumberOfEigenvectors(readMatrix);
+                                execFunc1(readMatrix, k);
 
-                    folderPath = UI_Utils.selectFolderToRead();
-                    files = File_Utils.getCsvFiles(folderPath);
-                    matrixSize = File_Utils.getNumberOfLines(files[0]);
-                    matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
-                    averageImages = calculateAverage(matrixVectors);
-                    UI_Utils.printVetorMedia(averageImages);
-                    matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
-                    transposedMatrixA = Matrix_Utils.transpose(matrixA);
-                    matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
-                    double[][] covarianceMatrix = Matrix_Utils.calculateCovarianceMatrix(matrixATA, matrixVectors[0].length);
-                    System.out.println("Covariance Matrix:");
-                    UI_Utils.printMatrix(covarianceMatrix);
-                    eigenVectorsATA = getEigenVectors(matrixATA);
-                    System.out.println("\nQuantos Eigenfaces deseja usar?");
-                    numEigenFaces = scanner.nextInt();
-                    matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
-                    matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
-                    System.out.println("\nNúmero de Eigenfaces utilizadas: " + numEigenFaces + "\n");
-                    saveEigenFaces(matrixEigenFaces, matrixSize, numEigenFaces);
-                    rebuildImages(files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize, matrixVectors);
+                            } else System.out.println("\nInsira uma matriz válida.");
+                        } else System.out.println("A matriz ainda não foi lida.");
+                        break;
+                    case 2:
+                        UI_Utils.showMenuTitle(2);
+                        folderPath = UI_Utils.selectFolderToRead();
+                        //TODO: Fazer verificaçao num eigenfaces
+                        System.out.println("\nQuantos Eigenfaces deseja usar?");
+                        numEigenFaces = scanner.nextInt();
+                        execFunc2(folderPath, numEigenFaces);
+                        break;
+                    case 3:
+                        UI_Utils.showMenuTitle(3);
+                        folderPath = UI_Utils.selectFolderToRead();
+                        System.out.println("\nQuantos Eigenfaces deseja usar?");
+                        numEigenFaces = scanner.nextInt();
+                        System.out.println("Enter the path of the new image (CSV format): ");
+                        scanner.nextLine();
+                        String newImagePath = scanner.nextLine();
+                        execFunc3(folderPath, numEigenFaces, newImagePath);
+                        break;
+                    case 4:
+                        UI_Utils.showMenuTitle(4);
+                        UI_Utils.showDevelopmentTeam();
+                        break;
+                    case 0:
+                        System.out.println("A fechar a aplicação...");
+                        break;
+                }
 
-                    break;
-                case 3:
-                    UI_Utils.showMenuTitle(3);
+            } while (menuOption != 0);
 
-                    folderPath = UI_Utils.selectFolderToRead();
-                    files = File_Utils.getCsvFiles(folderPath);
-                    matrixSize = File_Utils.getNumberOfLines(files[0]);
-                    matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
-                    averageImages = calculateAverage(matrixVectors);
-                    UI_Utils.printVetorMedia(averageImages);
-                    matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
-                    transposedMatrixA = Matrix_Utils.transpose(matrixA);
-                    matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
-                    UI_Utils.printMatrix(matrixATA);
-                    eigenVectorsATA = getEigenVectors(matrixATA);
-                    System.out.println("\nQuantos Eigenfaces deseja usar?");
-                    numEigenFaces = scanner.nextInt();
-                    matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
-                    matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
+        }
+        scanner.close();
+    }
 
+    private static void execFunc3(String folderPath, int numEigenFaces, String newImagePath) {
+        int matrixSize;
+        double[][] matrixA,eigenVectorsATA,matrixEigenFaces,matrixVectors,matrixATA,matrixEigenVectorsC,transposedMatrixA;
+        double[] averageImages;
+        File[] files;
 
-                    // Pedir ao utilizador para introduzir o caminho para a nova imagem
-                    System.out.println("Enter the path of the new image (CSV format): ");
-                    scanner.nextLine();
-                    String newImagePath = scanner.nextLine();
+        files = File_Utils.getCsvFiles(folderPath);
+        matrixSize = File_Utils.getNumberOfLines(files[0]);
+        matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
+        averageImages = calculateAverage(matrixVectors);
+        if(interactive)UI_Utils.printVetorMedia(averageImages);
+        matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
+        transposedMatrixA = Matrix_Utils.transpose(matrixA);
+        matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
+        if(interactive)UI_Utils.printMatrix(matrixATA);
+        eigenVectorsATA = getEigenVectors(matrixATA);
+        matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
+        matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
+        // Ler a nova imagem
+        double[][] newImage = File_Utils.getMatrixFromCSV(newImagePath);
 
+        int imageSize = File_Utils.getNumberOfLines(files[0]);
 
-                    // Ler a nova imagem
-                    double[][] newImage = File_Utils.getMatrixFromCSV(newImagePath);
+        // Calcular Φnova
+        double[] phiNova = new double[imageSize * imageSize];
+        for (int i = 0; i < phiNova.length; i++) {
+            phiNova[i] = newImage[i / imageSize][i % imageSize] - averageImages[i];
+        }
 
-                    int imageSize = File_Utils.getNumberOfLines(files[0]);
+        double[] omegaNova = new double[numEigenFaces];
 
-                    // Calcular Φnova
-                    double[] phiNova = new double[imageSize * imageSize];
-                    for (int i = 0; i < phiNova.length; i++) {
-                        phiNova[i] = newImage[i / imageSize][i % imageSize] - averageImages[i];
-                    }
+        for (int j = 0; j < numEigenFaces; j++) {
+            double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
+            omegaNova[j] = calculateWeight(ujTransposto, phiNova);
+        }
 
-                    double[] omegaNova = new double[numEigenFaces];
+        double[][] omegaMatrixDatabase = new double[files.length][numEigenFaces];
 
-                    for (int j = 0; j < numEigenFaces; j++) {
-                        double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
-                        omegaNova[j] = calculateWeight(ujTransposto, phiNova);
-                    }
+        for (int i = 0; i < files.length; i++) {
+            double[] phi = getPhiInPosition(matrixA, i);
+            double[] omegaVectorDatabase = new double[numEigenFaces];
+            for (int j = 0; j < numEigenFaces; j++) {
+                double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
+                double peso = calculateWeight(ujTransposto, phi);
+                omegaVectorDatabase[j] = peso;
+            }
+            omegaMatrixDatabase[i] = omegaVectorDatabase;
+        }
 
-                    double[][] omegaMatrixDatabase = new double[files.length][numEigenFaces];
-
-                    for (int i = 0; i < files.length; i++) {
-                        double[] phi = getPhiInPosition(matrixA, i);
-                        double[] omegaVectorDatabase = new double[numEigenFaces];
-                        for (int j = 0; j < numEigenFaces; j++) {
-                            double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
-                            double peso = calculateWeight(ujTransposto, phi);
-                            omegaVectorDatabase[j] = peso;
-                        }
-                        omegaMatrixDatabase[i] = omegaVectorDatabase;
-                    }
-
-                    double[] distances = new double[omegaMatrixDatabase.length];
-                    for (int i = 0; i < omegaMatrixDatabase.length; i++) {
-                        distances[i] = calcularDistanciaEuclidiana(omegaNova, omegaMatrixDatabase[i]);
-                    }
-
-                    for (int i = 0; i < distances.length; i++) {
-                        System.out.println("Distance to Ω" + i + ": " + distances[i]);
-                    }
-
-                    System.out.println("Number of eigenfaces used: " + numEigenFaces);
-                    System.out.println("Ωnova: " + Arrays.toString(omegaNova));
-                    for (int i = 0; i < files.length; i++) {
-                        System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
-                    }
-
-                    int[] closestImageIndices = new int[distances.length];
-                    int count = 0;
-                    double minDistance = distances[0];
-                    closestImageIndices[count++] = 0;
-
-                    for (int i = 1; i < distances.length; i++) {
-                        if (distances[i] < minDistance) {
-                            minDistance = distances[i];
-                            count = 0;
-                            closestImageIndices[count++] = i;
-                        } else if (distances[i] == minDistance) {
-                            closestImageIndices[count++] = i;
-                        }
-                    }
-
-                    for (int i = 0; i < count; i++) {
-                        getImageAsJPG(files[closestImageIndices[i]], "output/funcionalidade_3/closest_image_" + closestImageIndices[i] + ".jpg");
-                    }
-
-                    break;
-                case 4:
-                    UI_Utils.showMenuTitle(4);
-                    UI_Utils.showDevelopmentTeam();
-                    break;
-                case 0:
-                    System.out.println("A fechar a aplicação...");
-                    break;
+        double[] distances = new double[omegaMatrixDatabase.length];
+        for (int i = 0; i < omegaMatrixDatabase.length; i++) {
+            distances[i] = calcularDistanciaEuclidiana(omegaNova, omegaMatrixDatabase[i]);
+        }
+        if(interactive){
+            for (int i = 0; i < distances.length; i++) {
+                System.out.println("Distance to Ω" + i + ": " + distances[i]);
             }
 
-        } while (menuOption != 0);
+            System.out.println("Number of eigenfaces used: " + numEigenFaces);
+            System.out.println("Ωnova: " + Arrays.toString(omegaNova));
+            for (int i = 0; i < files.length; i++) {
+                System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
+            }
+        }
 
-        scanner.close();
+
+        int[] closestImageIndices = new int[distances.length];
+        int count = 0;
+        double minDistance = distances[0];
+        closestImageIndices[count++] = 0;
+
+        for (int i = 1; i < distances.length; i++) {
+            if (distances[i] < minDistance) {
+                minDistance = distances[i];
+                count = 0;
+                closestImageIndices[count++] = i;
+            } else if (distances[i] == minDistance) {
+                closestImageIndices[count++] = i;
+            }
+        }
+
+        for (int i = 0; i < count; i++) {
+            getImageAsJPG(files[closestImageIndices[i]], "output/funcionalidade_3/closest_image_" + closestImageIndices[i] + ".jpg");
+        }
+    }
+
+    private static void execFunc2(String folderPath, int numEigenFaces) {
+        double[][] matrixEigenVectorsC,transposedMatrixA,matrixVectors,matrixATA,eigenVectorsATA,matrixA,matrixEigenFaces;
+        int matrixSize;
+        File[] files;
+        double[] averageImages;
+
+        files = File_Utils.getCsvFiles(folderPath);
+        matrixSize = File_Utils.getNumberOfLines(files[0]);
+        matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
+        averageImages = calculateAverage(matrixVectors);
+        if(interactive)UI_Utils.printVetorMedia(averageImages);
+        matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
+        transposedMatrixA = Matrix_Utils.transpose(matrixA);
+        matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
+        double[][] covarianceMatrix = Matrix_Utils.calculateCovarianceMatrix(matrixATA, matrixVectors[0].length);
+        if(interactive){
+            System.out.println("Covariance Matrix:");
+            UI_Utils.printMatrix(covarianceMatrix);
+        }
+        eigenVectorsATA = getEigenVectors(matrixATA);
+        matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
+        matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
+        if(interactive){
+            System.out.println("\nNúmero de Eigenfaces utilizadas: " + numEigenFaces + "\n");
+        }
+        saveEigenFaces(matrixEigenFaces, matrixSize, numEigenFaces);
+        rebuildImages(files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize, matrixVectors);
+    }
+
+    private static void execFunc1(double[][] readMatrix, int k) {
+        if(interactive){
+            System.out.println("\nMatriz Lida:");
+            UI_Utils.printMatrix(readMatrix);
+        }
+
+        RealMatrix[] result = ownDecomposition(readMatrix);
+
+        double[][] matrixP = result[0].getData();
+        double[][] matrixD = result[1].getData();
+
+        double[][][] decomposed = compressedMatrix(matrixP, matrixD, k);
+
+        double[][] matrixPk = decomposed[0];
+        double[][] matrixDk = decomposed[1];
+
+        double[][] matrixAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrixPk, matrixDk), Matrix_Utils.transpose(matrixPk));
+        if(interactive){
+            System.out.println("\nMatriz Reconstruída\n:");
+            UI_Utils.printMatrix(matrixAk);
+        }
+        File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
     }
 
     public static double calcularDistanciaEuclidiana(double[] vetor1, double[] vetor2) {
@@ -303,13 +319,14 @@ public class Main {
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-
-            System.out.println("Vetor dos pesos da imagem " + i + ": ");
-            printVector(weightsVector);
+            if(interactive){
+                System.out.println("Vetor dos pesos da imagem " + i + ": ");
+                printVector(weightsVector);
+            }
 
             double[] originalImageVector = getMatrixVectorAtPosition(matrixVectors, i);
             double eam = calculateEAM(originalImageVector, reconstructedImage);
-            System.out.printf("Mean Absolute Error (EAM) for image %d: %.2f%n%n", i, eam);
+            if(interactive) System.out.printf("Mean Absolute Error (EAM) for image %d: %.2f%n%n", i, eam);
 
 
             saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
@@ -630,6 +647,7 @@ public class Main {
         }
         return k;
     }
+
 
     /**
      * Function to calculate the average absolute error between two matrices, the original and the reconstructed one
