@@ -132,11 +132,11 @@ public class Main {
             phiNova[i] = newImage[i / imageSize][i % imageSize] - averageImages[i];
         }
 
-        double[] omegaNova = new double[numEigenFaces];
+        double[] newOmega = new double[numEigenFaces];
 
         for (int j = 0; j < numEigenFaces; j++) {
-            double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
-            omegaNova[j] = calculateWeight(ujTransposto, phiNova);
+            double[] transposedUj = getUjTransposed(matrixEigenFaces, j);
+            newOmega[j] = calculateWeight(transposedUj, phiNova);
         }
 
         double[][] omegaMatrixDatabase = new double[files.length][numEigenFaces];
@@ -145,16 +145,16 @@ public class Main {
             double[] phi = getPhiInPosition(matrixA, i);
             double[] omegaVectorDatabase = new double[numEigenFaces];
             for (int j = 0; j < numEigenFaces; j++) {
-                double[] ujTransposto = getUjTransposed(matrixEigenFaces, j);
-                double peso = calculateWeight(ujTransposto, phi);
-                omegaVectorDatabase[j] = peso;
+                double[] transposedUj = getUjTransposed(matrixEigenFaces, j);
+                double weight = calculateWeight(transposedUj, phi);
+                omegaVectorDatabase[j] = weight;
             }
             omegaMatrixDatabase[i] = omegaVectorDatabase;
         }
 
         double[] distances = new double[omegaMatrixDatabase.length];
         for (int i = 0; i < omegaMatrixDatabase.length; i++) {
-            distances[i] = calcularDistanciaEuclidiana(omegaNova, omegaMatrixDatabase[i]);
+            distances[i] = calculateEuclideanDistance(newOmega, omegaMatrixDatabase[i]);
         }
         if(interactive){
             for (int i = 0; i < distances.length; i++) {
@@ -162,7 +162,7 @@ public class Main {
             }
 
             System.out.println("Number of eigenfaces used: " + numEigenFaces);
-            System.out.println("Ωnova: " + Arrays.toString(omegaNova));
+            System.out.println("New Ω: " + Arrays.toString(newOmega));
             for (int i = 0; i < files.length; i++) {
                 System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
             }
@@ -242,10 +242,10 @@ public class Main {
         File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
     }
 
-    public static double calcularDistanciaEuclidiana(double[] vetor1, double[] vetor2) {
+    public static double calculateEuclideanDistance(double[] vector1, double[] vector2) {
         double soma = 0.0;
-        for (int i = 0; i < vetor1.length; i++) {
-            soma += Math.pow(vetor1[i] - vetor2[i], 2);
+        for (int i = 0; i < vector1.length; i++) {
+            soma += Math.pow(vector1[i] - vector2[i], 2);
         }
         return Math.sqrt(soma);
     }
