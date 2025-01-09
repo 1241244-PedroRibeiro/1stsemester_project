@@ -98,7 +98,6 @@ public class UI_Utils {
         boolean isValid = false;
 
         while (!isValid) {
-            System.out.println("Enter the path of the file: ");
             filePath = scanner.nextLine();
             File file = new File(filePath);
 
@@ -130,15 +129,34 @@ public class UI_Utils {
         return folderPath;
     }
 
-    public static void printVetorMedia(double[] mediaImagens) {
-        System.out.print("\nVetor µ: [");
-        for (int i = 0; i < mediaImagens.length; i++) {
-            System.out.print(String.format("%.2f", mediaImagens[i]).replace(',', '.'));
-            if (i < mediaImagens.length - 1) {
+    public static void printVector(double[] vector, String title) {
+        if(title!="")System.out.print("\n" + title + ": [");
+        for (int i = 0; i < vector.length; i++) {
+            System.out.printf("%.2f", vector[i]);
+            if (i < vector.length - 1) {
                 System.out.print(", ");
             }
         }
         System.out.println("]");
+    }
+    public static String saveVector(double[] vector, String title) {
+        StringBuilder result = new StringBuilder();
+
+        if (!title.isEmpty()) {
+            result.append("\n").append(title).append(": [");
+        } else {
+            result.append("[");
+        }
+
+        for (int i = 0; i < vector.length; i++) {
+            result.append(String.format("%.2f", vector[i]));
+            if (i < vector.length - 1) {
+                result.append(", ");
+            }
+        }
+        result.append("]");
+
+        return result.toString();
     }
 
     /**
@@ -154,4 +172,20 @@ public class UI_Utils {
             System.out.println();
         }
     }
+    public static String saveMatrix(double[][] matrix, String title) {
+        StringBuilder result = new StringBuilder();
+        if (!title.isEmpty()) {
+            result.append("\n").append(title).append("\n[");
+        } else {
+            result.append("[");
+        }        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                result.append(String.format("%.2f ", matrix[i][j]));
+            }
+            result.append("\n");
+        }
+
+        return result.toString();
+    }
+
 }
