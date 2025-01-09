@@ -11,13 +11,14 @@ public class UI_Utils {
         System.out.println("""
                 
                   ╔═════════════════════════════════════════════════════════════════════════╗
-                  ║                               MENU OPTIONS                              ║
+                  ║                                 MENU                                    ║
                   ╠═════════════════════════════════════════════════════════════════════════╣
                   ║                                                                         ║
                   ║    1. Decomposição Própria de Matriz Simétrica                          ║
                   ║    2. Reconstrução e representação de imagens utilizando EigenFaces     ║
                   ║    3. Identificação de Imagens utilizando EigenFaces                    ║
-                  ║    4. Know Delevopment Team                                             ║
+                  ║    4. Gerar novas imagens utilizando Eigenfaces                         ║
+                  ║    5. Conhecer a equipa de desenvolvimento                              ║
                   ║                                                                         ║
                   ║    0. Exit                                                              ║
                   ║                                                                         ║
@@ -56,10 +57,20 @@ public class UI_Utils {
                 System.out.println("""
                         
                           ╔═════════════════════════════════════════════════════════════════════════╗
-                          ║                         4. Know Delevopment Team                        ║
+                          ║              4. Gerar novas imagens utilizando Eigenfaces               ║
                           ╚═════════════════════════════════════════════════════════════════════════╝
                         """);
                 break;
+            case 5:
+                System.out.println("""
+                        
+                          ╔═════════════════════════════════════════════════════════════════════════╗
+                          ║              5. Conhecer a equipa de desenvolvimento                    ║
+                          ╚═════════════════════════════════════════════════════════════════════════╝
+                        """);
+                break;
+
+
         }
     }
 
@@ -96,7 +107,7 @@ public class UI_Utils {
         Scanner scanner = new Scanner(System.in);
         String filePath = null;
         boolean isValid = false;
-
+        System.out.println("Introduza o caminho para o ficheiro: ");
         while (!isValid) {
             filePath = scanner.nextLine();
             File file = new File(filePath);
@@ -104,7 +115,7 @@ public class UI_Utils {
             if (file.exists() && file.isFile() && filePath.endsWith(".csv")) {
                 isValid = true;
             } else {
-                System.out.println("Invalid file path. Ensure the file exist and has a .csv extension.");
+                System.out.println("Caminho inválido. Introduza novamente: ");
             }
         }
         return filePath;
@@ -116,21 +127,21 @@ public class UI_Utils {
         boolean isValid = false;
 
         while (!isValid) {
-            System.out.println("Enter the path of the folder: ");
+            System.out.println("Introduza o caminho para a pasta: ");
             folderPath = scanner.nextLine();
             File folder = new File(folderPath);
 
             if (folder.exists() && folder.isDirectory()) {
                 isValid = true;
             } else {
-                System.out.println("Invalid folder path. Please enter a valid path.");
+                System.out.println("Caminho inválido. Por favor introduza um caminho válido.");
             }
         }
         return folderPath;
     }
 
     public static void printVector(double[] vector, String title) {
-        if(title!="")System.out.print("\n" + title + ": [");
+        if (!title.isEmpty()) System.out.print("\n" + title + "\n[");
         for (int i = 0; i < vector.length; i++) {
             System.out.printf("%.2f", vector[i]);
             if (i < vector.length - 1) {
@@ -139,11 +150,12 @@ public class UI_Utils {
         }
         System.out.println("]");
     }
+
     public static String saveVector(double[] vector, String title) {
         StringBuilder result = new StringBuilder();
 
         if (!title.isEmpty()) {
-            result.append("\n").append(title).append(": [");
+            result.append("\n").append(title).append("\n").append("[");
         } else {
             result.append("[");
         }
@@ -172,13 +184,15 @@ public class UI_Utils {
             System.out.println();
         }
     }
+
     public static String saveMatrix(double[][] matrix, String title) {
         StringBuilder result = new StringBuilder();
         if (!title.isEmpty()) {
             result.append("\n").append(title).append("\n[");
         } else {
             result.append("[");
-        }        for (int i = 0; i < matrix.length; i++) {
+        }
+        for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 result.append(String.format("%.2f ", matrix[i][j]));
             }

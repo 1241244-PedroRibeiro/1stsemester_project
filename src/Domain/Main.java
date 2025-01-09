@@ -85,7 +85,7 @@ public class Main {
                         break;
                     default:
                         if (args[i].endsWith(".txt")) {
-                            txtFile=args[i];
+                            txtFile = args[i];
                             break;
                         } else {
                             System.out.println("Parâmetro desconhecido: " + args[i]);
@@ -119,6 +119,7 @@ public class Main {
                     System.out.println("A encerrar o programa...");
                     return;
                 } else {
+                    
                     double[][] readMatrix = File_Utils.getMatrixFromCSV(caminhoCSV);
 
                     if (readMatrix != null) {
@@ -130,7 +131,7 @@ public class Main {
                                 writer.write(txtContent.toString());
                                 System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                             } catch (IOException e) {
-                                System.err.println("Erro ao salvar o conteúdo no arquivo: " + e.getMessage());
+                                System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
                             }
                         } else {
                             System.out.println("A encerrar o programa...");
@@ -168,7 +169,7 @@ public class Main {
                             writer.write(txtContent.toString());
                             System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                         } catch (IOException e) {
-                            System.err.println("Erro ao salvar o conteúdo no arquivo: " + e.getMessage());
+                            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
                         }
                         System.out.println("Funcionalidade executada com sucesso.");
                     }
@@ -201,7 +202,7 @@ public class Main {
                             writer.write(txtContent.toString());
                             System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                         } catch (IOException e) {
-                            System.err.println("Erro ao salvar o conteúdo no arquivo: " + e.getMessage());
+                            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
                         }
                         System.out.println("Funcionalidade executada com sucesso.");
                     }
@@ -242,6 +243,7 @@ public class Main {
                     case 2:
                         UI_Utils.showMenuTitle(2);
                         File[] files;
+                        
                         do {
                             folderPath = UI_Utils.selectFolderToRead();
                             files = File_Utils.getCsvFiles(folderPath);
@@ -258,7 +260,7 @@ public class Main {
                         } while (files.length == 0);
                         numEigenFaces = askNumberOfEigenfaces();
                         if (numEigenFaces > files.length) numEigenFaces = files.length;
-                        System.out.println("Enter the path of the new image (CSV format): ");
+                        System.out.println("Introduza o caminho da nova imagem (formato csv): ");
                         scanner.nextLine();
 
 
@@ -300,8 +302,8 @@ public class Main {
         }
 
         averageImages = calculateAverage(matrixVectors);
-        if (interactive)UI_Utils.printVector(averageImages,"Vetor µ: [");
-        else txtContent.append(UI_Utils.saveVector(averageImages,"Vetor µ: ["));
+        if (interactive) UI_Utils.printVector(averageImages, "Vetor µ: ");
+        else txtContent.append(UI_Utils.saveVector(averageImages, "Vetor µ: "));
         matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
         transposedMatrixA = Matrix_Utils.transpose(matrixA);
         matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
@@ -344,18 +346,21 @@ public class Main {
             distances[i] = calculateEuclideanDistance(newOmega, omegaMatrixDatabase[i]);
         }
         if (interactive) {
-            for (int i = 0; i < distances.length; i++) System.out.println("Distance to Ω" + i + ": " + distances[i]);
+            for (int i = 0; i < distances.length; i++) System.out.println("Distância de Ω" + i + ": " + distances[i]);
 
-            System.out.println("Number of eigenfaces used: " + numEigenFaces);
-            System.out.println("New Ω: " + Arrays.toString(newOmega));
-            for (int i = 0; i < files.length; i++) System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
+            System.out.println("Número de Eigenfaces utilizado: " + numEigenFaces);
+            System.out.println("Novo Ω: " + Arrays.toString(newOmega));
+            for (int i = 0; i < files.length; i++)
+                System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
         } else {
-            for (int i = 0; i < distances.length; i++) txtContent.append("Distance to Ω").append(i).append(": ").append(distances[i]).append("\n");
+            for (int i = 0; i < distances.length; i++)
+                txtContent.append("Distância de Ω").append(i).append(": ").append(distances[i]).append("\n");
 
-            txtContent.append("Number of eigenfaces used: ").append(numEigenFaces).append("\n");
-            txtContent.append("New Ω: ").append(Arrays.toString(newOmega)).append("\n");
+            txtContent.append("Número de Eigenfaces utilizado: ").append(numEigenFaces).append("\n");
+            txtContent.append("Novo Ω: ").append(Arrays.toString(newOmega)).append("\n");
 
-            for (int i = 0; i < files.length; i++) txtContent.append("Ω").append(i).append(": ").append(Arrays.toString(omegaMatrixDatabase[i])).append(", Distance: ").append(distances[i]).append("\n");
+            for (int i = 0; i < files.length; i++)
+                txtContent.append("Ω").append(i).append(": ").append(Arrays.toString(omegaMatrixDatabase[i])).append(", Distance: ").append(distances[i]).append("\n");
         }
 
         int[] closestImageIndices = new int[distances.length];
@@ -374,7 +379,7 @@ public class Main {
         }
 
         for (int i = 0; i < count; i++) {
-            getImageAsJPG(files[closestImageIndices[i]], "funcionalidade_3/closest_image_" + closestImageIndices[i] + ".jpg");
+            getImageAsJPG(files[closestImageIndices[i]], "funcionalidade_3/imagem_mais_proxima_" + closestImageIndices[i] + ".jpg");
         }
     }
 
@@ -392,17 +397,16 @@ public class Main {
         }
 
         averageImages = calculateAverage(matrixVectors);
-        if (interactive) UI_Utils.printVector(averageImages,"Vetor µ: [");
-        else txtContent.append(UI_Utils.saveVector(averageImages,"Vetor µ: ["));
+        if (interactive) UI_Utils.printVector(averageImages, "Vetor µ:");
+        else txtContent.append(UI_Utils.saveVector(averageImages, "Vetor µ:"));
         matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
         transposedMatrixA = Matrix_Utils.transpose(matrixA);
         matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
         double[][] covarianceMatrix = Matrix_Utils.calculateCovarianceMatrix(matrixATA, matrixVectors[0].length);
         if (interactive) {
-            System.out.println("Covariance Matrix:");
+            System.out.println("\nMatriz de Covariâncias:");
             UI_Utils.printMatrix(covarianceMatrix);
-        }
-        else txtContent.append(UI_Utils.saveMatrix(covarianceMatrix,"Covariance Matrix:"));
+        } else txtContent.append(UI_Utils.saveMatrix(covarianceMatrix, "Matriz de Covariâncias:"));
         eigenVectorsATA = getEigenVectors(matrixATA);
         matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
         matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
@@ -416,8 +420,7 @@ public class Main {
         if (interactive) {
             System.out.println("\nMatriz Lida:");
             UI_Utils.printMatrix(readMatrix);
-        }
-        else txtContent.append(UI_Utils.saveMatrix(readMatrix,"Matriz Lida:"));
+        } else txtContent.append(UI_Utils.saveMatrix(readMatrix, "Matriz Lida:"));
 
         RealMatrix[] result = ownDecomposition(readMatrix);
 
@@ -433,8 +436,7 @@ public class Main {
         if (interactive) {
             System.out.println("\nMatriz Reconstruída:\n");
             UI_Utils.printMatrix(matrixAk);
-        }
-        else txtContent.append(UI_Utils.saveMatrix(matrixAk,"Matriz Reconstruída:"));
+        } else txtContent.append(UI_Utils.saveMatrix(matrixAk, "Matriz Reconstruída:"));
         File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
     }
 
@@ -467,9 +469,9 @@ public class Main {
             }
 
             ImageIO.write(image, "jpg", output);
-            System.out.println("Image saved as JPG: " + output.getAbsolutePath());
+            System.out.println("Imagem guardada como JPG: " + output.getAbsolutePath());
         } catch (IOException e) {
-            System.err.println("Error saving image as JPG: " + e.getMessage());
+            System.err.println("Erro ao guardar a imagem JPG: " + e.getMessage());
         }
     }
 
@@ -520,14 +522,14 @@ public class Main {
             for (int j = 0; j < averageImages.length; j++) {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
-            if (interactive) UI_Utils.printVector(weightsVector,"Vetor dos pesos da imagem " + i + ": ");
-            else txtContent.append(UI_Utils.saveVector(weightsVector,"Vetor dos pesos da imagem " + i + ": "));
+            if (interactive) UI_Utils.printVector(weightsVector, "Vetor dos pesos da imagem " + i + ": ");
+            else txtContent.append(UI_Utils.saveVector(weightsVector, "Vetor dos pesos da imagem " + i + ": "));
 
             double[] originalImageVector = getMatrixVectorAtPosition(matrixVectors, i);
             double eam = calculateEAM(originalImageVector, reconstructedImage);
 
-            if (interactive) System.out.printf("Mean Absolute Error (EAM) for image %d: %.2f%n%n", i, eam);
-            else txtContent.append(String.format("Mean Absolute Error (EAM) for image %d: %.2f%n%n", i, eam));
+            if (interactive) System.out.printf("Erro Absoluto Médio (EAM) para a imagem %d: %.2f%n%n", i, eam);
+            else txtContent.append(String.format("Erro Absoluto Médio (EAM) para a imagem %d: %.2f%n%n", i, eam));
 
             saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
 
@@ -548,7 +550,6 @@ public class Main {
         }
         return true;
     }
-
 
 
     public static void saveEigenFaces(double[][] eigenFacesMatrix, int matrixSize, int numEigenFaces) {
@@ -624,7 +625,7 @@ public class Main {
                 writer.println();
             }
         } catch (IOException e) {
-            System.err.println("Erro ao salvar imagem como CSV: " + e.getMessage());
+            System.err.println("Erro ao guardar imagem como CSV: " + e.getMessage());
         }
     }
 
@@ -661,7 +662,7 @@ public class Main {
         try {
             writer.writeArrayAsImage(array, savePath + filePattern + counter + ".jpg");
         } catch (IOException e) {
-            System.err.println("Erro ao salvar imagem como JPG: " + e.getMessage());
+            System.err.println("Erro ao guardar imagem como JPG: " + e.getMessage());
         }
     }
 
@@ -861,7 +862,8 @@ public class Main {
 
                 if (k == -1) {
                     k = matrix.length;
-                    System.out.println("Opção -1: Usando todos os Vetores Próprios.");
+                    System.out.println("O número de Vetores Próprios a utilizar foi adaptado para o máximo: " + k);
+
                     return k;
                 }
 
