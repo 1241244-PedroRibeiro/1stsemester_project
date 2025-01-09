@@ -8,6 +8,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Arrays;
 
@@ -271,6 +272,15 @@ public class Main {
                         } else System.out.println("A matriz ainda não foi lida.");
                         break;
                     case 4:
+                        do {
+                            folderPath = UI_Utils.selectFolderToRead();
+                            files = File_Utils.getCsvFiles(folderPath);
+                        } while (files.length == 0);
+                        numEigenFaces = askNumberOfEigenfaces();
+                        if (numEigenFaces > files.length) numEigenFaces = files.length;
+                        execFunc4(folderPath, numEigenFaces);
+                        break;
+                    case 5:
                         UI_Utils.showMenuTitle(4);
                         UI_Utils.showDevelopmentTeam();
                         break;
@@ -283,6 +293,52 @@ public class Main {
 
         }
         scanner.close();
+    }
+
+    public static void execFunc4(String folderPath, int numEigenFaces) {
+        File[] files = File_Utils.getCsvFiles(folderPath);
+        int matrixSize = File_Utils.getNumberOfLines(files[0]);
+        double[][] matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
+        double[] averageImages = calculateAverage(matrixVectors);
+
+        double[][] matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
+        double[][] transposedMatrixA = Matrix_Utils.transpose(matrixA);
+        double[][] matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
+        EigenDecomposition decomposition = new EigenDecomposition(MatrixUtils.createRealMatrix(matrixATA));
+        double[][] eigenVectorsATA = decomposition.getV().getData();
+        double[][] matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
+        double[][] matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
+
+        double[] newImage = new double[matrixSize * matrixSize];
+        for (int i = 0; i < newImage.length; i++) {
+            newImage[i] = averageImages[i];
+        }
+
+        Random random = new Random();
+        for (int i = 0; i < numEigenFaces; i++) {
+            double lambda = decomposition.getRealEigenvalue(i);
+            double w = random.nextDouble() * 2 * Math.sqrt(lambda) - Math.sqrt(lambda);
+            double[] eigenFace = getMatrixVectorAtPosition(matrixEigenFaces, i);
+            for (int j = 0; j < newImage.length; j++) {
+                newImage[j] += w * eigenFace[j];
+            }
+        }
+
+        newImage = normalizeImage(newImage);
+
+        saveImageAsJPG("output/test_data/", newImage, matrixSize, 0, "new_image_");
+    }
+
+    public static double[] normalizeImage(double[] image) {
+        double min = Arrays.stream(image).min().orElse(0);
+        double max = Arrays.stream(image).max().orElse(255);
+
+        double[] normalizedImage = new double[image.length];
+        for (int i = 0; i < image.length; i++) {
+            normalizedImage[i] = 255 * (image[i] - min) / (max - min);
+        }
+
+        return normalizedImage;
     }
 
     private static void execFunc3(String folderPath, int numEigenFaces, String newImagePath) {
