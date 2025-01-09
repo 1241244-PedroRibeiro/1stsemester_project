@@ -208,6 +208,38 @@ public class Main {
                         System.out.println("Funcionalidade executada com sucesso.");
                     }
                 }
+            } else if (func == 4) {
+                if (numEigenfaces == null || caminhoImagens == null) {
+                    System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
+                    System.out.println("""
+                            
+                            Parâmetros necessários:
+                              - k (número de eigenfaces)
+                              - d (caminho para a pasta da base de imagens)
+                            
+                            """);
+                    return;
+                }
+                if (!NonInteractiveValidations.selectFolderToRead(caminhoImagens) || !NonInteractiveValidations.validateK(numEigenfaces)) {
+                    System.out.println("A encerrar o programa...");
+                    return;
+                } else {
+                    File[] files = File_Utils.getCsvFiles(caminhoImagens);
+                    if (files.length == 0) {
+                        System.out.println("A encerrar o programa...");
+                        return;
+                    } else {
+                        int k = Integer.parseInt(numEigenfaces);
+                        execFunc4(caminhoImagens, k);
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
+                            writer.write(txtContent.toString());
+                            System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
+                        } catch (IOException e) {
+                            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
+                        }
+                        System.out.println("Funcionalidade executada com sucesso.");
+                    }
+                }
             }
         }
         //MODO INTERATIVO
@@ -326,7 +358,10 @@ public class Main {
 
         newImage = normalizeImage(newImage);
 
-        saveImageAsJPG("output/test_data/", newImage, matrixSize, 0, "new_image_");
+        saveImageAsJPG("output/test_data/", newImage, matrixSize, 0, "new_image");
+
+        if (interactive) System.out.println("\nNova imagem salva na pasta test_data com o nome new_image");
+        else txtContent.append("\nNova imagem salva na pasta test_data com o nome new_image");
     }
 
     public static double[] normalizeImage(double[] image) {
