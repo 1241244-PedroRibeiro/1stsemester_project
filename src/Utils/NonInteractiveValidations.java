@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class NonInteractiveValidations {
 
-    public static boolean validateK(double[][] matrix, String kArgument) {
+    public static boolean validateK(String kArgument) {
         try {
             int k = Integer.parseInt(kArgument);
 
