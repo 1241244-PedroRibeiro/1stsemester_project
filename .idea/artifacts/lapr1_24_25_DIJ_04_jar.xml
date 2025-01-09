@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="lapr1-24-25_DIJ_04:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/lapr1_24_25_DIJ_04_jar</output-path>
+    <root id="archive" name="lapr1-24-25_DIJ_04.jar">
+      <element id="module-output" name="lapr1-24-25_DIJ_04" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/commons-math3-3.6.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

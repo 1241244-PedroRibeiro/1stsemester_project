@@ -23,6 +23,8 @@ public class Main {
     public static final String FILE_EIGENFACE_PATTERN = "eigenface_";
     public static final String FILE_EIGENFACE_TRANSFORMED_PATTERN = "eigenface_transformada_";
     public static final String FILE_RECONSTRUCTED_IMAGE_PATTERN = "imagem_reconstruida_";
+    public static final String FILE_RECONSTRUCTED_IMAGE_TRANSFORMED_PATTERN = "imagem_reconstruida_transformada_";
+
     public static Scanner scanner = new Scanner(System.in);
     public static boolean interactive;
     public static StringBuilder txtContent;
@@ -491,12 +493,27 @@ public class Main {
 
             double[] originalImageVector = getMatrixVectorAtPosition(matrixVectors, i);
             double eam = calculateEAM(originalImageVector, reconstructedImage);
+
             if (interactive) System.out.printf("Mean Absolute Error (EAM) for image %d: %.2f%n%n", i, eam);
 
-
             saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
+
+            if (!validateVectorPixels(reconstructedImage)) {
+                reconstructedImage = pixelScalingEigenFaces(reconstructedImage);
+                saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_TRANSFORMED_PATTERN);
+            }
             saveImageAsJPG(OUTPUT_PATH_F2_REBUILT_IMAGES, reconstructedImage, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
+
         }
+    }
+
+    private static boolean validateVectorPixels(double[] reconstructedImage) {
+        for (int i = 0; i < reconstructedImage.length; i++) {
+            if (reconstructedImage[i] < 0 || reconstructedImage[i] > 255) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void printVector(double[] vector) {
@@ -570,6 +587,7 @@ public class Main {
             }
         }
 
+
         File outputFile = new File(outputPath + "/" + filePattern + counter + ".csv");
         try (PrintWriter writer = new PrintWriter(outputFile)) {
             for (int[] row : matrix) {
@@ -609,6 +627,9 @@ public class Main {
         for (int i = 0; i < matrixSize; i++) {
             for (int j = 0; j < matrixSize; j++) {
                 int pixelValue = (int) Math.round(imageVector[i * matrixSize + j]);
+                if (pixelValue < 0 || pixelValue > 255) {
+                    System.out.println("Valor de pixel inválido: " + pixelValue);
+                }
 
                 pixelValue = Math.max(0, Math.min(255, pixelValue));
                 array[i][j] = pixelValue;
