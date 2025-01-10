@@ -11,6 +11,10 @@ public class Matrix_Utils_Test {
         testTransposeLargeMatrix();
         testMatrixMultiplicationLargeMatrix();
         testMatrixMultiplicationRectangularMatrix();
+        testMatrixMultiplicationTwoRectangularMatrix();
+        testTransposeNonSquareMatrix();
+        testMatrixMultiplicationWithIdentityMatrix();
+        testMatrixMultiplicationWithZeroMatrix();
     }
 
     public static void testTranspose() {
@@ -168,5 +172,59 @@ public class Matrix_Utils_Test {
         return true;
     }
 
+
+    public static void testTransposeNonSquareMatrix() {
+        UI_Utils.showTestTitle("testTransposeNonSquareMatrix");
+        double[][] matrix = {
+                {1, 2, 3},
+                {4, 5, 6}
+        };
+        double[][] expected = {
+                {1, 4},
+                {2, 5},
+                {3, 6}
+        };
+        double[][] actual = Matrix_Utils.transpose(matrix);
+        boolean result = compareMatrices(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+
+
+    public static void testMatrixMultiplicationWithIdentityMatrix() {
+        UI_Utils.showTestTitle("testMatrixMultiplicationWithIdentityMatrix");
+        double[][] matrix = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+        double[][] identityMatrix = {
+                {1, 0, 0},
+                {0, 1, 0},
+                {0, 0, 1}
+        };
+        double[][] expected = matrix;
+        double[][] actual = Matrix_Utils.matrixMultiplication(matrix, identityMatrix);
+        boolean result = compareMatrices(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testMatrixMultiplicationWithZeroMatrix() {
+        UI_Utils.showTestTitle("testMatrixMultiplicationWithZeroMatrix");
+        double[][] matrix = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+        double[][] zeroMatrix = {
+                {0, 0, 0},
+                {0, 0, 0},
+                {0, 0, 0}
+        };
+        double[][] expected = zeroMatrix;
+        double[][] actual = Matrix_Utils.matrixMultiplication(matrix, zeroMatrix);
+        boolean result = compareMatrices(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
 
 }

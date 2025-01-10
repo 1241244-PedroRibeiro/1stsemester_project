@@ -120,7 +120,7 @@ public class Main {
                     System.out.println("A encerrar o programa...");
                     return;
                 } else {
-                    
+
                     double[][] readMatrix = File_Utils.getMatrixFromCSV(caminhoCSV);
 
                     if (readMatrix != null) {
@@ -280,7 +280,7 @@ public class Main {
                     case 2:
                         UI_Utils.showMenuTitle(2);
                         File[] files;
-                        
+
                         do {
                             folderPath = UI_Utils.selectFolderToRead();
                             files = File_Utils.getCsvFiles(folderPath);
@@ -404,7 +404,7 @@ public class Main {
 
         averageImages = calculateAverage(matrixVectors);
         if (interactive) UI_Utils.printVector(averageImages, "Vetor µ: ");
-        else txtContent.append(UI_Utils.saveVector(averageImages, "Vetor µ: "));
+        else txtContent.append(NonInteractive_Utils.saveVector(averageImages, "Vetor µ: "));
         matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
         transposedMatrixA = Matrix_Utils.transpose(matrixA);
         matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
@@ -495,7 +495,7 @@ public class Main {
 
         averageImages = calculateAverage(matrixVectors);
         if (interactive) UI_Utils.printVector(averageImages, "Vetor µ:");
-        else txtContent.append(UI_Utils.saveVector(averageImages, "Vetor µ:"));
+        else txtContent.append(NonInteractive_Utils.saveVector(averageImages, "Vetor µ:"));
         matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
         transposedMatrixA = Matrix_Utils.transpose(matrixA);
         matrixATA = Matrix_Utils.matrixMultiplication(transposedMatrixA, matrixA);
@@ -503,7 +503,7 @@ public class Main {
         if (interactive) {
             System.out.println("\nMatriz de Covariâncias:");
             UI_Utils.printMatrix(covarianceMatrix);
-        } else txtContent.append(UI_Utils.saveMatrix(covarianceMatrix, "Matriz de Covariâncias:"));
+        } else txtContent.append(NonInteractive_Utils.saveMatrix(covarianceMatrix, "Matriz de Covariâncias:"));
         eigenVectorsATA = getEigenVectors(matrixATA);
         matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
         matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
@@ -518,8 +518,7 @@ public class Main {
             System.out.println("\nNúmero de eigenfaces utilizadas:");
             System.out.printf("%d\n", k);
 
-        } else
-        {
+        } else {
             txtContent.append("Número de eigenfaces utilizado:" + k);
 
         }
@@ -535,7 +534,7 @@ public class Main {
         double[][] matrixDk = decomposed[1];
 
         double[][] matrixAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrixPk, matrixDk), Matrix_Utils.transpose(matrixPk));
-        double eam=calculateEAM(readMatrix,matrixAk);
+        double eam = calculateEAM(readMatrix, matrixAk);
 
         if (interactive) {
             System.out.println("\nValores próprios utilizados:\n");
@@ -543,15 +542,16 @@ public class Main {
             System.out.println("\nVetores próprios utilizados:\n");
             UI_Utils.printMatrix(matrixPk);
             System.out.println("\nErro absoluto médio:\n");
-            System.out.printf("%.2f\n", eam);;
+            System.out.printf("%.2f\n", eam);
+            ;
             System.out.println("\nMatriz Reconstruída:\n");
             UI_Utils.printMatrix(matrixAk);
-        } else{
-            txtContent.append(UI_Utils.saveMatrix(matrixDk, "\nValores próprios utilizados"));
-            txtContent.append(UI_Utils.saveMatrix(matrixPk, "\nVetores próprios utilizados"));
+        } else {
+            txtContent.append(NonInteractive_Utils.saveMatrix(matrixDk, "\nValores próprios utilizados"));
+            txtContent.append(NonInteractive_Utils.saveMatrix(matrixPk, "\nVetores próprios utilizados"));
 
-            txtContent.append("\nErro absoluto médio:"+eam+"\n");
-            txtContent.append(UI_Utils.saveMatrix(matrixAk, "Matriz Reconstruída:"));
+            txtContent.append("\nErro absoluto médio:" + eam + "\n");
+            txtContent.append(NonInteractive_Utils.saveMatrix(matrixAk, "Matriz Reconstruída:"));
         }
         File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
     }
@@ -639,7 +639,8 @@ public class Main {
                 reconstructedImage[j] = averageImages[j] + sumArray[j];
             }
             if (interactive) UI_Utils.printVector(weightsVector, "Vetor dos pesos da imagem " + i + ": ");
-            else txtContent.append(UI_Utils.saveVector(weightsVector, "Vetor dos pesos da imagem " + i + ": "));
+            else
+                txtContent.append(NonInteractive_Utils.saveVector(weightsVector, "Vetor dos pesos da imagem " + i + ": "));
 
             double[] originalImageVector = getMatrixVectorAtPosition(matrixVectors, i);
             double eam = calculateEAM(originalImageVector, reconstructedImage);

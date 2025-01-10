@@ -151,25 +151,7 @@ public class UI_Utils {
         System.out.println("]");
     }
 
-    public static String saveVector(double[] vector, String title) {
-        StringBuilder result = new StringBuilder();
 
-        if (!title.isEmpty()) {
-            result.append("\n").append(title).append("\n").append("[");
-        } else {
-            result.append("[");
-        }
-
-        for (int i = 0; i < vector.length; i++) {
-            result.append(String.format("%.2f", vector[i]));
-            if (i < vector.length - 1) {
-                result.append(", ");
-            }
-        }
-        result.append("]");
-
-        return result.toString();
-    }
 
     /**
      * Função para imprimir uma matriz (double[][]) para efeitos de teste e visualização
@@ -185,26 +167,6 @@ public class UI_Utils {
         }
     }
 
-    public static String saveMatrix(double[][] matrix, String title) {
-        StringBuilder result = new StringBuilder();
-        if (!title.isEmpty()) {
-            result.append("\n").append(title).append("\n[");
-        } else {
-            result.append("[");
-        }
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                result.append(String.format("%.2f ", matrix[i][j]));
-            }
-            if(i==matrix.length-1){
-                result.append("]");
-            }
-            result.append("\n");
 
-        }
-
-
-        return result.toString();
-    }
 
 }
