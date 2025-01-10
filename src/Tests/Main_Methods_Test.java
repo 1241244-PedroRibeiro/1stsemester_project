@@ -37,6 +37,8 @@ public class Main_Methods_Test {
         testaskNumberOfEigenVectors_UseAllEigenvectors();
         testaskNumberOfEigenVectors_InvalidNegativeInput();
         testaskNumberOfEigenVectors_InvalidLargeInput();
+        testNormalizeImageNoChanges();
+        testNormalizeImage();
 
     }
 
@@ -408,6 +410,27 @@ public class Main_Methods_Test {
         int actualK = Main.askNumberOfEigenVectors(matrix);
 
         boolean result = compareInt(expectedK, actualK);
+        UI_Utils.showTestResult(result);
+    }
+    public static void testNormalizeImageNoChanges() {
+        UI_Utils.showTestTitle("testNormalizeImage");
+
+        double[] image = {0.0, 50.0, 100.0, 150.0, 200.0, 255.0};
+        double[] expected = {0.0, 50.0, 100.0, 150.0, 200.0, 255.0};
+        double[] actual = Main.normalizeImage(image);
+
+        boolean result = compareVector(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testNormalizeImage() {
+        UI_Utils.showTestTitle("testNormalizeImage_NeedsNormalization");
+
+        double[] image = {0.0, 100.0, 200.0, 300.0, 400.0, 500.0};
+        double[] expected = {0.0, 51.0, 102.0, 153.0, 204.0, 255.0};
+        double[] actual = Main.normalizeImage(image);
+
+        boolean result = compareVector(expected, actual);
         UI_Utils.showTestResult(result);
     }
 
