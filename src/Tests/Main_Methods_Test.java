@@ -579,4 +579,82 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
+    public static void testSaveIntMatrixToCSV() {
+        UI_Utils.showTestTitle("testSaveIntMatrixToCSV");
+
+        double[] vector = {1.0, 2.0, 3.0, 4.0};
+        String outputPath = "output/test_data";
+        int matrixSize = 2;
+        int counter = 1;
+        String filePattern = "/test_matrix_";
+
+        Main.saveIntMatrixToCSV(vector, outputPath, matrixSize, counter, filePattern);
+
+        File outputFile = new File(outputPath + filePattern + counter + ".csv");
+        boolean result = outputFile.exists();
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateEigenVectorsCLargerMatrix() {
+        UI_Utils.showTestTitle("testCalculateEigenVectorsC_LargerMatrix");
+
+        double[][] matrizA = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+
+        double[][] vetoresPropriosATA = {
+                {0.5, 0.5, 0.5},
+                {0.5, 0.5, 0.5},
+                {0.5, 0.5, 0.5}
+        };
+
+        int numEigenFaces = 3;
+
+        double[][] expected = {
+                {3, 3, 3},
+                {7.5, 7.5, 7.5},
+                {12, 12, 12}
+        };
+
+        double[][] actual = Main.calculateEigenVectorsC(matrizA, vetoresPropriosATA, numEigenFaces);
+
+        boolean result = compareMatrix(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCompressedMatrix() {
+        UI_Utils.showTestTitle("testCompressedMatrix");
+
+        double[][] matrixP = {
+                {1, 0, 0},
+                {0, 1, 0},
+                {0, 0, 1}
+        };
+        double[][] matrixD = {
+                {3, 0, 0},
+                {0, 2, 0},
+                {0, 0, 1}
+        };
+        int k = 2;
+
+        double[][][] expected = {
+                {
+                        {1, 0},
+                        {0, 1},
+                        {0, 0}
+                },
+                {
+                        {3, 0},
+                        {0, 2}
+                }
+        };
+
+        double[][][] actual = Main.compressedMatrix(matrixP, matrixD, k);
+
+        boolean result = compareMatrix(expected[0], actual[0]) && compareMatrix(expected[1], actual[1]);
+        UI_Utils.showTestResult(result);
+    }
+
 }

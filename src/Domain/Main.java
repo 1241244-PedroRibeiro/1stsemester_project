@@ -19,9 +19,12 @@ import static Utils.NonInteractive_Utils.*;
 
 
 public class Main {
-    public static final String OUTPUT_PATH = "funcionalidade_1";
+    public static final String OUTPUT_PATH_F1 = "funcionalidade_1";
     public static final String OUTPUT_PATH_F2_REBUILT_IMAGES = "funcionalidade_2/imagensReconstruidas/";
     public static final String OUTPUT_PATH_F2_EIGENFACES = "funcionalidade_2/eigenfaces/";
+    public static final String OUTPUT_PATTERN_F3 = "funcionalidade_3/imagem_mais_proxima_";
+    public static final String OUTPUT_PATH_F4_GENERATED_IMAGE = "funcionalidade_4/";
+    public static final String FILE_F4_PATTERN = "new-image_";
     public static final String FILE_EIGENFACE_PATTERN = "eigenface_";
     public static final String FILE_EIGENFACE_TRANSFORMED_PATTERN = "eigenface_transformada_";
     public static final String FILE_RECONSTRUCTED_IMAGE_PATTERN = "imagem_reconstruida_";
@@ -104,8 +107,8 @@ public class Main {
             }
             int func = Integer.parseInt(funcionalidade);
 
-            if (func < 1 || func > 3) {
-                System.out.println("Funcionalidade inválida. Deve ser 1, 2 ou 3.");
+            if (func < 1 || func > 4) {
+                System.out.println("Funcionalidade inválida. Deve ser 1, 2, 3 ou 4.");
                 return;
             }
 
@@ -133,7 +136,7 @@ public class Main {
                             int k = Integer.parseInt(numEigenfaces);
                             if (k == -1 || k > readMatrix.length) k = readMatrix.length;
                             execFunc1(readMatrix, k);
-                            try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
+                            try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_1/" + txtFile))) {
                                 writer.write(txtContent.toString());
                                 System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                             } catch (IOException e) {
@@ -177,7 +180,7 @@ public class Main {
 
                         int k = Integer.parseInt(numEigenfaces);
                         execFunc2(files, k);
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_2/" + txtFile))) {
                             writer.write(txtContent.toString());
                             System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                         } catch (IOException e) {
@@ -218,7 +221,7 @@ public class Main {
                             System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + k);
                         }
                         execFunc3(caminhoImagens, k, caminhoCSV);
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_3/" + txtFile))) {
                             writer.write(txtContent.toString());
                             System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                         } catch (IOException e) {
@@ -254,7 +257,7 @@ public class Main {
                         }
                         int k = Integer.parseInt(numEigenfaces);
                         execFunc4(caminhoImagens, k);
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_4/" + txtFile))) {
                             writer.write(txtContent.toString());
                             System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
                         } catch (IOException e) {
@@ -407,7 +410,7 @@ public class Main {
 
         newImage = normalizeImage(newImage);
 
-        saveImageAsJPG("output/test_data/", newImage, matrixSize, 0, "new_image");
+        saveImageAsJPG(OUTPUT_PATH_F4_GENERATED_IMAGE, newImage, matrixSize, 4, FILE_F4_PATTERN);
 
         if (interactive) System.out.println("\nNova imagem salva na pasta test_data com o nome new_image");
         else txtContent.append("\nNova imagem salva na pasta test_data com o nome new_image");
@@ -520,7 +523,7 @@ public class Main {
         }
 
         for (int i = 0; i < count; i++) {
-            getImageAsJPG(files[closestImageIndices[i]], "output/test_data/imagem_mais_proxima_" + closestImageIndices[i] + ".jpg");
+            getImageAsJPG(files[closestImageIndices[i]], OUTPUT_PATTERN_F3 + closestImageIndices[i] + ".jpg");
         }
     }
 
@@ -597,7 +600,7 @@ public class Main {
             txtContent.append("\nErro absoluto médio:" + eam + "\n");
             txtContent.append(saveMatrix(matrixAk, "Matriz Reconstruída:"));
         }
-        saveMatrixToCSV(matrixAk, OUTPUT_PATH);
+        saveMatrixToCSV(matrixAk, OUTPUT_PATH_F1);
     }
 
     public static double calculateEuclideanDistance(double[] vector1, double[] vector2) {
