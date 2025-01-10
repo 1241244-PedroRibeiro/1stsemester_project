@@ -198,6 +198,10 @@ public class Main {
                         return;
                     } else {
                         int k = Integer.parseInt(numEigenfaces);
+                        if (k > files.length || k == -1) {
+                            k = files.length;
+                            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + k);
+                        }
                         execFunc3(caminhoImagens, k, caminhoCSV);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
                             writer.write(txtContent.toString());
@@ -292,9 +296,10 @@ public class Main {
                             files = File_Utils.getCsvFiles(folderPath);
                         } while (files.length == 0);
                         numEigenFaces = askNumberOfEigenfaces();
-                        if (numEigenFaces > files.length) numEigenFaces = files.length;
-                        System.out.println("Introduza o caminho da nova imagem (formato csv): ");
-                        scanner.nextLine();
+                        if (numEigenFaces > files.length || numEigenFaces == -1) {
+                            numEigenFaces = files.length;
+                            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + numEigenFaces);
+                        }
 
 
                         String newImagePath = UI_Utils.selectFileToRead();
@@ -387,9 +392,14 @@ public class Main {
         matrixSize = File_Utils.getNumberOfLines(files[0]);
         matrixVectors = File_Utils.processCsvFiles(files, matrixSize);
 
-        if (numEigenFaces == -1 || numEigenFaces > matrixVectors[0].length) {
-            numEigenFaces = matrixVectors[0].length;
-            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + numEigenFaces);
+        // Ler a nova imagem
+        double[][] newImage = File_Utils.getMatrixFromCSV(newImagePath);
+
+        int imageSize = File_Utils.getNumberOfLines(files[0]);
+
+        if (imageSize != newImage.length) {
+            System.out.println("A imagem lida não tem o mesmo tamanho que as imagens da base de dados.");
+            return;
         }
 
         averageImages = calculateAverage(matrixVectors);
@@ -401,10 +411,6 @@ public class Main {
         eigenVectorsATA = getEigenVectors(matrixATA);
         matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
         matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
-        // Ler a nova imagem
-        double[][] newImage = File_Utils.getMatrixFromCSV(newImagePath);
-
-        int imageSize = File_Utils.getNumberOfLines(files[0]);
 
         // Calcular Φnova
         double[] phiNova = new double[imageSize * imageSize];
@@ -470,7 +476,7 @@ public class Main {
         }
 
         for (int i = 0; i < count; i++) {
-            getImageAsJPG(files[closestImageIndices[i]], "funcionalidade_3/imagem_mais_proxima_" + closestImageIndices[i] + ".jpg");
+            getImageAsJPG(files[closestImageIndices[i]], "output/test_data/imagem_mais_proxima_" + closestImageIndices[i] + ".jpg");
         }
     }
 
