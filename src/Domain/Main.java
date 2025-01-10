@@ -116,7 +116,7 @@ public class Main {
                             """);
                     return;
                 }
-                if (caminhoCSV == null || !NonInteractiveValidations.validateK(numEigenfaces) || !NonInteractiveValidations.validateFilePath(caminhoCSV)) {
+                if (caminhoCSV == null || !NonInteractive_Utils.validateK(numEigenfaces) || !NonInteractive_Utils.validateFilePath(caminhoCSV)) {
                     System.out.println("A encerrar o programa...");
                     return;
                 } else {
@@ -155,7 +155,7 @@ public class Main {
                             """);
                     return;
                 }
-                if (!NonInteractiveValidations.selectFolderToRead(caminhoImagens) || !NonInteractiveValidations.validateK(numEigenfaces)) {
+                if (!NonInteractive_Utils.selectFolderToRead(caminhoImagens) || !NonInteractive_Utils.validateK(numEigenfaces)) {
                     System.out.println("A encerrar o programa...");
                     return;
                 } else {
@@ -188,7 +188,7 @@ public class Main {
                             """);
                     return;
                 }
-                if (!NonInteractiveValidations.validateK(numEigenfaces) || !NonInteractiveValidations.selectFolderToRead(caminhoImagens) || !NonInteractiveValidations.validateFilePath(caminhoCSV)) {
+                if (!NonInteractive_Utils.validateK(numEigenfaces) || !NonInteractive_Utils.selectFolderToRead(caminhoImagens) || !NonInteractive_Utils.validateFilePath(caminhoCSV)) {
                     System.out.println("A encerrar o programa...");
                     return;
                 } else {
@@ -224,7 +224,7 @@ public class Main {
                             """);
                     return;
                 }
-                if (!NonInteractiveValidations.selectFolderToRead(caminhoImagens) || !NonInteractiveValidations.validateK(numEigenfaces)) {
+                if (!NonInteractive_Utils.selectFolderToRead(caminhoImagens) || !NonInteractive_Utils.validateK(numEigenfaces)) {
                     System.out.println("A encerrar o programa...");
                     return;
                 } else {
