@@ -107,8 +107,8 @@ public class Main {
             }
             int func = Integer.parseInt(funcionalidade);
 
-            if (func < 1 || func > 4) {
-                System.out.println("Funcionalidade inválida. Deve ser 1, 2, 3 ou 4.");
+            if (func < 1 || func > 5) {
+                System.out.println("Funcionalidade inválida. Deve ser 1, 2, 3, 4 ou 5.");
                 return;
             }
 
@@ -151,7 +151,8 @@ public class Main {
                         return;
                     }
                 }
-            } else if (func == 2) {
+            }
+            else if (func == 2) {
                 if (numEigenfaces == null || caminhoImagens == null) {
                     System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
                     System.out.println("""
@@ -189,7 +190,8 @@ public class Main {
                         System.out.println("Funcionalidade executada com sucesso.");
                     }
                 }
-            } else if (func == 3) {
+            }
+            else if (func == 3) {
                 if (numEigenfaces == null || caminhoImagens == null || caminhoCSV == null) {
                     System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
                     System.out.println("""
@@ -230,7 +232,8 @@ public class Main {
                         System.out.println("Funcionalidade executada com sucesso.");
                     }
                 }
-            } else if (func == 4) {
+            }
+            else if (func == 4) {
                 if (numEigenfaces == null || caminhoImagens == null) {
                     System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
                     System.out.println("""
@@ -266,6 +269,25 @@ public class Main {
                         System.out.println("Funcionalidade executada com sucesso.");
                     }
                 }
+            }
+            else if(func==5){
+                txtContent.append("""
+                    LAPR1 - Projeto Integrador
+                    Grupo 04 - BitMinds
+                
+                    Desenvolvido por:
+                        Pedro Costa     - 1221790
+                        Pedro Ribeiro   - 1241244
+                        Afonso Mota     - 1241225
+                        Diogo Oliveira  - 1241883
+                """);
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
+                    writer.write(txtContent.toString());
+                    System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
+                } catch (IOException e) {
+                    System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
+                }
+                System.out.println("Funcionalidade executada com sucesso.");
             }
         }
         //INTERACTIVE MODE

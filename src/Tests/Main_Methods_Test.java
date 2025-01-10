@@ -50,6 +50,7 @@ public class Main_Methods_Test {
         testCalculateMatrixA();
         testNormalizeVectorsCLargerMatrix();
     }
+
     public static void testCalculateMatrixA() {
         UI_Utils.showTestTitle("testCalculateMatrixA");
 
