@@ -21,6 +21,29 @@ public class NonInteractive_Utils_Test {
         testSelectFolderToRead_ValidFolder();
         testSelectFolderToRead_InvalidFolder();
         testValidateFilePath_ValidFile();
+
+        testValidateFilePath_InvalidFile();
+        testSelectFolderToRead_NoCSVFiles();
+        testValidateFilePath_WithoutCSVFile();
+    }
+    public static void testSelectFolderToRead_NoCSVFiles() {
+        UI_Utils.showTestTitle("testSelectFolderToRead_NoCSVFiles");
+        boolean expected = false;
+        boolean actual = NonInteractive_Utils.selectFolderToRead(VALID_FOLDER_PATH_BUT_NO_CSV);
+        UI_Utils.showTestResult(expected == actual);
+    }
+
+    public static void testValidateFilePath_WithoutCSVFile() {
+        UI_Utils.showTestTitle("testValidateFilePath_ExistingNonCSVFile");
+        boolean expected = false;
+            boolean actual = NonInteractive_Utils.validateFilePath(VALID_PATH_BUT_NOT_CSV);
+        UI_Utils.showTestResult(expected == actual);
+    }
+    public static void testValidateFilePath_InvalidFile() {
+        UI_Utils.showTestTitle("testValidateFilePath_InvalidFile");
+        boolean expected = false;
+        boolean actual = NonInteractive_Utils.validateFilePath(INVALID_FILE_PATH);
+        UI_Utils.showTestResult(expected == actual);
     }
     public static void testValidateFilePath_ValidFile() {
         UI_Utils.showTestTitle("testValidateFilePath_ValidFile");
