@@ -9,7 +9,6 @@ import org.apache.commons.math3.linear.RealMatrix;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static Domain.Main.*;
@@ -37,6 +36,10 @@ public class Main_Methods_Test {
         testaskNumberOfEigenVectors_UseAllEigenvectors();
         testaskNumberOfEigenVectors_InvalidNegativeInput();
         testaskNumberOfEigenVectors_InvalidLargeInput();
+        testCalculateEuclideanDistance();
+        testCalculateEuclideanDistanceBiggerVectors();
+
+
 
     }
 
@@ -165,7 +168,6 @@ public class Main_Methods_Test {
     }
 
 
-
     public static double[][] generateSymmetricalMatrix(int size) {
         double[][] matrix = new double[size][size];
 
@@ -178,7 +180,6 @@ public class Main_Methods_Test {
         }
         return matrix;
     }
-
 
 
     public static void testCalcularPeso() {
@@ -210,13 +211,12 @@ public class Main_Methods_Test {
             outputDir.mkdirs();
         }
 
-        Main.saveImageAsJPG(outputPath,vetorImagem, tamanhoMatriz, contador, "/imagem_reconstruida_");
+        Main.saveImageAsJPG(outputPath, vetorImagem, tamanhoMatriz, contador, "/imagem_reconstruida_");
 
         File outputFile = new File(outputPath + "/imagem_reconstruida_" + contador + ".png");
         boolean result = outputFile.exists();
         UI_Utils.showTestResult(result);
     }
-
 
 
     public static void testGetVectorPhiOnPosition() {
@@ -411,8 +411,29 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
+    public static void testCalculateEuclideanDistance() {
+        UI_Utils.showTestTitle("testCalculateEuclideanDistance");
 
+        double[] vector1 = {1.0, 2.0, 3.0};
+        double[] vector2 = {4.0, 5.0, 6.0};
+        double expectedDistance = 5.196152422706632;
+        double actualDistance = Main.calculateEuclideanDistance(vector1, vector2);
 
+        boolean result = compareDouble(expectedDistance, actualDistance);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateEuclideanDistanceBiggerVectors() {
+        UI_Utils.showTestTitle("testCalculateEuclideanDistance2");
+
+        double[] vector1 = {1.0, 2.0, 3.0, 4.0, 5.0};
+        double[] vector2 = {6.0, 7.0, 8.0, 9.0, 10.0};
+        double expectedDistance = 11.180339887498949;
+        double actualDistance = Main.calculateEuclideanDistance(vector1, vector2);
+
+        boolean result = compareDouble(expectedDistance, actualDistance);
+        UI_Utils.showTestResult(result);
+    }
 
 
 
