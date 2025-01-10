@@ -24,18 +24,18 @@ public class File_Utils_Test {
         testGetCsvFiles();
         testGetNumberOfLines();
         testProcessCsvFiles();
-        testConverterCSVparaVetor();
+        testConvertCSVtoVector();
         testGetMatrixFromCSV();
         testSaveMatrixToCSV();
         testGetCsvFilesWithInvalidPath();
         testGetNumberOfLinesWithInvalidFile();
         testProcessCsvFilesWithEmptyFolder();
-        testConverterCSVparaVetorWithInvalidFile();
+        testConvertCSVtoVectorWithInvalidFile();
         testGetMatrixFromCSVWithInvalidFile();
         testGetCsvFilesWithNonCsvFiles();
         testGetNumberOfLinesWithEmptyFile();
         testProcessCsvFilesWithDifferentSizes();
-        testConverterCSVparaVetorWithNonNumericValues();
+        testConvertCSVtoVectorWithNonNumericValues();
         testGetMatrixFromCSVWithDifferentLineSizes();
         testGetCsvFilesWithMixedFiles();
         testGetNumberOfLinesWithBlankLines();
@@ -62,29 +62,29 @@ public class File_Utils_Test {
         UI_Utils.showTestTitle("testProcessCsvFiles");
         String folderPath = F2_CORRECT_TEST_DATA_FOLDER;
         File[] csvFiles = File_Utils.getCsvFiles(folderPath);
-        int tamanhoMatriz = 3;
-        double[][] matrizVetores = File_Utils.processCsvFiles(csvFiles, tamanhoMatriz);
-        boolean result = matrizVetores.length == tamanhoMatriz * tamanhoMatriz && matrizVetores[0].length == csvFiles.length;
+        int matrixSize = 3;
+        double[][] matrixVectors = File_Utils.processCsvFiles(csvFiles, matrixSize);
+        boolean result = matrixVectors.length == matrixSize * matrixSize && matrixVectors[0].length == csvFiles.length;
         UI_Utils.showTestResult(result);
     }
 
-    public static void testConverterCSVparaVetor() {
-        UI_Utils.showTestTitle("testConverterCSVparaVetor");
+    public static void testConvertCSVtoVector() {
+        UI_Utils.showTestTitle("testConvertCSVtoVector");
         File csvFile = new File(F1_CSV_FILE);
-        int tamanhoMatriz = 8;
+        int matrixSize = 8;
         try {
-            double[] vetor = File_Utils.converterCSVtoVetor(csvFile, tamanhoMatriz);
-            boolean result = vetor.length == tamanhoMatriz * tamanhoMatriz;
+            double[] vector = File_Utils.convertCSVtoVector(csvFile, matrixSize);
+            boolean result = vector.length == matrixSize * matrixSize;
             UI_Utils.showTestResult(result);
         } catch (IOException e) {
-            System.out.println("testConverterCSVparaVetor: Failed with exception " + e.getMessage());
+            System.out.println("testConvertCSVtoVector: Failed with exception " + e.getMessage());
         }
     }
 
     public static void testGetMatrixFromCSV() {
         UI_Utils.showTestTitle("testGetMatrixFromCSV");
-        String caminhoCsv = F1_CSV_FILE;
-        double[][] matrix = File_Utils.getMatrixFromCSV(caminhoCsv);
+        String csvPath = F1_CSV_FILE;
+        double[][] matrix = File_Utils.getMatrixFromCSV(csvPath);
         boolean result = matrix != null && matrix.length > 0 && matrix[0].length > 0;
         UI_Utils.showTestResult(result);
     }
@@ -98,7 +98,7 @@ public class File_Utils_Test {
         };
         String outputPath = SAVE_TEST_FOLDER;
         File_Utils.saveMatrixToCSV(matrix, outputPath);
-        File outputFile = new File(outputPath + "/matriz_F1.csv");
+        File outputFile = new File(outputPath + "/matrix_F1.csv");
         boolean result = outputFile.exists();
         UI_Utils.showTestResult(result);
     }
@@ -127,22 +127,24 @@ public class File_Utils_Test {
         UI_Utils.showTestResult(result);
     }
 
-    public static void testConverterCSVparaVetorWithInvalidFile() {
-        UI_Utils.showTestTitle("testConverterCSVparaVetorWithInvalidFile");
+    public static void testConvertCSVtoVectorWithInvalidFile() {
+        UI_Utils.showTestTitle("testConvertCSVtoVectorWithInvalidFile");
         File csvFile = new File(INVALID_PATH + "/sample.csv");
-        int tamanhoMatriz = 3;
+        int matrixSize = 3;
         try {
-            double[] vetor = File_Utils.converterCSVtoVetor(csvFile, tamanhoMatriz);
+            double[] vector = File_Utils.convertCSVtoVector(csvFile, matrixSize);
             System.out.println("Result: Failed!");
+            UI_Utils.drawLine();
         } catch (IOException e) {
             System.out.println("Result: Passed!");
+            UI_Utils.drawLine();
         }
     }
 
     public static void testGetMatrixFromCSVWithInvalidFile() {
         UI_Utils.showTestTitle("testGetMatrixFromCSVWithInvalidFile");
-        String caminhoCsv = INVALID_PATH + "/any.csv";
-        double[][] matrix = File_Utils.getMatrixFromCSV(caminhoCsv);
+        String csvPath = INVALID_PATH + "/any.csv";
+        double[][] matrix = File_Utils.getMatrixFromCSV(csvPath);
         boolean result = matrix == null;
         UI_Utils.showTestResult(result);
     }
@@ -167,28 +169,30 @@ public class File_Utils_Test {
         UI_Utils.showTestTitle("testProcessCsvFilesWithDifferentSizes");
         String folderPath = MATRIZES_DIFERENTES_TAMANHOS_FOLDER;
         File[] csvFiles = File_Utils.getCsvFiles(folderPath);
-        int tamanhoMatriz = 64;
-        double[][] matrizVetores = File_Utils.processCsvFiles(csvFiles, tamanhoMatriz);
-        boolean result = matrizVetores.length == tamanhoMatriz * tamanhoMatriz && matrizVetores[0].length == csvFiles.length;
+        int matrixSize = 64;
+        double[][] matrixVectors = File_Utils.processCsvFiles(csvFiles, matrixSize);
+        boolean result = matrixVectors.length == matrixSize * matrixSize && matrixVectors[0].length == csvFiles.length;
         UI_Utils.showTestResult(result);
     }
 
-    public static void testConverterCSVparaVetorWithNonNumericValues() {
-        UI_Utils.showTestTitle("testConverterCSVparaVetorWithNonNumericValues");
+    public static void testConvertCSVtoVectorWithNonNumericValues() {
+        UI_Utils.showTestTitle("testConvertCSVtoVectorWithNonNumericValues");
         File csvFile = new File(MATRIZ_COM_LETRAS_FILE);
-        int tamanhoMatriz = 3;
+        int matrixSize = 3;
         try {
-            double[] vetor = File_Utils.converterCSVtoVetor(csvFile, tamanhoMatriz);
+            double[] vector = File_Utils.convertCSVtoVector(csvFile, matrixSize);
             System.out.println("Result: Failed!");
+            UI_Utils.drawLine();
         } catch (IOException | NumberFormatException e) {
             System.out.println("Result: Passed!");
+            UI_Utils.drawLine();
         }
     }
 
     public static void testGetMatrixFromCSVWithDifferentLineSizes() {
         UI_Utils.showTestTitle("testGetMatrixFromCSVWithDifferentLineSizes");
-        String caminhoCsv = MATRIZ_NAO_QUADRADA_FILE;
-        double[][] matrix = File_Utils.getMatrixFromCSV(caminhoCsv);
+        String csvPath = MATRIZ_NAO_QUADRADA_FILE;
+        double[][] matrix = File_Utils.getMatrixFromCSV(csvPath);
         boolean result = matrix == null;
         UI_Utils.showTestResult(result);
     }

@@ -23,7 +23,7 @@ public class Main_Methods_Test {
         testCalculateEAM();
         testCalculateEAM_value_0444();
         testValidateMatrixNotSquare();
-        testAskNumberOfEigenvectors();
+        testaskNumberOfEigenVectors();
         testValidateMatrixWithNegativeValues();
         testValidateMatrixNotSymmetrical();
         testCalcularPeso();
@@ -33,10 +33,10 @@ public class Main_Methods_Test {
         testOrdenarVetoresProprios();
         testObterVetoresProprios();
         testNormalizarVetoresC();
-        testAskNumberOfEigenvectors_ValidInput();
-        testAskNumberOfEigenvectors_UseAllEigenvectors();
-        testAskNumberOfEigenvectors_InvalidNegativeInput();
-        testAskNumberOfEigenvectors_InvalidLargeInput();
+        testaskNumberOfEigenVectors_ValidInput();
+        testaskNumberOfEigenVectors_UseAllEigenvectors();
+        testaskNumberOfEigenVectors_InvalidNegativeInput();
+        testaskNumberOfEigenVectors_InvalidLargeInput();
 
     }
 
@@ -147,8 +147,8 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
-    public static void testAskNumberOfEigenvectors() {
-        UI_Utils.showTestTitle("testAskNumberOfEigenvectors");
+    public static void testaskNumberOfEigenVectors() {
+        UI_Utils.showTestTitle("testaskNumberOfEigenVectors");
 
         double[][] matrix = {
                 {1, 2, 3},
@@ -158,7 +158,7 @@ public class Main_Methods_Test {
 
         Main.scanner = new java.util.Scanner("2\n");
         int expectedK = 2;
-        int actualK = Main.askNumberOfEigenvectors(matrix);
+        int actualK = Main.askNumberOfEigenVectors(matrix);
 
         boolean result = expectedK == actualK;
         UI_Utils.showTestResult(result);
@@ -331,8 +331,8 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
-    public static void testAskNumberOfEigenvectors_ValidInput() {
-        UI_Utils.showTestTitle("testAskNumberOfEigenvectors_ValidInput");
+    public static void testaskNumberOfEigenVectors_ValidInput() {
+        UI_Utils.showTestTitle("testaskNumberOfEigenVectors_ValidInput");
 
         double[][] matrix = {
                 {1, 2, 3},
@@ -345,14 +345,14 @@ public class Main_Methods_Test {
         System.setIn(in);
         Main.scanner = new java.util.Scanner(System.in);
         int expectedK = 2;
-        int actualK = Main.askNumberOfEigenvectors(matrix);
+        int actualK = Main.askNumberOfEigenVectors(matrix);
 
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);
     }
 
-    public static void testAskNumberOfEigenvectors_UseAllEigenvectors() {
-        UI_Utils.showTestTitle("testAskNumberOfEigenvectors_UseAllEigenvectors");
+    public static void testaskNumberOfEigenVectors_UseAllEigenvectors() {
+        UI_Utils.showTestTitle("testaskNumberOfEigenVectors_UseAllEigenvectors");
 
         double[][] matrix = {
                 {1, 2, 3},
@@ -365,14 +365,14 @@ public class Main_Methods_Test {
         System.setIn(in);
         Main.scanner = new java.util.Scanner(System.in);
         int expectedK = matrix.length;
-        int actualK = Main.askNumberOfEigenvectors(matrix);
+        int actualK = Main.askNumberOfEigenVectors(matrix);
 
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);
     }
 
-    public static void testAskNumberOfEigenvectors_InvalidNegativeInput() {
-        UI_Utils.showTestTitle("testAskNumberOfEigenvectors_InvalidNegativeInput");
+    public static void testaskNumberOfEigenVectors_InvalidNegativeInput() {
+        UI_Utils.showTestTitle("testaskNumberOfEigenVectors_InvalidNegativeInput");
 
         double[][] matrix = {
                 {1, 2, 3},
@@ -385,14 +385,14 @@ public class Main_Methods_Test {
         System.setIn(in);
         Main.scanner = new Scanner(System.in);
         int expectedK = 3;
-        int actualK = Main.askNumberOfEigenvectors(matrix);
+        int actualK = Main.askNumberOfEigenVectors(matrix);
 
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);
     }
 
-    public static void testAskNumberOfEigenvectors_InvalidLargeInput() {
-        UI_Utils.showTestTitle("testAskNumberOfEigenvectors_InvalidLargeInput");
+    public static void testaskNumberOfEigenVectors_InvalidLargeInput() {
+        UI_Utils.showTestTitle("testaskNumberOfEigenVectors_InvalidLargeInput");
 
         double[][] matrix = {
                 {1, 2, 3},
@@ -405,7 +405,7 @@ public class Main_Methods_Test {
         System.setIn(in);
         Main.scanner = new java.util.Scanner(System.in);
         int expectedK = matrix.length;
-        int actualK = Main.askNumberOfEigenvectors(matrix);
+        int actualK = Main.askNumberOfEigenVectors(matrix);
 
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);

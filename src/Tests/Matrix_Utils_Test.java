@@ -339,8 +339,6 @@ public class Matrix_Utils_Test {
         int j = 1;
         double[] expected = {2.0, 5.0, 8.0};
         double[] actual = Matrix_Utils.getUjTransposed(eigenFacesMatrix, j);
-        System.out.println(Arrays.toString(actual));
-        System.out.println(Arrays.toString(expected));
 
         boolean result = compareVector(expected, actual);
         UI_Utils.showTestResult(result);
