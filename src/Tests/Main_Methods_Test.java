@@ -41,9 +41,59 @@ public class Main_Methods_Test {
         testNormalizeImage();
         testCalculateEuclideanDistance();
         testCalculateEuclideanDistanceBiggerVectors();
+        testValidateVectorPixels_Valid();
+        testValidateVectorPixels_Invalid();
+        testCalculateEAM_Vector();
+        testCalculateEAM_VectorBigger();
+        testGetImageAsJPG();
+        testPixelScalingEigenFaces();
+        testCalculateMatrixA();
         testNormalizeVectorsCLargerMatrix();
-
     }
+    public static void testCalculateMatrixA() {
+        UI_Utils.showTestTitle("testCalculateMatrixA");
+
+        double[][] matrixVectors = {
+                {1, 2},
+                {3, 4},
+                {5, 6}
+        };
+        double[] averageImages = {2, 3, 4};
+        double[][] expected = {
+                {-1, 0},
+                {0, 1},
+                {1, 2}
+        };
+
+        double[][] actual = Main.calculateMatrixA(3, 2, matrixVectors, averageImages);
+
+        boolean result = compareMatrix(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testPixelScalingEigenFaces() {
+        UI_Utils.showTestTitle("testPixelScalingEigenFaces");
+
+        double[] eigenFace = {-100.0, 0.0, 100.0, 200.0, 300.0, 400.0};
+        double[] expected = {0.0, 51.0, 102.0, 153.0, 204.0, 255.0}; // Corrected expected values
+        double[] actual = Main.pixelScalingEigenFaces(eigenFace);
+        boolean result = compareVector(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testGetImageAsJPG() {
+        UI_Utils.showTestTitle("testGetImageAsJPG");
+
+        File csvFile = new File("resources/exampleInputFunc1.csv");
+        String outputPath = "output/test_data/test_image.jpg";
+
+        Main.getImageAsJPG(csvFile, outputPath);
+
+        File outputFile = new File(outputPath);
+        boolean result = outputFile.exists();
+        UI_Utils.showTestResult(result);
+    }
+
 
     public static void testValidateMatrix() {
         UI_Utils.showTestTitle("testValidateMatrix");
@@ -170,6 +220,7 @@ public class Main_Methods_Test {
     }
 
 
+
     public static double[][] generateSymmetricalMatrix(int size) {
         double[][] matrix = new double[size][size];
 
@@ -182,6 +233,7 @@ public class Main_Methods_Test {
         }
         return matrix;
     }
+
 
 
     public static void testCalcularPeso() {
@@ -219,6 +271,7 @@ public class Main_Methods_Test {
         boolean result = outputFile.exists();
         UI_Utils.showTestResult(result);
     }
+
 
 
     public static void testGetVectorPhiOnPosition() {
@@ -412,7 +465,6 @@ public class Main_Methods_Test {
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);
     }
-
     public static void testNormalizeImageNoChanges() {
         UI_Utils.showTestTitle("testNormalizeImage");
 
@@ -458,7 +510,53 @@ public class Main_Methods_Test {
         boolean result = compareDouble(expectedDistance, actualDistance);
         UI_Utils.showTestResult(result);
     }
+    public static void testValidateVectorPixels_Valid() {
+        UI_Utils.showTestTitle("testValidateVectorPixelsValid");
 
+        double[] validVector = {0.0, 50.0, 100.0, 150.0, 200.0, 255.0};
+
+        boolean resultValid = Main.validateVectorPixels(validVector);
+
+        UI_Utils.showTestResult(resultValid);
+    }
+
+    public static void testValidateVectorPixels_Invalid() {
+        UI_Utils.showTestTitle("testValidateVectorPixelsInvalid");
+
+        double[] invalidVector = {-10.0, 50.0, 100.0, 150.0, 200.0, 300.0};
+
+        boolean resultInvalid = Main.validateVectorPixels(invalidVector);
+
+        UI_Utils.showTestResult(!resultInvalid);
+    }
+    public static void testCalculateEAM_Vector() {
+        UI_Utils.showTestTitle("testCalculateEAM_Vector");
+
+        double[] original = {1.0, 2.0, 3.0};
+        double[] reconstructed = {1.1, 2.1, 3.1};
+
+        double expectedEAM = (Math.abs(1.0 - 1.1) + Math.abs(2.0 - 2.1) + Math.abs(3.0 - 3.1)) / original.length;
+
+        double actualEAM = Main.calculateEAM(original, reconstructed);
+
+        boolean result = compareDouble(expectedEAM, actualEAM);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateEAM_VectorBigger() {
+        UI_Utils.showTestTitle("testCalculateEAM_VectorBigger");
+
+        double[] original = {1.0, 2.0, 3.3, 4.0, 5.4, 6.0};
+        double[] reconstructed = {1.1, 2.1, 3.1, 4.1, 5.1, 6.1};
+
+        double expectedEAM = (Math.abs(1.0 - 1.1) + Math.abs(2.0 - 2.1) + Math.abs(3.3 - 3.1) +
+                Math.abs(4.0 - 4.1) + Math.abs(5.4 - 5.1) + Math.abs(6.0 - 6.1)) / original.length;
+
+        double actualEAM = Main.calculateEAM(original, reconstructed);
+
+        boolean result = compareDouble(expectedEAM, actualEAM);
+        UI_Utils.showTestResult(result);
+    }
 
     public static void testNormalizeVectorsCLargerMatrix() {
         UI_Utils.showTestTitle("testNormalizeVectorsC_LargerMatrix");
