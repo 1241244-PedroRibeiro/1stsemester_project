@@ -169,6 +169,12 @@ public class Main {
                         System.out.println("A encerrar o programa...");
                         return;
                     } else {
+
+                        if (!validateImages(files)) {
+                            System.out.println("A encerrar o programa...");
+                            return;
+                        }
+
                         int k = Integer.parseInt(numEigenfaces);
                         execFunc2(files, k);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
@@ -202,6 +208,10 @@ public class Main {
                         System.out.println("A encerrar o programa...");
                         return;
                     } else {
+                        if (!validateImages(files)) {
+                            System.out.println("A encerrar o programa...");
+                            return;
+                        }
                         int k = Integer.parseInt(numEigenfaces);
                         if (k > files.length || k == -1) {
                             k = files.length;
@@ -238,6 +248,10 @@ public class Main {
                         System.out.println("A encerrar o programa...");
                         return;
                     } else {
+                        if (!validateImages(files)) {
+                            System.out.println("A encerrar o programa...");
+                            return;
+                        }
                         int k = Integer.parseInt(numEigenfaces);
                         execFunc4(caminhoImagens, k);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
@@ -290,6 +304,10 @@ public class Main {
                             folderPath = selectFolderToRead();
                             files = getCsvFiles(folderPath);
                         } while (files.length == 0);
+                        if (!validateImages(files)) {
+                            System.out.println("A encerrar o programa...");
+                            return;
+                        }
                         numEigenFaces = askNumberOfEigenfaces();
                         if (numEigenFaces > files.length) numEigenFaces = files.length;
                         execFunc2(files, numEigenFaces);
@@ -300,6 +318,10 @@ public class Main {
                             folderPath = selectFolderToRead();
                             files = getCsvFiles(folderPath);
                         } while (files.length == 0);
+                        if (!validateImages(files)) {
+                            System.out.println("A encerrar o programa...");
+                            return;
+                        }
                         numEigenFaces = askNumberOfEigenfaces();
                         if (numEigenFaces > files.length || numEigenFaces == -1) {
                             numEigenFaces = files.length;
@@ -318,6 +340,10 @@ public class Main {
                             folderPath = selectFolderToRead();
                             files = getCsvFiles(folderPath);
                         } while (files.length == 0);
+                        if (!validateImages(files)) {
+                            System.out.println("A encerrar o programa...");
+                            return;
+                        }
                         numEigenFaces = askNumberOfEigenfaces();
                         if (numEigenFaces > files.length) numEigenFaces = files.length;
                         execFunc4(folderPath, numEigenFaces);
@@ -336,6 +362,17 @@ public class Main {
         }
         scanner.close();
     }
+
+    private static boolean validateImages(File[] files) {
+        for (File file : files) {
+            double[][] matrix = File_Utils.getMatrixFromCSV(file.getAbsolutePath());
+            if (matrix == null || !validateImageBaseMatrix(matrix)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public static void execFunc4(String folderPath, int numEigenFaces) {
         File[] files = getCsvFiles(folderPath);
@@ -458,13 +495,13 @@ public class Main {
                 System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
         } else {
             for (int i = 0; i < distances.length; i++)
-                txtContent.append("Distância de Ω").append(i).append(": ").append(distances[i]).append("\n");
+                txtContent.append("\nDistância de Ω").append(i).append(": ").append(distances[i]).append("\n");
 
-            txtContent.append("Número de Eigenfaces utilizado: ").append(numEigenFaces).append("\n");
-            txtContent.append("Novo Ω: ").append(Arrays.toString(newOmega)).append("\n");
+            txtContent.append("\n\nNúmero de Eigenfaces utilizado: ").append(numEigenFaces).append("\n");
+            txtContent.append("\n\nNovo Ω: ").append(Arrays.toString(newOmega)).append("\n");
 
             for (int i = 0; i < files.length; i++)
-                txtContent.append("Ω").append(i).append(": ").append(Arrays.toString(omegaMatrixDatabase[i])).append(", Distance: ").append(distances[i]).append("\n");
+                txtContent.append("\nΩ").append(i).append(": ").append(Arrays.toString(omegaMatrixDatabase[i])).append(", Distance: ").append(distances[i]).append("\n");
         }
 
         int[] closestImageIndices = new int[distances.length];
@@ -970,6 +1007,23 @@ public class Main {
                 }
             }
             return false;
+        }
+        return true;
+    }
+
+    public static boolean validateImageBaseMatrix(double[][] matrix) {
+        if (matrix.length != matrix[0].length) {
+            System.out.println("A matriz não é quadrada.");
+            return false;
+        }
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] < 0 || matrix[i][j] > 255) {
+                    System.out.println("A matriz contém valores fora do intervalo [0-255].");
+                    return false;
+                }
+            }
         }
         return true;
     }
