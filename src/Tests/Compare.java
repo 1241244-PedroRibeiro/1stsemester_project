@@ -42,4 +42,18 @@ public class Compare {
 
         return true;
     }
+
+    public static boolean compareMatrixWithTolerance(double[][] expected, double[][] actual, double tolerance) {
+        if (expected.length != actual.length || expected[0].length != actual[0].length) {
+            return false;
+        }
+        for (int i = 0; i < expected.length; i++) {
+            for (int j = 0; j < expected[i].length; j++) {
+                if (Math.abs(expected[i][j] - actual[i][j]) > tolerance) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

@@ -9,6 +9,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import static Domain.Main.*;
@@ -40,8 +41,7 @@ public class Main_Methods_Test {
         testNormalizeImage();
         testCalculateEuclideanDistance();
         testCalculateEuclideanDistanceBiggerVectors();
-
-
+        testNormalizeVectorsCLargerMatrix();
 
     }
 
@@ -170,7 +170,6 @@ public class Main_Methods_Test {
     }
 
 
-
     public static double[][] generateSymmetricalMatrix(int size) {
         double[][] matrix = new double[size][size];
 
@@ -183,7 +182,6 @@ public class Main_Methods_Test {
         }
         return matrix;
     }
-
 
 
     public static void testCalcularPeso() {
@@ -221,7 +219,6 @@ public class Main_Methods_Test {
         boolean result = outputFile.exists();
         UI_Utils.showTestResult(result);
     }
-
 
 
     public static void testGetVectorPhiOnPosition() {
@@ -415,6 +412,7 @@ public class Main_Methods_Test {
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);
     }
+
     public static void testNormalizeImageNoChanges() {
         UI_Utils.showTestTitle("testNormalizeImage");
 
@@ -462,5 +460,25 @@ public class Main_Methods_Test {
     }
 
 
+    public static void testNormalizeVectorsCLargerMatrix() {
+        UI_Utils.showTestTitle("testNormalizeVectorsC_LargerMatrix");
+
+        double[][] matrizVetoresPropriosC = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+
+        double[][] expected = {
+                {0.12309149097933272, 0.20739033894608505, 0.2672612419124244},
+                {0.4923659639173309, 0.5184758473652126, 0.5345224838248488},
+                {0.8616404368553291, 0.8295613557843401, 0.8017837257372732}
+        };
+
+        double[][] actual = Main.normalizeVectorsC(matrizVetoresPropriosC);
+
+        boolean result = compareMatrixWithTolerance(expected, actual, 0.0001);
+        UI_Utils.showTestResult(result);
+    }
 
 }
