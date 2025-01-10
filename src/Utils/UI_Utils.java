@@ -73,10 +73,7 @@ public class UI_Utils {
     }
 
     public static void showTestTitle(String testName) {
-        System.out.print("""
-                ════════════════════
-                Test:""");
-        System.out.println(" " + testName);
+        System.out.println("Test Name: " + testName);
     }
 
     public static void showTestResult(boolean result) {
@@ -85,7 +82,7 @@ public class UI_Utils {
         } else {
             System.out.println("Result: Failed!");
         }
-        System.out.println("════════════════════");
+        System.out.println("══════════════════════════════════════════");
     }
 
     public static void showDevelopmentTeam() {
@@ -165,4 +162,7 @@ public class UI_Utils {
     }
 
 
+    public static void drawLine() {
+        System.out.println("══════════════════════════════════════════");
+    }
 }

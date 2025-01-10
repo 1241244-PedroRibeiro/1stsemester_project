@@ -66,7 +66,7 @@ public class File_Utils {
         for (int i = 0; i < files.length; i++) {
             File fileCSV = files[i];
             try {
-                double[] vector = converterCSVtoVetor(fileCSV, matrixSize);
+                double[] vector = convertCSVtoVector(fileCSV, matrixSize);
 
                 for (int j = 0; j < vector.length; j++) {
                     matrixVectors[j][i] = vector[j];
@@ -79,7 +79,7 @@ public class File_Utils {
         return matrixVectors;
     }
 
-    public static double[] converterCSVtoVetor(File fileCSV, int matrixSize) throws IOException {
+    public static double[] convertCSVtoVector(File fileCSV, int matrixSize) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(fileCSV));
 
         double[] array = new double[matrixSize * matrixSize];
@@ -201,8 +201,6 @@ public class File_Utils {
             System.out.println("Erro ao guardar a matriz no CSV: " + e.getMessage());
         }
     }
-
-
 
 
 }

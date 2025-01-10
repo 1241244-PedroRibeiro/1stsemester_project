@@ -277,7 +277,7 @@ public class Main {
                         double[][] readMatrix = getMatrixFromCSV(filePath);
                         if (readMatrix != null) {
                             if (validateMatrix(readMatrix)) {
-                                int k = askNumberOfEigenvectors(readMatrix);
+                                int k = askNumberOfEigenVectors(readMatrix);
                                 execFunc1(readMatrix, k);
                             } else System.out.println("\nInsira uma matriz válida.");
                         } else System.out.println("A matriz ainda não foi lida.");
@@ -829,7 +829,7 @@ public class Main {
         // Eigenvector matrix (P)
         RealMatrix matrixP = eigenDecomposition.getV();
         result[0] = matrixP;
-        // Diagonal matrix of eigenvalues ​​(D)
+        // Diagonal matrix of eigenvalues (D)
         RealMatrix matrixD = MatrixUtils.createRealDiagonalMatrix(eigenDecomposition.getRealEigenvalues());
         result[1] = matrixD;
 
@@ -960,7 +960,7 @@ public class Main {
         return true;
     }
 
-    public static int askNumberOfEigenvectors(double[][] matrix) {
+    public static int askNumberOfEigenVectors(double[][] matrix) {
         int k = 0;
 
         while (k <= 0 || k > matrix.length) {
