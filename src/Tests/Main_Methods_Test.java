@@ -42,6 +42,8 @@ public class Main_Methods_Test {
         testCalculateEuclideanDistanceBiggerVectors();
         testValidateVectorPixels_Valid();
         testValidateVectorPixels_Invalid();
+        testCalculateEAM_Vector();
+        testCalculateEAM_VectorBigger();
 
 
 
@@ -481,7 +483,34 @@ public class Main_Methods_Test {
 
         UI_Utils.showTestResult(!resultInvalid);
     }
+    public static void testCalculateEAM_Vector() {
+        UI_Utils.showTestTitle("testCalculateEAM_Vector");
 
+        double[] original = {1.0, 2.0, 3.0};
+        double[] reconstructed = {1.1, 2.1, 3.1};
+
+        double expectedEAM = (Math.abs(1.0 - 1.1) + Math.abs(2.0 - 2.1) + Math.abs(3.0 - 3.1)) / original.length;
+
+        double actualEAM = Main.calculateEAM(original, reconstructed);
+
+        boolean result = compareDouble(expectedEAM, actualEAM);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateEAM_VectorBigger() {
+        UI_Utils.showTestTitle("testCalculateEAM_VectorBigger");
+
+        double[] original = {1.0, 2.0, 3.3, 4.0, 5.4, 6.0};
+        double[] reconstructed = {1.1, 2.1, 3.1, 4.1, 5.1, 6.1};
+
+        double expectedEAM = (Math.abs(1.0 - 1.1) + Math.abs(2.0 - 2.1) + Math.abs(3.3 - 3.1) +
+                Math.abs(4.0 - 4.1) + Math.abs(5.4 - 5.1) + Math.abs(6.0 - 6.1)) / original.length;
+
+        double actualEAM = Main.calculateEAM(original, reconstructed);
+
+        boolean result = compareDouble(expectedEAM, actualEAM);
+        UI_Utils.showTestResult(result);
+    }
 
 
 }
