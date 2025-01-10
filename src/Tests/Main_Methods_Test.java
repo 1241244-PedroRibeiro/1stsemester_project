@@ -40,6 +40,8 @@ public class Main_Methods_Test {
         testNormalizeImage();
         testCalculateEuclideanDistance();
         testCalculateEuclideanDistanceBiggerVectors();
+        testValidateVectorPixels_Valid();
+        testValidateVectorPixels_Invalid();
 
 
 
@@ -459,6 +461,25 @@ public class Main_Methods_Test {
 
         boolean result = compareDouble(expectedDistance, actualDistance);
         UI_Utils.showTestResult(result);
+    }
+    public static void testValidateVectorPixels_Valid() {
+        UI_Utils.showTestTitle("testValidateVectorPixelsValid");
+
+        double[] validVector = {0.0, 50.0, 100.0, 150.0, 200.0, 255.0};
+
+        boolean resultValid = Main.validateVectorPixels(validVector);
+
+        UI_Utils.showTestResult(resultValid);
+    }
+
+    public static void testValidateVectorPixels_Invalid() {
+        UI_Utils.showTestTitle("testValidateVectorPixelsInvalid");
+
+        double[] invalidVector = {-10.0, 50.0, 100.0, 150.0, 200.0, 300.0};
+
+        boolean resultInvalid = Main.validateVectorPixels(invalidVector);
+
+        UI_Utils.showTestResult(!resultInvalid);
     }
 
 
