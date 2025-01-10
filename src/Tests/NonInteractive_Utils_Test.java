@@ -18,6 +18,29 @@ public class NonInteractive_Utils_Test {
         testValidateK_InvalidK_NonNumeric();
         testValidateK_PositiveGreaterThanOne();
         testValidateK_NegativeNotMinusOne();
+        testSelectFolderToRead_ValidFolder();
+        testSelectFolderToRead_InvalidFolder();
+        testValidateFilePath_ValidFile();
+    }
+    public static void testValidateFilePath_ValidFile() {
+        UI_Utils.showTestTitle("testValidateFilePath_ValidFile");
+
+        boolean expected = true;
+        boolean actual = NonInteractive_Utils.validateFilePath(VALID_FILE_PATH);
+        UI_Utils.showTestResult(expected == actual);
+    }
+    public static void testSelectFolderToRead_InvalidFolder() {
+        UI_Utils.showTestTitle("testSelectFolderToRead_InvalidFolder");
+
+        boolean expected = false;
+        boolean actual = NonInteractive_Utils.selectFolderToRead(INVALID_FOLDER_PATH);
+        UI_Utils.showTestResult(expected == actual);
+    }
+    public static void testSelectFolderToRead_ValidFolder() {
+        UI_Utils.showTestTitle("testSelectFolderToRead_ValidFolder");
+        boolean expected = true;
+        boolean actual = NonInteractive_Utils.selectFolderToRead(VALID_FOLDER_PATH);
+        UI_Utils.showTestResult(expected == actual);
     }
 
     public static void testValidateK_ValidK() {
