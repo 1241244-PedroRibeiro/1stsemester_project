@@ -37,7 +37,7 @@ public class Main {
         String filePath, folderPath;
         int numEigenFaces, menuOption;
 
-        //MODO NAO INTERATIVO
+        //NON-INTERACTIVE MODE
         if (args.length > 0) {
             boolean foundTxtFile = false;
 
@@ -265,7 +265,7 @@ public class Main {
                 }
             }
         }
-        //MODO INTERATIVO
+        //INTERACTIVE MODE
         else {
             interactive = true;
             do {
@@ -436,7 +436,7 @@ public class Main {
         matrixSize = getNumberOfLines(files[0]);
         matrixVectors = processCsvFiles(files, matrixSize);
 
-        // Ler a nova imagem
+        // Read the new image
         double[][] newImage = getMatrixFromCSV(newImagePath);
 
         int imageSize = getNumberOfLines(files[0]);
@@ -456,7 +456,7 @@ public class Main {
         matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
         matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
 
-        // Calcular Φnova
+        // Calculate Φnova
         double[] phiNova = new double[imageSize * imageSize];
         for (int i = 0; i < phiNova.length; i++) {
             phiNova[i] = newImage[i / imageSize][i % imageSize] - averageImages[i];
@@ -730,11 +730,11 @@ public class Main {
     }
 
     public static double[] pixelScalingEigenFaces(double[] eigenFace) {
-        // Inicializamos as variáveis para o mínimo e máximo
+        // We initialize the variables to minimum and maximum
         double min = eigenFace[0];
         double max = eigenFace[0];
 
-        // Encontrar o valor mínimo e máximo no vetor
+        // Find the minimum and maximum value in the vector
         for (int i = 1; i < eigenFace.length; i++) {
             if (eigenFace[i] < min) {
                 min = eigenFace[i];
@@ -744,10 +744,10 @@ public class Main {
             }
         }
 
-        // Array para armazenar os valores escalados
+        // Array to store the scaled values
         double[] scaledEigenFace = new double[eigenFace.length];
 
-        // Escalar os valores para o intervalo [0, 255]
+        // Scale the values ​​to the range [0, 255]
         for (int i = 0; i < eigenFace.length; i++) {
             scaledEigenFace[i] = 255 * (eigenFace[i] - min) / (max - min);
         }

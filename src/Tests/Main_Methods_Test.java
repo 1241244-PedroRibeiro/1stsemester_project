@@ -373,12 +373,12 @@ public class Main_Methods_Test {
                 {0.9486832980505138, 0.8944271909999159}
         };
 
-        // Para a primeira coluna: sqrt(1^2 + 3^2) = sqrt(1 + 9) = sqrt(10) ≈ 3.162277660168379
-        // Para a segunda coluna: sqrt(2^2 + 4^2) = sqrt(4 + 16) = sqrt(20) ≈ 4.47213595499958
+        // For the first column: sqrt(1^2 + 3^2) = sqrt(1 + 9) = sqrt(10) ≈ 3.162277660168379
+        // For the second column: sqrt(2^2 + 4^2) = sqrt(4 + 16) = sqrt(20) ≈ 4.47213595499958
 
-        // Normalizar cada elemento da matriz
-        // Primeira coluna: [1/3.162277660168379, 3/3.162277660168379] ≈ [0.31622776601683794, 0.9486832980505138]
-        // Segunda coluna: [2/4.47213595499958, 4/4.47213595499958] ≈ [0.4472135954999579, 0.8944271909999159]
+        // Normalize each element of the array
+        // First column: [1/3.162277660168379, 3/3.162277660168379] ≈ [0.31622776601683794, 0.9486832980505138]
+        // Second column: [2/4.47213595499958, 4/4.47213595499958] ≈ [0.4472135954999579, 0.8944271909999159]
 
         double[][] actual = normalizeVectorsC(matrizVetoresPropriosC);
 

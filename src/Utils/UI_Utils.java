@@ -22,7 +22,7 @@ public class UI_Utils {
                   ║                                                                         ║
                   ╚═════════════════════════════════════════════════════════════════════════╝
                 """);
-        System.out.print("     Choose Option: ");
+        System.out.print("     Escolha uma opção: ");
     }
 
     public static void showMenuTitle(int uiNumber) {
@@ -73,14 +73,14 @@ public class UI_Utils {
     }
 
     public static void showTestTitle(String testName) {
-        System.out.println("Test Name: " + testName);
+        System.out.println("Nome teste: " + testName);
     }
 
     public static void showTestResult(boolean result) {
         if (result) {
-            System.out.println("Result: Passed!");
+            System.out.println("Resultado: Aprovado!");
         } else {
-            System.out.println("Result: Failed!");
+            System.out.println("Resultado: Falhou!");
         }
         System.out.println("══════════════════════════════════════════");
     }
@@ -148,7 +148,7 @@ public class UI_Utils {
 
 
     /**
-     * Função para imprimir uma matriz (double[][]) para efeitos de teste e visualização
+     * Function to print a matrix (double[][]) for testing and viewing purposes
      *
      * @param matrix
      */

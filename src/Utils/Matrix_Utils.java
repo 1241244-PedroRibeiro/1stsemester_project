@@ -28,7 +28,7 @@ public class Matrix_Utils {
 
     public static double[][] calculateCovarianceMatrix(double[][] matrixATA, int n) {
         double[][] covarianceMatrix = new double[matrixATA.length][matrixATA[0].length];
-        //A matriz é a C = (1/n) * ATA
+        //The matrix is the C = (1/n) * ATA
         for (int i = 0; i < matrixATA.length; i++) {
             for (int j = 0; j < matrixATA[i].length; j++) {
                 covarianceMatrix[i][j] = matrixATA[i][j] / n;
