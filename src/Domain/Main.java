@@ -851,7 +851,21 @@ public class Main {
             indices[i] = i;
         }
 
-        Arrays.sort(indices, (i, j) -> Double.compare(diagonal[j], diagonal[i]));
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (diagonal[j] < diagonal[j + 1]) {
+                    double temp = diagonal[j];
+                    diagonal[j] = diagonal[j + 1];
+                    diagonal[j + 1] = temp;
+
+                    for (int m = 0; m < n; m++) {
+                        double tempP = matrixP[m][j];
+                        matrixP[m][j] = matrixP[m][j + 1];
+                        matrixP[m][j + 1] = tempP;
+                    }
+                }
+            }
+        }
 
         double[][] sortedD = new double[n][n];
         double[][] sortedP = new double[n][n];
