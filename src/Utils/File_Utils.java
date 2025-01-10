@@ -174,7 +174,6 @@ public class File_Utils {
         }
 
         File outputDir = new File(outputPath);
-        System.out.println(outputDir);
         if (!outputDir.exists()) {
             if (outputDir.mkdir()) {
                 System.out.println("Pasta criada com sucesso.");

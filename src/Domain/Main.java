@@ -509,9 +509,14 @@ public class Main {
 
     private static void execFunc1(double[][] readMatrix, int k) {
         if (interactive) {
-            System.out.println("\nMatriz Lida:");
-            UI_Utils.printMatrix(readMatrix);
-        } else txtContent.append(UI_Utils.saveMatrix(readMatrix, "Matriz Lida:"));
+            System.out.println("\nNúmero de eigenfaces utilizadas:");
+            System.out.printf("%d\n", k);
+
+        } else
+        {
+            txtContent.append("Número de eigenfaces utilizado:" + k);
+
+        }
 
         RealMatrix[] result = ownDecomposition(readMatrix);
 
@@ -524,10 +529,24 @@ public class Main {
         double[][] matrixDk = decomposed[1];
 
         double[][] matrixAk = Matrix_Utils.matrixMultiplication(Matrix_Utils.matrixMultiplication(matrixPk, matrixDk), Matrix_Utils.transpose(matrixPk));
+        double eam=calculateEAM(readMatrix,matrixAk);
+
         if (interactive) {
+            System.out.println("\nValores próprios utilizados:\n");
+            UI_Utils.printMatrix(matrixDk);
+            System.out.println("\nVetores próprios utilizados:\n");
+            UI_Utils.printMatrix(matrixPk);
+            System.out.println("\nErro absoluto médio:\n");
+            System.out.printf("%.2f\n", eam);;
             System.out.println("\nMatriz Reconstruída:\n");
             UI_Utils.printMatrix(matrixAk);
-        } else txtContent.append(UI_Utils.saveMatrix(matrixAk, "Matriz Reconstruída:"));
+        } else{
+            txtContent.append(UI_Utils.saveMatrix(matrixDk, "\nValores próprios utilizados"));
+            txtContent.append(UI_Utils.saveMatrix(matrixPk, "\nVetores próprios utilizados"));
+
+            txtContent.append("\nErro absoluto médio:"+eam+"\n");
+            txtContent.append(UI_Utils.saveMatrix(matrixAk, "Matriz Reconstruída:"));
+        }
         File_Utils.saveMatrixToCSV(matrixAk, OUTPUT_PATH);
     }
 

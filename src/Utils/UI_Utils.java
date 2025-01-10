@@ -196,8 +196,13 @@ public class UI_Utils {
             for (int j = 0; j < matrix[i].length; j++) {
                 result.append(String.format("%.2f ", matrix[i][j]));
             }
+            if(i==matrix.length-1){
+                result.append("]");
+            }
             result.append("\n");
+
         }
+
 
         return result.toString();
     }
