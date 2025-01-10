@@ -1,7 +1,12 @@
 package Tests;
 
+import Domain.Main;
 import Utils.Matrix_Utils;
 import Utils.UI_Utils;
+
+import java.util.Arrays;
+
+import static Tests.Compare.compareVector;
 
 public class Matrix_Utils_Test {
 
@@ -15,6 +20,13 @@ public class Matrix_Utils_Test {
         testTransposeNonSquareMatrix();
         testMatrixMultiplicationWithIdentityMatrix();
         testMatrixMultiplicationWithZeroMatrix();
+        testCalculateAverage();
+        testCalculateAverage15x15();
+        testGetMatrixVectorAtPosition();
+        testGetUjTransposed();
+        testCalculateCovarianceMatrix();
+        testCalculateCovarianceMatrixLarge();
+
     }
 
     public static void testTranspose() {
@@ -172,7 +184,6 @@ public class Matrix_Utils_Test {
         return true;
     }
 
-
     public static void testTransposeNonSquareMatrix() {
         UI_Utils.showTestTitle("testTransposeNonSquareMatrix");
         double[][] matrix = {
@@ -189,7 +200,21 @@ public class Matrix_Utils_Test {
         UI_Utils.showTestResult(result);
     }
 
-
+    public static void testCalculateCovarianceMatrix() {
+        UI_Utils.showTestTitle("testCalculateCovarianceMatrix");
+        double[][] matrixATA = {
+                {4, 2},
+                {2, 3}
+        };
+        int n = 2;
+        double[][] expected = {
+                {2, 1},
+                {1, 1.5}
+        };
+        double[][] actual = Matrix_Utils.calculateCovarianceMatrix(matrixATA, n);
+        boolean result = compareMatrices(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
 
     public static void testMatrixMultiplicationWithIdentityMatrix() {
         UI_Utils.showTestTitle("testMatrixMultiplicationWithIdentityMatrix");
@@ -223,6 +248,120 @@ public class Matrix_Utils_Test {
         };
         double[][] expected = zeroMatrix;
         double[][] actual = Matrix_Utils.matrixMultiplication(matrix, zeroMatrix);
+        boolean result = compareMatrices(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateAverage() {
+        UI_Utils.showTestTitle("testCalculateAverage");
+
+        double[][] vectorMatrix = {
+                {1, 2, 3},
+                {4, 5, 6},
+                {7, 8, 9}
+        };
+        double[] expected = {2, 5, 8};
+        double[] actual = Matrix_Utils.calculateAverage(vectorMatrix);
+
+        boolean result = compareVector(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateAverage15x15() {
+        UI_Utils.showTestTitle("testCalculateAverage15x15");
+
+        double[][] vectorMatrix = {
+                {1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5},
+                {2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5},
+                {3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5},
+                {4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5},
+                {5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5},
+                {6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5},
+                {7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5},
+                {8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5},
+                {9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5},
+                {10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5},
+                {11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5},
+                {12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5},
+                {13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5},
+                {14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5},
+                {15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5}
+        };
+
+        double[] expectedAverageVector = {
+                8.5,
+                9.5,
+                10.5,
+                11.5,
+                12.5,
+                13.5,
+                14.5,
+                15.5,
+                16.5,
+                17.5,
+                18.5,
+                19.5,
+                20.5,
+                21.5,
+                22.5
+        };
+
+        double[] actualAverageVector = Matrix_Utils.calculateAverage(vectorMatrix);
+        boolean result = compareVector(expectedAverageVector, actualAverageVector);
+
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testGetMatrixVectorAtPosition() {
+        UI_Utils.showTestTitle("testGetMatrixVectorAtPosition");
+
+        double[][] eigenFacesMatrix = {
+                {1.0, 2.0, 3.0},
+                {4.0, 5.0, 6.0},
+                {7.0, 8.0, 9.0}
+        };
+        int j = 1;
+        double[] expected = {2.0, 5.0, 8.0};
+        double[] actual = Matrix_Utils.getMatrixVectorAtPosition(eigenFacesMatrix, j);
+
+        boolean result = compareVector(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testGetUjTransposed() {
+        UI_Utils.showTestTitle("testGetUjTransposed");
+
+        double[][] eigenFacesMatrix = {
+                {1.0, 2.0, 3.0},
+                {4.0, 5.0, 6.0},
+                {7.0, 8.0, 9.0}
+        };
+        int j = 1;
+        double[] expected = {2.0, 5.0, 8.0};
+        double[] actual = Matrix_Utils.getUjTransposed(eigenFacesMatrix, j);
+        System.out.println(Arrays.toString(actual));
+        System.out.println(Arrays.toString(expected));
+
+        boolean result = compareVector(expected, actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testCalculateCovarianceMatrixLarge() {
+        UI_Utils.showTestTitle("testCalculateCovarianceMatrixLarge");
+        double[][] matrixATA = {
+                {4, 2, 0, 1},
+                {2, 3, 1, 0},
+                {0, 1, 2, 1},
+                {1, 0, 1, 3}
+        };
+        int n = 4;
+        double[][] expected = {
+                {1, 0.5, 0, 0.25},
+                {0.5, 0.75, 0.25, 0},
+                {0, 0.25, 0.5, 0.25},
+                {0.25, 0, 0.25, 0.75}
+        };
+        double[][] actual = Matrix_Utils.calculateCovarianceMatrix(matrixATA, n);
         boolean result = compareMatrices(expected, actual);
         UI_Utils.showTestResult(result);
     }

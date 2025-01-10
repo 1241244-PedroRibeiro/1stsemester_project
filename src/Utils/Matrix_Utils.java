@@ -2,14 +2,14 @@ package Utils;
 
 public class Matrix_Utils {
     public static double[][] transpose(double[][] matrix) {
-        double[][] transposedmatrix = new double[matrix[0].length][matrix.length];
+        double[][] transposedMatrix = new double[matrix[0].length][matrix.length];
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                    transposedmatrix[j][i] = matrix[i][j];
+                    transposedMatrix[j][i] = matrix[i][j];
             }
         }
 
-        return transposedmatrix;
+        return transposedMatrix;
     }
 
     public static double[][] matrixMultiplication(double[][] P, double[][] D) {
@@ -36,5 +36,39 @@ public class Matrix_Utils {
             }
         }
         return covarianceMatrix;
+    }
+
+    public static double[] calculateAverage(double[][] vectorMatrix) {
+        int numRows = vectorMatrix.length;
+        int numCols = vectorMatrix[0].length;
+
+        double[] averageVector = new double[numRows];
+
+        for (int i = 0; i < numRows; i++) {
+            double sum = 0.0;
+            for (int j = 0; j < numCols; j++) {
+                sum += vectorMatrix[i][j];
+            }
+            averageVector[i] = sum / numCols;
+        }
+
+        return averageVector;
+    }
+
+    public static double[] getMatrixVectorAtPosition(double[][] matrixEigenFaces, int j) {
+        double[] vector = new double[matrixEigenFaces.length];
+
+        for (int i = 0; i < matrixEigenFaces.length; i++) {
+            vector[i] = matrixEigenFaces[i][j];
+        }
+        return vector;
+    }
+
+    public static double[] getUjTransposed(double[][] EigenFacesmatrix, int j) {
+        double[] ujTransposed = new double[EigenFacesmatrix.length];
+        for (int i = 0; i < EigenFacesmatrix.length; i++) {
+            ujTransposed[i] = EigenFacesmatrix[i][j];
+        }
+        return ujTransposed;
     }
 }

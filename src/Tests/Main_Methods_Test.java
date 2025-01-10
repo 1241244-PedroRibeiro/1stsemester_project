@@ -24,14 +24,10 @@ public class Main_Methods_Test {
         testCalculateEAM_value_0444();
         testValidateMatrixNotSquare();
         testAskNumberOfEigenvectors();
-        testCalcularMedia();
         testValidateMatrixWithNegativeValues();
         testValidateMatrixNotSymmetrical();
-        testCalculateAverage15x15();
-        testObterVetorDaMatrizNaPosicao();
         testCalcularPeso();
         testGetVectorPhiOnPosition();
-        testObterUjTransposto();
         testSaveImageAsPNG();
         testCalcularVetoresPropriosC();
         testOrdenarVetoresProprios();
@@ -168,66 +164,7 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
-    public static void testCalcularMedia() {
-        UI_Utils.showTestTitle("testCalcularMedia");
 
-        double[][] matrizVetores = {
-                {1, 2, 3},
-                {4, 5, 6},
-                {7, 8, 9}
-        };
-        double[] expected = {2, 5, 8};
-        double[] actual = calculateAverage(matrizVetores);
-
-        boolean result = compareVector(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
-
-    public static void testCalculateAverage15x15() {
-        UI_Utils.showTestTitle("testCalculateAverage15x15");
-
-        double[][] vectorMatrix = {
-                {1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5},
-                {2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5},
-                {3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5},
-                {4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5},
-                {5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5},
-                {6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5},
-                {7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5},
-                {8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5},
-                {9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5},
-                {10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5},
-                {11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5},
-                {12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5},
-                {13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5},
-                {14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5},
-                {15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5}
-        };
-
-
-        double[] expectedAverageVector = {
-                8.5,
-                9.5,
-                10.5,
-                11.5,
-                12.5,
-                13.5,
-                14.5,
-                15.5,
-                16.5,
-                17.5,
-                18.5,
-                19.5,
-                20.5,
-                21.5,
-                22.5
-        };
-
-        double[] actualAverageVector = calculateAverage(vectorMatrix);
-        boolean result = compareVector(expectedAverageVector, actualAverageVector);
-
-        UI_Utils.showTestResult(result);
-    }
 
     public static double[][] generateSymmetricalMatrix(int size) {
         double[][] matrix = new double[size][size];
@@ -242,21 +179,7 @@ public class Main_Methods_Test {
         return matrix;
     }
 
-    public static void testObterVetorDaMatrizNaPosicao() {
-        UI_Utils.showTestTitle("testObterVetorDaMatrizNaPosicao");
 
-        double[][] matrizEigenFaces = {
-                {1.0, 2.0, 3.0},
-                {4.0, 5.0, 6.0},
-                {7.0, 8.0, 9.0}
-        };
-        int j = 1;
-        double[] expected = {2.0, 5.0, 8.0};
-        double[] actual = Main.getMatrixVectorAtPosition(matrizEigenFaces, j);
-
-        boolean result = compareVector(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
 
     public static void testCalcularPeso() {
         UI_Utils.showTestTitle("testCalcularPeso");
@@ -294,23 +217,7 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
-    public static void testObterUjTransposto() {
-        UI_Utils.showTestTitle("testObterUjTransposto");
 
-        double[][] matrizEigenFaces = {
-                {1.0, 2.0, 3.0},
-                {4.0, 5.0, 6.0},
-                {7.0, 8.0, 9.0}
-        };
-        int j = 1;
-        double[] expected = {2.0, 5.0, 8.0};
-        double[] actual = Main.getUjTransposed(matrizEigenFaces, j);
-        System.out.println(Arrays.toString(actual));
-        System.out.println(Arrays.toString(expected));
-
-        boolean result = compareVector(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
 
     public static void testGetVectorPhiOnPosition() {
         UI_Utils.showTestTitle("testGetVectorPhiOnPosition");
