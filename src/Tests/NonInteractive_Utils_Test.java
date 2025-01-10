@@ -15,6 +15,9 @@ public class NonInteractive_Utils_Test {
         testValidateK_ValidK();
         testValidateK_InvalidK_Negative();
         testValidateK_InvalidK_Zero();
+        testValidateK_InvalidK_NonNumeric();
+        testValidateK_PositiveGreaterThanOne();
+        testValidateK_NegativeNotMinusOne();
     }
 
     public static void testValidateK_ValidK() {
@@ -35,6 +38,24 @@ public class NonInteractive_Utils_Test {
         UI_Utils.showTestTitle("testValidateK_InvalidK_Zero");
         boolean expected = false;
         boolean actual = NonInteractive_Utils.validateK("0");
+        UI_Utils.showTestResult(expected == actual);
+    }
+    public static void testValidateK_InvalidK_NonNumeric() {
+        UI_Utils.showTestTitle("testValidateK_InvalidK_NonNumeric");
+        boolean expected = false;
+        boolean actual = NonInteractive_Utils.validateK("abc");
+        UI_Utils.showTestResult(expected == actual);
+    }
+    public static void testValidateK_PositiveGreaterThanOne() {
+        UI_Utils.showTestTitle("testValidateK_PositiveGreaterThanOne");
+        boolean expected = true;
+        boolean actual = NonInteractive_Utils.validateK("10");
+        UI_Utils.showTestResult(expected == actual);
+    }
+    public static void testValidateK_NegativeNotMinusOne() {
+        UI_Utils.showTestTitle("testValidateK_NegativeNotMinusOne");
+        boolean expected = false;
+        boolean actual = NonInteractive_Utils.validateK("-5");
         UI_Utils.showTestResult(expected == actual);
     }
 
