@@ -2,7 +2,7 @@ package Utils;
 
 import java.io.File;
 
-public class NonInteractiveValidations {
+public class NonInteractive_Utils {
 
     public static boolean validateK(String kArgument) {
         try {
