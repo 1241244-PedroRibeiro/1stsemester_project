@@ -359,10 +359,12 @@ public class Main {
         Random random = new Random();
         for (int i = 0; i < numEigenFaces; i++) {
             double lambda = decomposition.getRealEigenvalue(i);
-            double w = random.nextDouble() * 2 * Math.sqrt(lambda) - Math.sqrt(lambda);
-            double[] eigenFace = getMatrixVectorAtPosition(matrixEigenFaces, i);
-            for (int j = 0; j < newImage.length; j++) {
-                newImage[j] += w * eigenFace[j];
+            if (lambda > 0) { // Ensure lambda is positive
+                double w = random.nextDouble() * 2 * Math.sqrt(lambda) - Math.sqrt(lambda);
+                double[] eigenFace = getMatrixVectorAtPosition(matrixEigenFaces, i);
+                for (int j = 0; j < newImage.length; j++) {
+                    newImage[j] += w * eigenFace[j];
+                }
             }
         }
 
