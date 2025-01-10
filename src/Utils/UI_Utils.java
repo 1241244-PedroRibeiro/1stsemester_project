@@ -148,7 +148,7 @@ public class UI_Utils {
 
 
     /**
-     * Function to print a matrix (double[][]) for testing and viewing purposes
+     *Function to print a matrix (double[][]) for testing and viewing purposes
      *
      * @param matrix
      */

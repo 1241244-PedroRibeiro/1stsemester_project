@@ -1119,8 +1119,8 @@ public class Main {
 
 
     public static double[][] normalizeVectorsC(double[][] eigenvectorMatrixC) {
-        int numRows = eigenvectorMatrixC.length;      // Number of rows
-        int numCols = eigenvectorMatrixC[0].length;  // Number of columns (number of eigenvectors)
+        int numRows = eigenvectorMatrixC.length;      //Number of rows
+        int numCols = eigenvectorMatrixC[0].length;  //Number of columns (number of eigenvectors)
 
         double[][] eigenFacesMatrix = new double[numRows][numCols];
 
