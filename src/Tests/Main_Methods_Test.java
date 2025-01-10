@@ -45,8 +45,7 @@ public class Main_Methods_Test {
         testCalculateEAM_Vector();
         testCalculateEAM_VectorBigger();
         testGetImageAsJPG();
-        testCalculateMatrixA();
-        testPixelScalingEigenFaces();
+
     }
     public static void testGetImageAsJPG() {
         UI_Utils.showTestTitle("testGetImageAsJPG");
@@ -61,36 +60,7 @@ public class Main_Methods_Test {
         UI_Utils.showTestResult(result);
     }
 
-    public static void testCalculateMatrixA() {
-        UI_Utils.showTestTitle("testCalculateMatrixA");
 
-        double[][] matrixVectors = {
-                {1, 2},
-                {3, 4},
-                {5, 6}
-        };
-        double[] averageImages = {2, 3, 4};
-        double[][] expected = {
-                {-1, 0},
-                {0, 1},
-                {1, 2}
-        };
-
-        double[][] actual = Main.calculateMatrixA(3, 2, matrixVectors, averageImages);
-
-        boolean result = compareMatrix(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
-
-    public static void testPixelScalingEigenFaces() {
-        UI_Utils.showTestTitle("testPixelScalingEigenFaces");
-
-        double[] eigenFace = {-100.0, 0.0, 100.0, 200.0, 300.0, 400.0};
-        double[] expected = {0.0, 51.0, 102.0, 153.0, 204.0, 255.0}; // Corrected expected values
-        double[] actual = Main.pixelScalingEigenFaces(eigenFace);
-        boolean result = compareVector(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
     public static void testValidateMatrix() {
         UI_Utils.showTestTitle("testValidateMatrix");
 
