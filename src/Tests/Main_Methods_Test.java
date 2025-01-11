@@ -37,8 +37,6 @@ public class Main_Methods_Test {
         testaskNumberOfEigenVectors_UseAllEigenvectors();
         testaskNumberOfEigenVectors_InvalidNegativeInput();
         testaskNumberOfEigenVectors_InvalidLargeInput();
-        testNormalizeImageNoChanges();
-        testNormalizeImage();
         testCalculateEuclideanDistance();
         testCalculateEuclideanDistanceBiggerVectors();
         testValidateVectorPixels_Valid();
@@ -49,6 +47,70 @@ public class Main_Methods_Test {
         testPixelScalingEigenFaces();
         testCalculateMatrixA();
         testNormalizeVectorsCLargerMatrix();
+        testOwnDecomposition();
+        testSaveIntMatrixToCSV();
+        testCalculateEigenVectorsCLargerMatrix();
+        testCompressedMatrix();
+
+    }
+
+    public static void testOwnDecomposition() {
+        UI_Utils.showTestTitle("testOwnDecomposition");
+
+        double[][] inputMatrix = {
+                {4, -2},
+                {-2, 1}
+        };
+
+        // Passo 1: Calcular os valores próprios (eigenvalues) da matriz
+        // A matriz de entrada é:
+        // | 4  -2 |
+        // | -2  1 |
+        // Os valores próprios são as raízes do polinômio característico det(A - λI) = 0
+        // det | 4-λ  -2   |
+        //     | -2   1-λ  |
+        // (4-λ)(1-λ) - (-2)(-2) = 0
+        // λ^2 - 5λ = 0
+        // λ(λ - 5) = 0
+        // λ1 = 5, λ2 = 0
+
+        // Passo 2: Calcular os vetores próprios (eigenvectors) correspondentes
+        // Para λ1 = 5:
+        // (A - 5I)v = 0
+        // | 4-5  -2 | | x |   | -1 -2 | | x |   | 0 |
+        // | -2  1-5 | | y | = | -2 -4 | | y | = | 0 |
+        // -x - 2y = 0  =>  x = -2y
+        // Vetor próprio correspondente: v1 = [2, -1]
+
+        // Para λ2 = 0:
+        // (A - 0I)v = 0
+        // | 4  -2 | | x |   | 4 -2 | | x |   | 0 |
+        // | -2  1 | | y | = | -2  1 | | y | = | 0 |
+        // 4x - 2y = 0  =>  y = 2x
+        // Vetor próprio correspondente: v2 = [1, 2]
+
+        // Passo 3: Normalizar os vetores próprios
+        // v1 = [2, -1] / sqrt(2^2 + (-1)^2) = [2, -1] / sqrt(5) ≈ [0.8944271909999159, -0.4472135954999579]
+        // v2 = [1, 2] / sqrt(1^2 + 2^2) = [1, 2] / sqrt(5) ≈ [0.4472135954999579, 0.8944271909999159]
+
+        RealMatrix[] result = Main.ownDecomposition(inputMatrix);
+        double[][] actualP = result[0].getData();
+        double[][] actualD = result[1].getData();
+
+        double[][] expectedP = {
+                {0.8944271909999159, -0.4472135954999579},
+                {-0.4472135954999579, -0.8944271909999159}
+        };
+
+        double[][] expectedD = {
+                {5, 0},
+                {0, 0}
+        };
+
+        boolean resultP = compareMatrixWithTolerance(expectedP, actualP, 0.0001);
+        boolean resultD = compareMatrixWithTolerance(expectedD, actualD, 0.0001);
+
+        UI_Utils.showTestResult(resultP && resultD);
     }
 
     public static void testCalculateMatrixA() {
@@ -221,7 +283,6 @@ public class Main_Methods_Test {
     }
 
 
-
     public static double[][] generateSymmetricalMatrix(int size) {
         double[][] matrix = new double[size][size];
 
@@ -234,7 +295,6 @@ public class Main_Methods_Test {
         }
         return matrix;
     }
-
 
 
     public static void testCalcularPeso() {
@@ -259,7 +319,7 @@ public class Main_Methods_Test {
         };
         int tamanhoMatriz = 3;
         int contador = 1;
-        String outputPath = "output/test_data";
+        String outputPath = "resources/test_data/save_test";
 
         File outputDir = new File(outputPath);
         if (!outputDir.exists()) {
@@ -268,11 +328,10 @@ public class Main_Methods_Test {
 
         Main.saveImageAsJPG(outputPath, vetorImagem, tamanhoMatriz, contador, "/imagem_reconstruida_");
 
-        File outputFile = new File(outputPath + "/imagem_reconstruida_" + contador + ".png");
+        File outputFile = new File(outputPath + "/imagem_reconstruida_" + contador + ".jpg");
         boolean result = outputFile.exists();
         UI_Utils.showTestResult(result);
     }
-
 
 
     public static void testGetVectorPhiOnPosition() {
@@ -466,27 +525,6 @@ public class Main_Methods_Test {
         boolean result = compareInt(expectedK, actualK);
         UI_Utils.showTestResult(result);
     }
-    public static void testNormalizeImageNoChanges() {
-        UI_Utils.showTestTitle("testNormalizeImage");
-
-        double[] image = {0.0, 50.0, 100.0, 150.0, 200.0, 255.0};
-        double[] expected = {0.0, 50.0, 100.0, 150.0, 200.0, 255.0};
-        double[] actual = Main.normalizeImage(image);
-
-        boolean result = compareVector(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
-
-    public static void testNormalizeImage() {
-        UI_Utils.showTestTitle("testNormalizeImage_NeedsNormalization");
-
-        double[] image = {0.0, 100.0, 200.0, 300.0, 400.0, 500.0};
-        double[] expected = {0.0, 51.0, 102.0, 153.0, 204.0, 255.0};
-        double[] actual = Main.normalizeImage(image);
-
-        boolean result = compareVector(expected, actual);
-        UI_Utils.showTestResult(result);
-    }
 
     public static void testCalculateEuclideanDistance() {
         UI_Utils.showTestTitle("testCalculateEuclideanDistance");
@@ -511,6 +549,7 @@ public class Main_Methods_Test {
         boolean result = compareDouble(expectedDistance, actualDistance);
         UI_Utils.showTestResult(result);
     }
+
     public static void testValidateVectorPixels_Valid() {
         UI_Utils.showTestTitle("testValidateVectorPixelsValid");
 
@@ -530,6 +569,7 @@ public class Main_Methods_Test {
 
         UI_Utils.showTestResult(!resultInvalid);
     }
+
     public static void testCalculateEAM_Vector() {
         UI_Utils.showTestTitle("testCalculateEAM_Vector");
 

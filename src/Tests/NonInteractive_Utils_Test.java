@@ -21,11 +21,13 @@ public class NonInteractive_Utils_Test {
         testSelectFolderToRead_ValidFolder();
         testSelectFolderToRead_InvalidFolder();
         testValidateFilePath_ValidFile();
-
         testValidateFilePath_InvalidFile();
         testSelectFolderToRead_NoCSVFiles();
         testValidateFilePath_WithoutCSVFile();
+        testSaveMatrix();
+        testSaveVector();
     }
+
     public static void testSelectFolderToRead_NoCSVFiles() {
         UI_Utils.showTestTitle("testSelectFolderToRead_NoCSVFiles");
         boolean expected = false;
@@ -36,15 +38,17 @@ public class NonInteractive_Utils_Test {
     public static void testValidateFilePath_WithoutCSVFile() {
         UI_Utils.showTestTitle("testValidateFilePath_ExistingNonCSVFile");
         boolean expected = false;
-            boolean actual = NonInteractive_Utils.validateFilePath(VALID_PATH_BUT_NOT_CSV);
+        boolean actual = NonInteractive_Utils.validateFilePath(VALID_PATH_BUT_NOT_CSV);
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testValidateFilePath_InvalidFile() {
         UI_Utils.showTestTitle("testValidateFilePath_InvalidFile");
         boolean expected = false;
         boolean actual = NonInteractive_Utils.validateFilePath(INVALID_FILE_PATH);
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testValidateFilePath_ValidFile() {
         UI_Utils.showTestTitle("testValidateFilePath_ValidFile");
 
@@ -52,6 +56,7 @@ public class NonInteractive_Utils_Test {
         boolean actual = NonInteractive_Utils.validateFilePath(VALID_FILE_PATH);
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testSelectFolderToRead_InvalidFolder() {
         UI_Utils.showTestTitle("testSelectFolderToRead_InvalidFolder");
 
@@ -59,6 +64,7 @@ public class NonInteractive_Utils_Test {
         boolean actual = NonInteractive_Utils.selectFolderToRead(INVALID_FOLDER_PATH);
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testSelectFolderToRead_ValidFolder() {
         UI_Utils.showTestTitle("testSelectFolderToRead_ValidFolder");
         boolean expected = true;
@@ -86,18 +92,21 @@ public class NonInteractive_Utils_Test {
         boolean actual = NonInteractive_Utils.validateK("0");
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testValidateK_InvalidK_NonNumeric() {
         UI_Utils.showTestTitle("testValidateK_InvalidK_NonNumeric");
         boolean expected = false;
         boolean actual = NonInteractive_Utils.validateK("abc");
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testValidateK_PositiveGreaterThanOne() {
         UI_Utils.showTestTitle("testValidateK_PositiveGreaterThanOne");
         boolean expected = true;
         boolean actual = NonInteractive_Utils.validateK("10");
         UI_Utils.showTestResult(expected == actual);
     }
+
     public static void testValidateK_NegativeNotMinusOne() {
         UI_Utils.showTestTitle("testValidateK_NegativeNotMinusOne");
         boolean expected = false;
@@ -105,6 +114,33 @@ public class NonInteractive_Utils_Test {
         UI_Utils.showTestResult(expected == actual);
     }
 
+    public static void testSaveMatrix() {
+        UI_Utils.showTestTitle("testSaveMatrix");
+
+        double[][] matrix = {
+                {1.0, 2.0, 3.0},
+                {4.0, 5.0, 6.0},
+                {7.0, 8.0, 9.0}
+        };
+        String title = "Matrix Title";
+        String expected = "\nMatrix Title\n[1.00 2.00 3.00 \n4.00 5.00 6.00 \n7.00 8.00 9.00 ]\n";
+        String actual = NonInteractive_Utils.saveMatrix(matrix, title);
+
+        boolean result = expected.equals(actual);
+        UI_Utils.showTestResult(result);
+    }
+
+    public static void testSaveVector() {
+        UI_Utils.showTestTitle("testSaveVector");
+
+        double[] vector = {1.0, 2.0, 3.0};
+        String title = "Vector Title";
+        String expected = "\nVector Title\n[1.00, 2.00, 3.00]";
+        String actual = NonInteractive_Utils.saveVector(vector, title);
+
+        boolean result = expected.equals(actual);
+        UI_Utils.showTestResult(result);
+    }
 
 
 }

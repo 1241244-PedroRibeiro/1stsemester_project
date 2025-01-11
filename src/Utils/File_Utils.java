@@ -140,7 +140,7 @@ public class File_Utils {
                 if (!line.isEmpty()) {
                     String[] rowValues = line.split(",");
                     if (rowValues.length != columnCount) {
-                        System.out.println("Erro - número de colunas na linha" + (currentRow + 1) + " não corresponde ao esperado.");
+                        System.out.println("Erro - número de colunas na linha " + (currentRow + 1) + " não corresponde ao esperado.");
                         System.out.println("A matriz não é quadrada.");
                         return null;
                     }
@@ -183,6 +183,8 @@ public class File_Utils {
             }
         }
 
+        clearFolderFiles(outputDir);
+
         String outputFilename = "matriz_F1.csv";
         File outputFile = new File(outputDir, outputFilename);
 
@@ -199,6 +201,17 @@ public class File_Utils {
             System.out.println("\nMatriz salva no arquivo CSV com sucesso: " + outputFile.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Erro ao guardar a matriz no CSV: " + e.getMessage());
+        }
+    }
+
+    public static void clearFolderFiles(File outputFolder) {
+        File[] files = outputFolder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (!file.delete()) {
+                    System.out.println("Erro ao eliminar ficheiro: " + file.getName());
+                }
+            }
         }
     }
 

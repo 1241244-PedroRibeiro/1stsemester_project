@@ -1,25 +1,30 @@
 package Domain;
 
-import Utils.*;
+import Utils.File_Utils;
+import Utils.GreyscaleImageWriter;
 import org.apache.commons.math3.linear.EigenDecomposition;
-import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Arrays;
 
-import static Utils.Matrix_Utils.*;
 import static Utils.File_Utils.*;
-import static Utils.UI_Utils.*;
+import static Utils.Matrix_Utils.*;
+import static Utils.NonInteractive_Utils.selectFolderToRead;
 import static Utils.NonInteractive_Utils.*;
+import static Utils.UI_Utils.selectFolderToRead;
+import static Utils.UI_Utils.*;
 
 
 public class Main {
     public static final String OUTPUT_PATH_F1 = "funcionalidade_1";
+    public static final String OUTPUT_PATH_F2 = "funcionalidade_2";
+    public static final String OUTPUT_PATH_F3 = "funcionalidade_3";
+    public static final String OUTPUT_PATH_F5 = "funcionalidade_5";
     public static final String OUTPUT_PATH_F2_REBUILT_IMAGES = "funcionalidade_2/imagensReconstruidas/";
     public static final String OUTPUT_PATH_F2_EIGENFACES = "funcionalidade_2/eigenfaces/";
     public static final String OUTPUT_PATTERN_F3 = "funcionalidade_3/imagem_mais_proxima_";
@@ -37,355 +42,395 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String filePath, folderPath;
-        int numEigenFaces, menuOption;
-
-        //NON-INTERACTIVE MODE
         if (args.length > 0) {
-            boolean foundTxtFile = false;
+            handleNonInteractiveMode(args);
+        } else {
+            handleInteractiveMode();
+        }
+        scanner.close();
+    }
 
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].endsWith(".txt")) {
-                    foundTxtFile = true;
-                }
+    private static void handleNonInteractiveMode(String[] args) {
+        if (!validateArgs(args)) return;
+
+        txtContent = new StringBuilder();
+
+        String funcionalidade = null;
+        String numEigenfaces = null;
+        String caminhoCSV = null;
+        String caminhoImagens = null;
+        String txtFile = null;
+
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "-f":
+                    funcionalidade = args[++i];
+                    break;
+                case "-k":
+                    numEigenfaces = args[++i];
+                    break;
+                case "-i":
+                    caminhoCSV = args[++i];
+                    break;
+                case "-d":
+                    caminhoImagens = args[++i];
+                    break;
+                default:
+                    if (args[i].endsWith(".txt")) {
+                        txtFile = args[i];
+                        break;
+                    } else {
+                        System.out.println("Parâmetro desconhecido: " + args[i]);
+                        return;
+                    }
             }
+        }
 
-            if (!foundTxtFile) {
-                System.out.println("Nenhum argumento termina com .txt.\nA encerrar o programa...");
-                return;
+        if (funcionalidade == null) {
+            return;
+        }
+
+        int func = Integer.parseInt(funcionalidade);
+
+        if (func < 1 || func > 5) {
+            System.out.println("Funcionalidade inválida. Deve ser 1, 2, 3, 4 ou 5.");
+            return;
+        }
+
+        switch (func) {
+            case 1:
+                handleFunc1(numEigenfaces, caminhoCSV, txtFile);
+                break;
+            case 2:
+                handleFunc2(numEigenfaces, caminhoImagens, txtFile);
+                break;
+            case 3:
+                handleFunc3(numEigenfaces, caminhoCSV, caminhoImagens, txtFile);
+                break;
+            case 4:
+                handleFunc4(numEigenfaces, caminhoImagens, txtFile);
+                break;
+            case 5:
+                handleFunc5(txtFile);
+                break;
+        }
+    }
+
+    private static void handleInteractiveMode() {
+        interactive = true;
+        int menuOption;
+
+        do {
+            menuOption = getMenuOption();
+
+            switch (menuOption) {
+                case 1:
+                    handleInteractiveFunc1();
+                    break;
+                case 2:
+                    handleInteractiveFunc2();
+                    break;
+                case 3:
+                    handleInteractiveFunc3();
+                    break;
+                case 4:
+                    handleInteractiveFunc4();
+                    break;
+                case 5:
+                    handleInteractiveFunc5();
+
+                    break;
+                case 0:
+                    System.out.println("A fechar a aplicação...");
+                    break;
             }
+        } while (menuOption != 0);
+    }
 
-            System.out.println(args[args.length - 1]);
-            if (args[args.length - 1].matches(ARGUMENT_PATTERN)) {
+    private static boolean validateArgs(String[] args) {
+        boolean foundTxtFile = false;
+        for (String arg : args) {
+            if (arg.endsWith(".txt")) {
+                foundTxtFile = true;
+            }
+        }
+        if (!foundTxtFile) {
+            System.out.println("Nenhum argumento termina com .txt.\nA encerrar o programa...");
+            return false;
+        }
+        if (args[args.length - 1].matches(ARGUMENT_PATTERN)) {
+            System.out.println("Argumentos inválidos. Insira os argumentos no formato correto.\nA encerrar o programa...");
+            return false;
+        }
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].matches(ARGUMENT_PATTERN) && args[i + 1].matches(ARGUMENT_PATTERN)) {
                 System.out.println("Argumentos inválidos. Insira os argumentos no formato correto.\nA encerrar o programa...");
-                return;
+                return false;
             }
-            for (int i = 0; i < args.length - 1; i++) {
+        }
+        return true;
+    }
 
-                if (args[i].matches(ARGUMENT_PATTERN) && args[i + 1].matches(ARGUMENT_PATTERN)) {
-                    System.out.println("Argumentos inválidos. Insira os argumentos no formato correto.\nA encerrar o programa...");
-                    return;
+    private static int getMenuOption() {
+        int menuOption = -1;
+        while (menuOption < 0 || menuOption > 5) {
+            showMenuOptions();
+
+            if (scanner.hasNextInt()) {
+                menuOption = scanner.nextInt();
+                if (menuOption < 0 || menuOption > 5) {
+                    System.out.println("Opção inválida. Escolha uma opção válida.");
                 }
-
+            } else {
+                System.out.println("Entrada inválida. Insira um número.");
+                scanner.next();
             }
-            interactive = false;
-            txtContent = new StringBuilder();
+        }
+        return menuOption;
+    }
 
+    private static void handleFunc1(String numEigenfaces, String caminhoCSV, String txtFile) {
+        saveMenuTitle(1, txtContent);
+        if (numEigenfaces == null || caminhoCSV == null) {
+            System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade 1");
+            System.out.println("""           
+                    
+                    Parâmetros necessários:
+                      - k (número de vetores próprios)
+                      - i (caminho para a imagem CSV)
+                    
+                    """);
+            return;
+        }
 
-            String funcionalidade = null;
-            String numEigenfaces = null;
-            String caminhoCSV = null;
-            String caminhoImagens = null;
-            String txtFile = null;
+        if (!validateK(numEigenfaces) || !validateFilePath(caminhoCSV)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
 
-            for (int i = 0; i < args.length; i++) {
-                switch (args[i]) {
-                    case "-f":
-                        funcionalidade = args[++i];
-                        break;
-                    case "-k":
-                        numEigenfaces = args[++i];
-                        break;
-                    case "-i":
-                        caminhoCSV = args[++i];
-                        break;
-                    case "-d":
-                        caminhoImagens = args[++i];
-                        break;
-                    default:
-                        if (args[i].endsWith(".txt")) {
-                            txtFile = args[i];
-                            break;
-                        } else {
-                            System.out.println("Parâmetro desconhecido: " + args[i]);
-                            return;
-                        }
-                }
-            }
-            if (funcionalidade == null) {
-                return;
-            }
-            int func = Integer.parseInt(funcionalidade);
+        double[][] readMatrix = getMatrixFromCSV(caminhoCSV);
 
-            if (func < 1 || func > 5) {
-                System.out.println("Funcionalidade inválida. Deve ser 1, 2, 3, 4 ou 5.");
-                return;
-            }
+        if (readMatrix != null && validateMatrix(readMatrix)) {
+            int k = Integer.parseInt(numEigenfaces);
+            if (k == -1 || k > readMatrix.length) k = readMatrix.length;
+            clearFolderFiles(new File(OUTPUT_PATH_F1));
+            execFunc1(readMatrix, k);
+            saveToFile(txtFile, 1);
+        }
+    }
 
-            if (func == 1) {
-                if (numEigenfaces == null || caminhoCSV == null) {
-                    System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
-                    System.out.println("""           
-                            
-                            Parâmetros necessários:
-                              - k (número de vetores próprios)
-                              - i (caminho para a imagem CSV)
-                            
-                            """);
-                    return;
-                }
-                if (caminhoCSV == null || !validateK(numEigenfaces) || !validateFilePath(caminhoCSV)) {
-                    System.out.println("A encerrar o programa...");
-                    return;
-                } else {
+    private static void handleFunc2(String numEigenfaces, String caminhoImagens, String txtFile) {
+        saveMenuTitle(2, txtContent);
 
-                    double[][] readMatrix = getMatrixFromCSV(caminhoCSV);
+        if (numEigenfaces == null || caminhoImagens == null) {
+            printErrorMsg(2);
+            return;
+        }
 
-                    if (readMatrix != null) {
-                        if (validateMatrix(readMatrix)) {
-                            int k = Integer.parseInt(numEigenfaces);
-                            if (k == -1 || k > readMatrix.length) k = readMatrix.length;
-                            execFunc1(readMatrix, k);
-                            try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_1/" + txtFile))) {
-                                writer.write(txtContent.toString());
-                                System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
-                            } catch (IOException e) {
-                                System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
-                            }
-                        } else {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
-                    } else {
-                        System.out.println("A encerrar o programa...");
-                        return;
-                    }
-                }
-            }
-            else if (func == 2) {
-                if (numEigenfaces == null || caminhoImagens == null) {
-                    System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
-                    System.out.println("""
-                            
-                            Parâmetros necessários:
-                              - k (número de eigenfaces)
-                              - d (caminho para a pasta da base de imagens)
-                            
-                            """);
-                    return;
-                }
-                if (!selectFolderToRead(caminhoImagens) || !validateK(numEigenfaces)) {
-                    System.out.println("A encerrar o programa...");
-                    return;
-                } else {
-                    File[] files = getCsvFiles(caminhoImagens);
-                    if (files.length == 0) {
-                        System.out.println("A encerrar o programa...");
-                        return;
-                    } else {
+        if (!selectFolderToRead(caminhoImagens) || !validateK(numEigenfaces)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
 
-                        if (!validateImages(files)) {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
+        File[] files = getCsvFiles(caminhoImagens);
+        if (files.length == 0 || !validateImages(files)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
 
-                        int k = Integer.parseInt(numEigenfaces);
-                        execFunc2(files, k);
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_2/" + txtFile))) {
-                            writer.write(txtContent.toString());
-                            System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
-                        } catch (IOException e) {
-                            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
-                        }
-                        System.out.println("Funcionalidade executada com sucesso.");
-                    }
-                }
-            }
-            else if (func == 3) {
-                if (numEigenfaces == null || caminhoImagens == null || caminhoCSV == null) {
-                    System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
-                    System.out.println("""
-                            
-                            Parâmetros necessários:
-                              - k (número de eigenfaces)
-                              - i (caminho para a imagem CSV)
-                              - d (caminho para a pasta da base de imagens)
-                            
-                            """);
-                    return;
-                }
-                if (!validateK(numEigenfaces) || !selectFolderToRead(caminhoImagens) || !validateFilePath(caminhoCSV)) {
-                    System.out.println("A encerrar o programa...");
-                    return;
-                } else {
-                    File[] files = getCsvFiles(caminhoImagens);
-                    if (files.length == 0) {
-                        System.out.println("A encerrar o programa...");
-                        return;
-                    } else {
-                        if (!validateImages(files)) {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
-                        int k = Integer.parseInt(numEigenfaces);
-                        if (k > files.length || k == -1) {
-                            k = files.length;
-                            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + k);
-                        }
-                        execFunc3(caminhoImagens, k, caminhoCSV);
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_3/" + txtFile))) {
-                            writer.write(txtContent.toString());
-                            System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
-                        } catch (IOException e) {
-                            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
-                        }
-                        System.out.println("Funcionalidade executada com sucesso.");
-                    }
-                }
-            }
-            else if (func == 4) {
-                if (numEigenfaces == null || caminhoImagens == null) {
-                    System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade: " + func);
-                    System.out.println("""
-                            
-                            Parâmetros necessários:
-                              - k (número de eigenfaces)
-                              - d (caminho para a pasta da base de imagens)
-                            
-                            """);
-                    return;
-                }
-                if (!selectFolderToRead(caminhoImagens) || !validateK(numEigenfaces)) {
-                    System.out.println("A encerrar o programa...");
-                    return;
-                } else {
-                    File[] files = getCsvFiles(caminhoImagens);
-                    if (files.length == 0) {
-                        System.out.println("A encerrar o programa...");
-                        return;
-                    } else {
-                        if (!validateImages(files)) {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
-                        int k = Integer.parseInt(numEigenfaces);
-                        execFunc4(caminhoImagens, k);
-                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_4/" + txtFile))) {
-                            writer.write(txtContent.toString());
-                            System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
-                        } catch (IOException e) {
-                            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
-                        }
-                        System.out.println("Funcionalidade executada com sucesso.");
-                    }
-                }
-            }
-            else if(func==5){
-                txtContent.append("""
+        if (!validateImages(files)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
+
+        int k = Integer.parseInt(numEigenfaces);
+
+        clearFolderFiles(new File(OUTPUT_PATH_F2));
+        clearFolderFiles(new File(OUTPUT_PATH_F2_EIGENFACES));
+        clearFolderFiles(new File(OUTPUT_PATH_F2_REBUILT_IMAGES));
+
+        execFunc2(files, k);
+        saveToFile(txtFile, 2);
+    }
+
+    private static void handleFunc3(String numEigenfaces, String caminhoCSV, String caminhoImagens, String txtFile) {
+        saveMenuTitle(3, txtContent);
+
+        if (numEigenfaces == null || caminhoCSV == null || caminhoImagens == null) {
+            printErrorMsg(3);
+            return;
+        }
+
+        if (!validateK(numEigenfaces) || !selectFolderToRead(caminhoImagens) || !validateFilePath(caminhoCSV)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
+
+        File[] files = getCsvFiles(caminhoImagens);
+        if (files.length == 0 || !validateImages(files)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
+
+        if (!validateImages(files)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
+
+        int k = Integer.parseInt(numEigenfaces);
+        if (k == -1 || k > files.length) k = files.length;
+        clearFolderFiles(new File(OUTPUT_PATH_F3));
+        execFunc3(files, k, caminhoCSV);
+        saveToFile(txtFile, 3);
+    }
+
+    private static void handleFunc4(String numEigenfaces, String caminhoImagens, String txtFile) {
+        saveMenuTitle(4, txtContent);
+
+        if (numEigenfaces == null || caminhoImagens == null) {
+            printErrorMsg(4);
+            return;
+        }
+
+        if (!selectFolderToRead(caminhoImagens) || !validateK(numEigenfaces)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
+
+        File[] files = getCsvFiles(caminhoImagens);
+        if (files.length == 0 || !validateImages(files)) {
+            System.out.println("A encerrar o programa...");
+            return;
+        }
+
+        int k = Integer.parseInt(numEigenfaces);
+        if (k == -1 || k > files.length) k = files.length;
+        execFunc4(files, k);
+        saveToFile(txtFile, 4);
+    }
+
+    private static void handleFunc5(String txtFile) {
+        saveMenuTitle(5, txtContent);
+
+        txtContent.append("""
                     LAPR1 - Projeto Integrador
                     Grupo 04 - BitMinds
-                
                     Desenvolvido por:
                         Pedro Costa     - 1221790
                         Pedro Ribeiro   - 1241244
                         Afonso Mota     - 1241225
                         Diogo Oliveira  - 1241883
                 """);
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFile))) {
-                    writer.write(txtContent.toString());
-                    System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
-                } catch (IOException e) {
-                    System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
-                }
-                System.out.println("Funcionalidade executada com sucesso.");
+
+        File outputDir = new File(OUTPUT_PATH_F5);
+        if (!outputDir.exists()) {
+            if (outputDir.mkdir()) {
+                System.out.println("Pasta criada com sucesso.");
+            } else {
+                System.out.println("Erro ao criar a pasta.");
+                return;
             }
         }
-        //INTERACTIVE MODE
-        else {
-            interactive = true;
-            do {
-                menuOption = -1;
+        saveToFile(txtFile, 5);
+    }
 
-                while (menuOption < 0 || menuOption > 5) {
-                    showMenuOptions();
-
-                    if (scanner.hasNextInt()) {
-                        menuOption = scanner.nextInt();
-                        if (menuOption < 0 || menuOption > 5) {
-                            System.out.println("Opção inválida. Escolha uma opção válida.");
-                        }
-                    } else {
-                        System.out.println("Entrada inválida. Insira um número.");
-                        scanner.next();
-                    }
-                }
-                switch (menuOption) {
-                    case 1:
-                        showMenuTitle(1);
-                        filePath = selectFileToRead();
-                        double[][] readMatrix = getMatrixFromCSV(filePath);
-                        if (readMatrix != null) {
-                            if (validateMatrix(readMatrix)) {
-                                int k = askNumberOfEigenVectors(readMatrix);
-                                execFunc1(readMatrix, k);
-                            } else System.out.println("\nInsira uma matriz válida.");
-                        } else System.out.println("A matriz ainda não foi lida.");
-                        break;
-                    case 2:
-                        showMenuTitle(2);
-                        File[] files;
-
-                        do {
-                            folderPath = selectFolderToRead();
-                            files = getCsvFiles(folderPath);
-                        } while (files.length == 0);
-                        if (!validateImages(files)) {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
-                        numEigenFaces = askNumberOfEigenfaces();
-                        if (numEigenFaces > files.length) numEigenFaces = files.length;
-                        execFunc2(files, numEigenFaces);
-                        break;
-                    case 3:
-                        showMenuTitle(3);
-                        do {
-                            folderPath = selectFolderToRead();
-                            files = getCsvFiles(folderPath);
-                        } while (files.length == 0);
-                        if (!validateImages(files)) {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
-                        numEigenFaces = askNumberOfEigenfaces();
-                        if (numEigenFaces > files.length || numEigenFaces == -1) {
-                            numEigenFaces = files.length;
-                            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + numEigenFaces);
-                        }
-
-
-                        String newImagePath = selectFileToRead();
-                        double[][] matrix3 = getMatrixFromCSV(newImagePath);
-                        if (matrix3 != null) {
-                            execFunc3(folderPath, numEigenFaces, newImagePath);
-                        } else System.out.println("A matriz ainda não foi lida.");
-                        break;
-                    case 4:
-                        do {
-                            folderPath = selectFolderToRead();
-                            files = getCsvFiles(folderPath);
-                        } while (files.length == 0);
-                        if (!validateImages(files)) {
-                            System.out.println("A encerrar o programa...");
-                            return;
-                        }
-                        numEigenFaces = askNumberOfEigenfaces();
-                        if (numEigenFaces > files.length) numEigenFaces = files.length;
-                        execFunc4(folderPath, numEigenFaces);
-                        break;
-                    case 5:
-                        showMenuTitle(4);
-                        showDevelopmentTeam();
-                        break;
-                    case 0:
-                        System.out.println("A fechar a aplicação...");
-                        break;
-                }
-
-            } while (menuOption != 0);
-
+    private static void saveToFile(String txtFile, int func) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_" + func + "/" + txtFile))) {
+            writer.write(txtContent.toString());
+            System.out.println("Conteúdo salvo com sucesso no arquivo: " + txtFile);
+        } catch (IOException e) {
+            System.err.println("Erro ao guardar o conteúdo no arquivo: " + e.getMessage());
         }
-        scanner.close();
+    }
+
+    private static void handleInteractiveFunc1() {
+        showMenuTitle(1);
+        String filePath = selectFileToRead();
+        double[][] readMatrix = getMatrixFromCSV(filePath);
+        if (readMatrix != null) {
+            if (validateMatrix(readMatrix)) {
+                int k = askNumberOfEigenVectors(readMatrix);
+                clearFolderFiles(new File(OUTPUT_PATH_F1));
+                execFunc1(readMatrix, k);
+            } else System.out.println("\nInsira uma matriz válida.");
+        }
+    }
+
+    private static void handleInteractiveFunc2() {
+        showMenuTitle(2);
+        File[] files;
+        do {
+            String folderPath = selectFolderToRead();
+            files = getCsvFiles(folderPath);
+        } while (files.length == 0);
+
+        if (!validateImages(files)) {
+            return;
+        }
+
+        int numEigenFaces = askNumberOfEigenfaces();
+        if (numEigenFaces > files.length || numEigenFaces == -1) {
+            numEigenFaces = files.length;
+            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + numEigenFaces);
+        }
+        clearFolderFiles(new File(OUTPUT_PATH_F2));
+        clearFolderFiles(new File(OUTPUT_PATH_F2_EIGENFACES));
+        clearFolderFiles(new File(OUTPUT_PATH_F2_REBUILT_IMAGES));
+        execFunc2(files, numEigenFaces);
+    }
+
+    private static void handleInteractiveFunc3() {
+        showMenuTitle(3);
+        File[] files;
+        do {
+            String folderPath = selectFolderToRead();
+            files = getCsvFiles(folderPath);
+        } while (files.length == 0);
+
+        if (!validateImages(files)) {
+            return;
+        }
+
+        int numEigenFaces = askNumberOfEigenfaces();
+        if (numEigenFaces > files.length || numEigenFaces == -1) {
+            numEigenFaces = files.length;
+            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + numEigenFaces);
+        }
+
+        String newImagePath = selectFileToRead();
+        double[][] matrix3 = getMatrixFromCSV(newImagePath);
+        if (matrix3 != null) {
+            clearFolderFiles(new File(OUTPUT_PATH_F3));
+            execFunc3(files, numEigenFaces, newImagePath);
+        } else System.out.println("A matriz ainda não foi lida.");
+
+    }
+
+    private static void handleInteractiveFunc4() {
+        showMenuTitle(4);
+        File[] files;
+        do {
+            String folderPath = selectFolderToRead();
+            files = getCsvFiles(folderPath);
+        } while (files.length == 0);
+
+        if (!validateImages(files)) {
+            return;
+        }
+
+        int numEigenFaces = askNumberOfEigenfaces();
+
+        if (numEigenFaces > files.length || numEigenFaces == -1) {
+            numEigenFaces = files.length;
+            System.out.println("O número de EigenFaces a utilizar foi adaptado para o máximo: " + numEigenFaces);
+        }
+
+        execFunc4(files, numEigenFaces);
+    }
+
+    private static void handleInteractiveFunc5() {
+        showMenuTitle(5);
+        showDevelopmentTeam();
     }
 
     private static boolean validateImages(File[] files) {
@@ -399,8 +444,8 @@ public class Main {
     }
 
 
-    public static void execFunc4(String folderPath, int numEigenFaces) {
-        File[] files = getCsvFiles(folderPath);
+    public static void execFunc4(File[] files, int numEigenFaces) {
+
         int matrixSize = getNumberOfLines(files[0]);
         double[][] matrixVectors = processCsvFiles(files, matrixSize);
         double[] averageImages = calculateAverage(matrixVectors);
@@ -430,33 +475,26 @@ public class Main {
             }
         }
 
-        newImage = normalizeImage(newImage);
+        newImage = pixelScalingEigenFaces(newImage);
 
-        saveImageAsJPG(OUTPUT_PATH_F4_GENERATED_IMAGE, newImage, matrixSize, 4, FILE_F4_PATTERN);
 
-        if (interactive) System.out.println("\nNova imagem salva na pasta test_data com o nome new_image");
-        else txtContent.append("\nNova imagem salva na pasta test_data com o nome new_image");
-    }
-
-    public static double[] normalizeImage(double[] image) {
-        double min = Arrays.stream(image).min().orElse(0);
-        double max = Arrays.stream(image).max().orElse(255);
-
-        double[] normalizedImage = new double[image.length];
-        for (int i = 0; i < image.length; i++) {
-            normalizedImage[i] = 255 * (image[i] - min) / (max - min);
+        File folder = new File(OUTPUT_PATH_F4_GENERATED_IMAGE);
+        File[] listOfFiles = folder.listFiles();
+        int counter = 1;
+        if (listOfFiles != null) {
+            counter = listOfFiles.length + 1;
         }
 
-        return normalizedImage;
+        saveImageAsJPG(OUTPUT_PATH_F4_GENERATED_IMAGE, newImage, matrixSize, counter, FILE_F4_PATTERN);
+
+        if (interactive) System.out.println("\nNova imagem guardada na pasta");
+        else txtContent.append("\nNova imagem guardada na pasta");
     }
 
-    public static void execFunc3(String folderPath, int numEigenFaces, String newImagePath) {
+    public static void execFunc3(File[] files, int numEigenFaces, String newImagePath) {
         int matrixSize;
         double[][] matrixA, eigenVectorsATA, matrixEigenFaces, matrixVectors, matrixATA, matrixEigenVectorsC, transposedMatrixA;
         double[] averageImages;
-        File[] files;
-
-        files = getCsvFiles(folderPath);
 
         matrixSize = getNumberOfLines(files[0]);
         matrixVectors = processCsvFiles(files, matrixSize);
@@ -472,8 +510,6 @@ public class Main {
         }
 
         averageImages = calculateAverage(matrixVectors);
-        if (interactive) printVector(averageImages, "Vetor µ: ");
-        else txtContent.append(saveVector(averageImages, "Vetor µ: "));
         matrixA = calculateMatrixA(matrixSize * matrixSize, files.length, matrixVectors, averageImages);
         transposedMatrixA = transpose(matrixA);
         matrixATA = matrixMultiplication(transposedMatrixA, matrixA);
@@ -512,21 +548,32 @@ public class Main {
             distances[i] = calculateEuclideanDistance(newOmega, omegaMatrixDatabase[i]);
         }
         if (interactive) {
-            for (int i = 0; i < distances.length; i++) System.out.println("Distância de Ω" + i + ": " + distances[i]);
-
-            System.out.println("Número de Eigenfaces utilizado: " + numEigenFaces);
-            System.out.println("Novo Ω: " + Arrays.toString(newOmega));
-            for (int i = 0; i < files.length; i++)
-                System.out.println("Ω" + i + ": " + Arrays.toString(omegaMatrixDatabase[i]) + ", Distance: " + distances[i]);
-        } else {
+            System.out.println();
             for (int i = 0; i < distances.length; i++)
-                txtContent.append("\nDistância de Ω").append(i).append(": ").append(distances[i]).append("\n");
+                System.out.printf("Distância de Omega - %d: %.2f%n", i, distances[i]);
 
-            txtContent.append("\n\nNúmero de Eigenfaces utilizado: ").append(numEigenFaces).append("\n");
-            txtContent.append("\n\nNovo Ω: ").append(Arrays.toString(newOmega)).append("\n");
+            System.out.println("\n\nNúmero de Eigenfaces utilizadas: " + numEigenFaces);
+            printVector(newOmega, "\nNovo Omega:");
+            System.out.println();
+            for (int i = 0; i < files.length; i++) {
+                System.out.print("Omega " + i + ": ");
+                printVector(omegaMatrixDatabase[i], "");
+            }
+        } else {
+            txtContent.append("\n");
+            for (int i = 0; i < distances.length; i++)
+                txtContent.append("Distância de Omega - ").append(i).append(": ").append(String.format("%.2f", distances[i])).append("\n");
 
-            for (int i = 0; i < files.length; i++)
-                txtContent.append("\nΩ").append(i).append(": ").append(Arrays.toString(omegaMatrixDatabase[i])).append(", Distance: ").append(distances[i]).append("\n");
+            txtContent.append("\n\nNúmero de Eigenfaces utilizadas: ").append(numEigenFaces).append("\n");
+            txtContent.append("\n\nNovo Omega: ");
+            txtContent.append(saveVector(newOmega, ""));
+            txtContent.append("\n");
+
+            for (int i = 0; i < files.length; i++) {
+                txtContent.append("\nOmega ").append(i).append(": ");
+                txtContent.append(saveVector(omegaMatrixDatabase[i], ""));
+            }
+            txtContent.append("\n");
         }
 
         int[] closestImageIndices = new int[distances.length];
@@ -543,6 +590,7 @@ public class Main {
                 closestImageIndices[count++] = i;
             }
         }
+
 
         for (int i = 0; i < count; i++) {
             getImageAsJPG(files[closestImageIndices[i]], OUTPUT_PATTERN_F3 + closestImageIndices[i] + ".jpg");
@@ -572,7 +620,7 @@ public class Main {
         if (interactive) {
             System.out.println("\nMatriz de Covariâncias:");
             printMatrix(covarianceMatrix);
-        } else txtContent.append(saveMatrix(covarianceMatrix, "Matriz de Covariâncias:"));
+        } else txtContent.append(saveMatrix(covarianceMatrix, "\nMatriz de Covariâncias:"));
         eigenVectorsATA = getEigenVectors(matrixATA);
         matrixEigenVectorsC = calculateEigenVectorsC(matrixA, eigenVectorsATA, numEigenFaces);
         matrixEigenFaces = normalizeVectorsC(matrixEigenVectorsC);
@@ -622,6 +670,7 @@ public class Main {
             txtContent.append("\nErro absoluto médio:" + eam + "\n");
             txtContent.append(saveMatrix(matrixAk, "Matriz Reconstruída:"));
         }
+
         saveMatrixToCSV(matrixAk, OUTPUT_PATH_F1);
     }
 
@@ -647,11 +696,13 @@ public class Main {
                     image.setRGB(i, j, rgb);
                 }
             }
+
             File output = new File(outputPath);
             File parentDir = output.getParentFile();
             if (parentDir != null && !parentDir.exists()) {
                 parentDir.mkdirs();
             }
+
 
             ImageIO.write(image, "jpg", output);
             System.out.println("Imagem guardada como JPG: " + output.getAbsolutePath());
@@ -714,8 +765,9 @@ public class Main {
             double[] originalImageVector = getMatrixVectorAtPosition(matrixVectors, i);
             double eam = calculateEAM(originalImageVector, reconstructedImage);
 
-            if (interactive) System.out.printf("Erro Absoluto Médio (EAM) para a imagem %d: %.2f%n%n", i, eam);
-            else txtContent.append(String.format("Erro Absoluto Médio (EAM) para a imagem %d: %.2f%n%n", i, eam));
+            if (interactive) System.out.printf("Erro Absoluto Médio (EAM) para a imagem %d: %.2f%n", i, eam);
+            else txtContent.append(String.format("\nErro Absoluto Médio (EAM) para a imagem %d: %.2f%n", i, eam));
+
 
             saveIntMatrixToCSV(reconstructedImage, OUTPUT_PATH_F2_REBUILT_IMAGES, matrixSize, i, FILE_RECONSTRUCTED_IMAGE_PATTERN);
 
@@ -754,6 +806,7 @@ public class Main {
         }
     }
 
+
     public static double[] pixelScalingEigenFaces(double[] eigenFace) {
         // We initialize the variables to minimum and maximum
         double min = eigenFace[0];
@@ -772,7 +825,7 @@ public class Main {
         // Array to store the scaled values
         double[] scaledEigenFace = new double[eigenFace.length];
 
-        // Scale the values ​​to the range [0, 255]
+        // Scale the values to the range [0, 255]
         for (int i = 0; i < eigenFace.length; i++) {
             scaledEigenFace[i] = 255 * (eigenFace[i] - min) / (max - min);
         }
@@ -833,6 +886,15 @@ public class Main {
 
                 pixelValue = Math.max(0, Math.min(255, pixelValue));
                 array[i][j] = pixelValue;
+            }
+        }
+        File outputDir = new File(savePath);
+        if (!outputDir.exists()) {
+            if (outputDir.mkdir()) {
+                System.out.println("Pasta criada com sucesso.");
+            } else {
+                System.out.println("Erro ao criar a pasta.");
+                return;
             }
         }
 

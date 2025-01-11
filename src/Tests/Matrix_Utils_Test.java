@@ -1,10 +1,8 @@
 package Tests;
 
-import Domain.Main;
+
 import Utils.Matrix_Utils;
 import Utils.UI_Utils;
-
-import java.util.Arrays;
 
 import static Tests.Compare.compareVector;
 

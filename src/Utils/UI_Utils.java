@@ -72,6 +72,67 @@ public class UI_Utils {
         }
     }
 
+    public static void printErrorMsg(int func) {
+        System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade" + func);
+        System.out.println("""
+                
+                Parâmetros necessários:
+                  - k (número de eigenfaces)
+                  - d (caminho para a pasta da base de imagens)
+                
+                """);
+    }
+
+    public static void saveMenuTitle(int uiNumber, StringBuilder sb) {
+        switch (uiNumber) {
+            case 1:
+                sb.append("""
+                        
+                          ╔═════════════════════════════════════════════════════════════════════════╗
+                          ║             1. Decomposição Própria de Matriz Simétrica                 ║
+                          ╚═════════════════════════════════════════════════════════════════════════╝
+                        
+                        """);
+                break;
+            case 2:
+                sb.append("""
+                        
+                          ╔═════════════════════════════════════════════════════════════════════════╗
+                          ║    2. Reconstrução e representação de imagens utilizando EigenFaces     ║
+                          ╚═════════════════════════════════════════════════════════════════════════╝
+                        
+                        """);
+                break;
+            case 3:
+                sb.append("""
+                        
+                          ╔═════════════════════════════════════════════════════════════════════════╗
+                          ║           3. Identificação de Imagens utilizando EigenFaces             ║
+                          ╚═════════════════════════════════════════════════════════════════════════╝
+                        
+                        """);
+                break;
+            case 4:
+                sb.append("""
+                        
+                          ╔═════════════════════════════════════════════════════════════════════════╗
+                          ║              4. Gerar novas imagens utilizando Eigenfaces               ║
+                          ╚═════════════════════════════════════════════════════════════════════════╝
+                        
+                        """);
+                break;
+            case 5:
+                sb.append("""
+                        
+                          ╔═════════════════════════════════════════════════════════════════════════╗
+                          ║              5. Conhecer a equipa de desenvolvimento                    ║
+                          ╚═════════════════════════════════════════════════════════════════════════╝
+                        
+                        """);
+                break;
+        }
+    }
+
     public static void showTestTitle(String testName) {
         System.out.println("Nome teste: " + testName);
     }
@@ -86,7 +147,7 @@ public class UI_Utils {
     }
 
     public static void showDevelopmentTeam() {
-        System.out.println("""
+        System.out.println("""                    
                     LAPR1 - Projeto Integrador
                     Grupo 04 - BitMinds
                 
@@ -136,7 +197,12 @@ public class UI_Utils {
     }
 
     public static void printVector(double[] vector, String title) {
-        if (!title.isEmpty()) System.out.print("\n" + title + "\n[");
+        if (!title.isEmpty()) {
+            System.out.print("\n" + title + "\n[");
+        } else {
+            System.out.print("[");
+        }
+
         for (int i = 0; i < vector.length; i++) {
             System.out.printf("%.2f", vector[i]);
             if (i < vector.length - 1) {
@@ -148,7 +214,7 @@ public class UI_Utils {
 
 
     /**
-     *Function to print a matrix (double[][]) for testing and viewing purposes
+     * Function to print a matrix (double[][]) for testing and viewing purposes
      *
      * @param matrix
      */

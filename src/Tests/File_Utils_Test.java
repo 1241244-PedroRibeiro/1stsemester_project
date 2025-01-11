@@ -98,7 +98,7 @@ public class File_Utils_Test {
         };
         String outputPath = SAVE_TEST_FOLDER;
         File_Utils.saveMatrixToCSV(matrix, outputPath);
-        File outputFile = new File(outputPath + "/matrix_F1.csv");
+        File outputFile = new File(outputPath + "/matriz_F1.csv");
         boolean result = outputFile.exists();
         UI_Utils.showTestResult(result);
     }
@@ -133,10 +133,10 @@ public class File_Utils_Test {
         int matrixSize = 3;
         try {
             double[] vector = File_Utils.convertCSVtoVector(csvFile, matrixSize);
-            System.out.println("Result: Failed!");
+            System.out.println("Result: Falhou!");
             UI_Utils.drawLine();
         } catch (IOException e) {
-            System.out.println("Result: Passed!");
+            System.out.println("Result: Aprovado!");
             UI_Utils.drawLine();
         }
     }
@@ -181,10 +181,10 @@ public class File_Utils_Test {
         int matrixSize = 3;
         try {
             double[] vector = File_Utils.convertCSVtoVector(csvFile, matrixSize);
-            System.out.println("Result: Failed!");
+            System.out.println("Result: Falhou!");
             UI_Utils.drawLine();
         } catch (IOException | NumberFormatException e) {
-            System.out.println("Result: Passed!");
+            System.out.println("Result: Aprovado!");
             UI_Utils.drawLine();
         }
     }
