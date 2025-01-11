@@ -3,6 +3,9 @@ package Tests;
 import Utils.NonInteractive_Utils;
 import Utils.UI_Utils;
 
+/**
+ * Unit tests for the NonInteractive_Utils class.
+ */
 public class NonInteractive_Utils_Test {
     public static final String VALID_FOLDER_PATH = "resources/exemploMatrizesImagensCSVFuncionalidades2e3";
     public static final String INVALID_FOLDER_PATH = "path/to/invalid/folder";

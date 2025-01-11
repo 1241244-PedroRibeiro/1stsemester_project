@@ -3,8 +3,14 @@ package Utils;
 import java.io.File;
 import java.util.Scanner;
 
+/**
+ * Class with utility functions to print messages and menus to the user
+ */
 public class UI_Utils {
 
+    /**
+     * Function to print the main menu options
+     */
     public static void showMenuOptions() {
         System.out.println("""
                 
@@ -25,6 +31,11 @@ public class UI_Utils {
         System.out.print("     Escolha uma opção: ");
     }
 
+    /**
+     * Function to print the title of the specific menu
+     *
+     * @param uiNumber - number of the menu
+     */
     public static void showMenuTitle(int uiNumber) {
         switch (uiNumber) {
             case 1:
@@ -72,6 +83,11 @@ public class UI_Utils {
         }
     }
 
+    /**
+     * Function to print the error message when the user doesn't provide all the necessary arguments
+     *
+     * @param func
+     */
     public static void printErrorMsg(int func) {
         System.out.println("Por favor, indique todos os argumentos necessários para a funcionalidade" + func);
         System.out.println("""
@@ -83,6 +99,12 @@ public class UI_Utils {
                 """);
     }
 
+    /**
+     * Method used to append the menu title to the non-interaction StringBuilder
+     *
+     * @param uiNumber number of the menu
+     * @param sb       StringBuilder to append the menu title
+     */
     public static void saveMenuTitle(int uiNumber, StringBuilder sb) {
         switch (uiNumber) {
             case 1:
@@ -133,10 +155,20 @@ public class UI_Utils {
         }
     }
 
+    /**
+     * Method to show the test title
+     *
+     * @param testName
+     */
     public static void showTestTitle(String testName) {
         System.out.println("Nome teste: " + testName);
     }
 
+    /**
+     * Method to show the test result in case of success or failure
+     *
+     * @param result boolean result of the test
+     */
     public static void showTestResult(boolean result) {
         if (result) {
             System.out.println("Resultado: Aprovado!");
@@ -146,6 +178,9 @@ public class UI_Utils {
         System.out.println("══════════════════════════════════════════");
     }
 
+    /**
+     * Method to show the development team
+     */
     public static void showDevelopmentTeam() {
         System.out.println("""                    
                     LAPR1 - Projeto Integrador
@@ -159,6 +194,11 @@ public class UI_Utils {
                 """);
     }
 
+    /**
+     * Method that asks for the file path to read until a valid path is given
+     *
+     * @return String with the file path
+     */
     public static String selectFileToRead() {
         Scanner scanner = new Scanner(System.in);
         String filePath = null;
@@ -177,6 +217,11 @@ public class UI_Utils {
         return filePath;
     }
 
+    /**
+     * Method that asks for the folder path to read until a valid path is given
+     *
+     * @return String with the folder path
+     */
     public static String selectFolderToRead() {
         Scanner scanner = new Scanner(System.in);
         String folderPath = null;
@@ -196,6 +241,12 @@ public class UI_Utils {
         return folderPath;
     }
 
+    /**
+     * Method that prints a given vector on the console
+     *
+     * @param vector vector to print
+     * @param title  title of the vector
+     */
     public static void printVector(double[] vector, String title) {
         if (!title.isEmpty()) {
             System.out.print("\n" + title + "\n[");
@@ -227,7 +278,9 @@ public class UI_Utils {
         }
     }
 
-
+    /**
+     * Print the line division between unitary tests
+     */
     public static void drawLine() {
         System.out.println("══════════════════════════════════════════");
     }

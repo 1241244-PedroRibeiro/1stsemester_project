@@ -5,8 +5,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * This class is responsible for writing a 2D array as a greyscale image.
+ */
 public class GreyscaleImageWriter {
 
+    /**
+     * Writes a 2D array as a greyscale image.
+     * @param array 2D array to be written as an image
+     * @param outputFilePath path to save the image
+     * @throws IOException if an error occurs while writing the image
+     */
     public void writeArrayAsImage(int[][] array, String outputFilePath) throws IOException {
         int height = array.length;
         int width = array[0].length;

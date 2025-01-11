@@ -15,7 +15,9 @@ import java.util.Scanner;
 import static Domain.Main.*;
 import static Tests.Compare.*;
 
-
+/**
+ * Unit tests for the methods in Main class.
+ */
 public class Main_Methods_Test {
 
     public static void main(String[] args) {

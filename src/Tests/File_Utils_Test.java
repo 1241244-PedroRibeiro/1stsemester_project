@@ -6,6 +6,9 @@ import Utils.UI_Utils;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Unit tests for the File_Utils class.
+ */
 public class File_Utils_Test {
 
     public static final String F1_CSV_FILE = "resources/exampleInputFunc1.csv";

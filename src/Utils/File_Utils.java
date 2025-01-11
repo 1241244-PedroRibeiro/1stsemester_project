@@ -3,7 +3,15 @@ package Utils;
 import java.io.*;
 import java.util.Scanner;
 
+/**
+ * Class that contains utility methods for file operations.
+ */
 public class File_Utils {
+    /**
+     * Method to get the CSV files from a folder.
+     * @param folderPath The path to the folder.
+     * @return An array of CSV files.
+     */
     public static File[] getCsvFiles(String folderPath) {
         File folder = new File(folderPath);
 
@@ -44,7 +52,11 @@ public class File_Utils {
         return csvFiles;
     }
 
-
+    /**
+     * Method to get the number of lines in a CSV file.
+     * @param csvFile The CSV file.
+     * @return The number of lines in the CSV file.
+     */
     public static int getNumberOfLines(File csvFile) {
         int lineCount = 0;
         try (Scanner scanner = new Scanner(csvFile)) {
@@ -60,6 +72,12 @@ public class File_Utils {
         return lineCount;
     }
 
+    /**
+     * Method to process CSV files and convert them to a matrix of vectors, where each column is a vector.
+     * @param files The CSV files.
+     * @param matrixSize The size of the matrix.
+     * @return A matrix of vectors.
+     */
     public static double[][] processCsvFiles(File[] files, int matrixSize) {
         double[][] matrixVectors = new double[matrixSize * matrixSize][files.length];
 
@@ -79,6 +97,13 @@ public class File_Utils {
         return matrixVectors;
     }
 
+    /**
+     * Method to convert a CSV file to a vector.
+     * @param fileCSV The CSV file.
+     * @param matrixSize The size of the matrix.
+     * @return The converted vector.
+     * @throws IOException If an I/O error occurs.
+     */
     public static double[] convertCSVtoVector(File fileCSV, int matrixSize) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(fileCSV));
 
@@ -109,7 +134,11 @@ public class File_Utils {
         return array;
     }
 
-
+    /**
+     * Method to read a matrix from a CSV file.
+     * @param csvPath The path to the CSV file.
+     * @return The matrix read from the CSV file.
+     */
     public static double[][] getMatrixFromCSV(String csvPath) {
         double[][] matrix = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
@@ -166,7 +195,11 @@ public class File_Utils {
         return matrix;
     }
 
-
+    /**
+     * Method to save a matrix to a CSV file.
+     * @param matrix The matrix to save.
+     * @param outputPath The path to save the CSV file.
+     */
     public static void saveMatrixToCSV(double[][] matrix, String outputPath) {
         if (matrix == null || matrix.length == 0) {
             System.out.println("\nMatriz inválida. Não foi possível salvar no CSV.");
@@ -204,6 +237,10 @@ public class File_Utils {
         }
     }
 
+    /**
+     * Method to clear the files in a folder.
+     * @param outputFolder The folder to clear.
+     */
     public static void clearFolderFiles(File outputFolder) {
         File[] files = outputFolder.listFiles();
         if (files != null) {

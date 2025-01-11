@@ -19,8 +19,13 @@ import static Utils.NonInteractive_Utils.*;
 import static Utils.UI_Utils.selectFolderToRead;
 import static Utils.UI_Utils.*;
 
-
+/**
+ * Main class of the program.
+ */
 public class Main {
+    /**
+     * Constants used in the program.
+     */
     public static final String OUTPUT_PATH_F1 = "funcionalidade_1";
     public static final String OUTPUT_PATH_F2 = "funcionalidade_2";
     public static final String OUTPUT_PATH_F3 = "funcionalidade_3";
@@ -40,6 +45,11 @@ public class Main {
     public static boolean interactive;
     public static StringBuilder txtContent;
 
+    /**
+     * Main method to execute the program.
+     *
+     * @param args Arguments passed to the program.
+     */
     public static void main(String[] args) {
 
         if (args.length > 0) {
@@ -50,6 +60,11 @@ public class Main {
         scanner.close();
     }
 
+    /**
+     * Handles the non-interactive mode of the program.
+     *
+     * @param args Arguments passed to the program.
+     */
     private static void handleNonInteractiveMode(String[] args) {
         if (!validateArgs(args)) return;
 
@@ -116,6 +131,9 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the interactive mode of the program.
+     */
     private static void handleInteractiveMode() {
         interactive = true;
         int menuOption;
@@ -147,6 +165,12 @@ public class Main {
         } while (menuOption != 0);
     }
 
+    /**
+     * Validates the arguments passed to the program.
+     *
+     * @param args Arguments passed to the program.
+     * @return True if the arguments are valid, false otherwise.
+     */
     private static boolean validateArgs(String[] args) {
         boolean foundTxtFile = false;
         for (String arg : args) {
@@ -154,6 +178,7 @@ public class Main {
                 foundTxtFile = true;
             }
         }
+
         if (!foundTxtFile) {
             System.out.println("Nenhum argumento termina com .txt.\nA encerrar o programa...");
             return false;
@@ -171,6 +196,9 @@ public class Main {
         return true;
     }
 
+    /**
+     * Shows the menu options available to the user. Running until the user chooses a valid option.
+     */
     private static int getMenuOption() {
         int menuOption = -1;
         while (menuOption < 0 || menuOption > 5) {
@@ -189,6 +217,13 @@ public class Main {
         return menuOption;
     }
 
+    /**
+     * Handles the functionality 1 (Symmetric Matrix Eigen Decomposition) of the program for the non-interactive mode.
+     *
+     * @param numEigenfaces The number of eigenfaces to use.
+     * @param caminhoCSV    The path to the CSV file.
+     * @param txtFile       The name of the text file to save the content.
+     */
     private static void handleFunc1(String numEigenfaces, String caminhoCSV, String txtFile) {
         saveMenuTitle(1, txtContent);
         if (numEigenfaces == null || caminhoCSV == null) {
@@ -219,6 +254,13 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the functionality 2 (Image Reconstruction and Representation Using EigenFaces) of the program for the non-interactive mode.
+     *
+     * @param numEigenfaces  The number of eigenfaces to use.
+     * @param caminhoImagens The path to the folder with the images.
+     * @param txtFile        The name of the text file to save the content.
+     */
     private static void handleFunc2(String numEigenfaces, String caminhoImagens, String txtFile) {
         saveMenuTitle(2, txtContent);
 
@@ -253,6 +295,14 @@ public class Main {
         saveToFile(txtFile, 2);
     }
 
+    /**
+     * Handles the functionality 3 (Image Identification Using EigenFaces) of the program for the non-interactive mode.
+     *
+     * @param numEigenfaces  The number of eigenfaces to use.
+     * @param caminhoCSV     The path to the CSV file.
+     * @param caminhoImagens The path to the folder with the images.
+     * @param txtFile        The name of the text file to save the content.
+     */
     private static void handleFunc3(String numEigenfaces, String caminhoCSV, String caminhoImagens, String txtFile) {
         saveMenuTitle(3, txtContent);
 
@@ -284,6 +334,13 @@ public class Main {
         saveToFile(txtFile, 3);
     }
 
+    /**
+     * Handles the functionality 4 (Generating New Images Using EigenFaces) of the program for the non-interactive mode.
+     *
+     * @param numEigenfaces  The number of eigenfaces to use.
+     * @param caminhoImagens The path to the folder with the images.
+     * @param txtFile        The name of the text file to save the content.
+     */
     private static void handleFunc4(String numEigenfaces, String caminhoImagens, String txtFile) {
         saveMenuTitle(4, txtContent);
 
@@ -309,6 +366,11 @@ public class Main {
         saveToFile(txtFile, 4);
     }
 
+    /**
+     * Handles the functionality 5 (Know development team) of the program for the non-interactive mode.
+     *
+     * @param txtFile The name of the text file to save the content.
+     */
     private static void handleFunc5(String txtFile) {
         saveMenuTitle(5, txtContent);
 
@@ -334,6 +396,12 @@ public class Main {
         saveToFile(txtFile, 5);
     }
 
+    /**
+     * Saves the content of the stringbuild of non-interactive mode to the specified text file.
+     *
+     * @param txtFile The name of the text file to save the content.
+     * @param func    The functionality number.
+     */
     private static void saveToFile(String txtFile, int func) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("funcionalidade_" + func + "/" + txtFile))) {
             writer.write(txtContent.toString());
@@ -343,6 +411,9 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the functionality 1 (Symmetric Matrix Eigen Decomposition) of the program for the interactive mode.
+     */
     private static void handleInteractiveFunc1() {
         showMenuTitle(1);
         String filePath = selectFileToRead();
@@ -356,6 +427,9 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the functionality 2 (Image Reconstruction and Representation Using EigenFaces) of the program for the interactive mode.
+     */
     private static void handleInteractiveFunc2() {
         showMenuTitle(2);
         File[] files;
@@ -379,6 +453,9 @@ public class Main {
         execFunc2(files, numEigenFaces);
     }
 
+    /**
+     * Handles the functionality 3 (Image Identification Using EigenFaces) of the program for the interactive mode.
+     */
     private static void handleInteractiveFunc3() {
         showMenuTitle(3);
         File[] files;
@@ -406,6 +483,9 @@ public class Main {
 
     }
 
+    /**
+     * Handles the functionality 4 (Generating New Images Using EigenFaces) of the program for the interactive mode.
+     */
     private static void handleInteractiveFunc4() {
         showMenuTitle(4);
         File[] files;
@@ -428,11 +508,20 @@ public class Main {
         execFunc4(files, numEigenFaces);
     }
 
+    /**
+     * Handles the functionality 5 (Know development team) of the program for the interactive mode.
+     */
     private static void handleInteractiveFunc5() {
         showMenuTitle(5);
         showDevelopmentTeam();
     }
 
+    /**
+     * Validates all csv matrices in the given folder.
+     *
+     * @param files The files to validate.
+     * @return True if all matrices are valid, false otherwise.
+     */
     private static boolean validateImages(File[] files) {
         for (File file : files) {
             double[][] matrix = File_Utils.getMatrixFromCSV(file.getAbsolutePath());
@@ -444,6 +533,12 @@ public class Main {
     }
 
 
+    /**
+     * Contains the code necessary to run the functionality 4 of the program for both interactive and non-interactive modes.
+     *
+     * @param files         The files to process.
+     * @param numEigenFaces The number of eigenfaces to use.
+     */
     public static void execFunc4(File[] files, int numEigenFaces) {
 
         int matrixSize = getNumberOfLines(files[0]);
@@ -491,6 +586,13 @@ public class Main {
         else txtContent.append("\nNova imagem guardada na pasta");
     }
 
+    /**
+     * Contains the code necessary to run the functionality 3 of the program for both interactive and non-interactive modes.
+     *
+     * @param files         The files to process.
+     * @param numEigenFaces The number of eigenfaces to use.
+     * @param newImagePath  The path to the new image.
+     */
     public static void execFunc3(File[] files, int numEigenFaces, String newImagePath) {
         int matrixSize;
         double[][] matrixA, eigenVectorsATA, matrixEigenFaces, matrixVectors, matrixATA, matrixEigenVectorsC, transposedMatrixA;
@@ -597,6 +699,12 @@ public class Main {
         }
     }
 
+    /**
+     * Contains the code necessary to run the functionality 2 of the program for both interactive and non-interactive modes.
+     *
+     * @param files         The files to process.
+     * @param numEigenFaces The number of eigenfaces to use.
+     */
     public static void execFunc2(File[] files, int numEigenFaces) {
         double[][] matrixEigenVectorsC, transposedMatrixA, matrixVectors, matrixATA, eigenVectorsATA, matrixA, matrixEigenFaces;
         int matrixSize;
@@ -630,6 +738,12 @@ public class Main {
         rebuildImages(files, matrixA, matrixEigenFaces, averageImages, numEigenFaces, matrixSize, matrixVectors);
     }
 
+    /**
+     * Contains the code necessary to run the functionality 1 of the program for both interactive and non-interactive modes.
+     *
+     * @param readMatrix The matrix read from the csv.
+     * @param k          The number of eigenfaces to use.
+     */
     public static void execFunc1(double[][] readMatrix, int k) {
         if (interactive) {
             System.out.println("\nNúmero de eigenfaces utilizadas:");
@@ -674,6 +788,13 @@ public class Main {
         saveMatrixToCSV(matrixAk, OUTPUT_PATH_F1);
     }
 
+    /**
+     * Method to calculate the Euclidean distance between two vectors.
+     *
+     * @param vector1 The first vector.
+     * @param vector2 The second vector.
+     * @return The Euclidean distance between the two vectors.
+     */
     public static double calculateEuclideanDistance(double[] vector1, double[] vector2) {
         double soma = 0.0;
         for (int i = 0; i < vector1.length; i++) {
@@ -682,6 +803,12 @@ public class Main {
         return Math.sqrt(soma);
     }
 
+    /**
+     * Saves the image as a JPG file.
+     *
+     * @param csvFile    The CSV file to read the image from.
+     * @param outputPath The path to save the image.
+     */
     public static void getImageAsJPG(File csvFile, String outputPath) {
         try {
             double[][] imageMatrix = getMatrixFromCSV(csvFile.getAbsolutePath());
@@ -712,6 +839,15 @@ public class Main {
     }
 
 
+    /**
+     * Method that calculates Matrix A.
+     *
+     * @param lines         The number of lines in the matrix.
+     * @param rows          The number of rows in the matrix.
+     * @param matrixVectors The matrix containing the original images.
+     * @param averageImages The array containing the average images.
+     * @return The calculated matrix A.
+     */
     public static double[][] calculateMatrixA(int lines, int rows, double[][] matrixVectors, double[] averageImages) {
         double[][] matrixA = new double[lines][rows];
 
@@ -724,6 +860,17 @@ public class Main {
         return matrixA;
     }
 
+    /**
+     * Method that handles the reconstruction of each image in the database. This method saves the rebuilt images in the output folder and the original/transformed csv.
+     *
+     * @param files            The files to process.
+     * @param matrixA          The matrix A.
+     * @param eigenFacesMatrix The matrix containing the eigenfaces.
+     * @param averageImages    The array containing the average images.
+     * @param numEigenFaces    The number of eigenfaces to use.
+     * @param matrixSize       The size of the matrix.
+     * @param matrixVectors    The matrix containing the original images.
+     */
     public static void rebuildImages(File[] files, double[][] matrixA, double[][] eigenFacesMatrix, double[] averageImages, int numEigenFaces, int matrixSize, double[][] matrixVectors) {
         File outputFolder = new File(OUTPUT_PATH_F2_REBUILT_IMAGES);
 
@@ -780,6 +927,12 @@ public class Main {
         }
     }
 
+    /**
+     * Method that validates every pixel of a given vector(image). Must be between 0 and 255.
+     *
+     * @param reconstructedImage The vector(image) to validate.
+     * @return True if all pixels are valid, false otherwise.
+     */
     public static boolean validateVectorPixels(double[] reconstructedImage) {
         for (int i = 0; i < reconstructedImage.length; i++) {
             if (reconstructedImage[i] < 0 || reconstructedImage[i] > 255) {
@@ -789,7 +942,13 @@ public class Main {
         return true;
     }
 
-
+    /**
+     * Method that handles the saving of the eigenfaces. It saves the original and the transformed eigenfaces in csv and jpg format.
+     *
+     * @param eigenFacesMatrix
+     * @param matrixSize
+     * @param numEigenFaces
+     */
     public static void saveEigenFaces(double[][] eigenFacesMatrix, int matrixSize, int numEigenFaces) {
         File outputFolder = new File(OUTPUT_PATH_F2_EIGENFACES);
 
@@ -806,7 +965,12 @@ public class Main {
         }
     }
 
-
+    /**
+     * This method scales the pixels of the given vector (eigenface/image) to the range [0, 255].
+     *
+     * @param eigenFace The vector to scale.
+     * @return The scaled vector.
+     */
     public static double[] pixelScalingEigenFaces(double[] eigenFace) {
         // We initialize the variables to minimum and maximum
         double min = eigenFace[0];
@@ -833,6 +997,13 @@ public class Main {
         return scaledEigenFace;
     }
 
+    /**
+     * Method to calculate the Average Absolute Error (EAM).
+     *
+     * @param original      The original vector.
+     * @param reconstructed The reconstructed vector.
+     * @return The EAM value.
+     */
     public static double calculateEAM(double[] original, double[] reconstructed) {
         double sum = 0;
         int length = original.length;
@@ -843,6 +1014,15 @@ public class Main {
         return sum / length;
     }
 
+    /**
+     * Method to save a matrix of Integer values to a CSV file by converting double values to integers.
+     *
+     * @param vector      The vector to save.
+     * @param outputPath  The path to save the CSV file.
+     * @param matrixSize  The size of the matrix.
+     * @param counter     The counter to append to the file name.
+     * @param filePattern The file pattern to append to the file name.
+     */
     public static void saveIntMatrixToCSV(double[] vector, String outputPath, int matrixSize, int counter, String filePattern) {
         int[][] matrix = new int[matrixSize][matrixSize];
         for (int i = 0; i < matrixSize; i++) {
@@ -868,7 +1048,13 @@ public class Main {
         }
     }
 
-
+    /**
+     * Method to calculate Weights associated with each eigenface.
+     *
+     * @param ujTransposed The transposed vector.
+     * @param phi          The phi vector.
+     * @return The calculated weight.
+     */
     public static double calculateWeight(double[] ujTransposed, double[] phi) {
         double weight = 0.0;
 
@@ -878,6 +1064,15 @@ public class Main {
         return weight;
     }
 
+    /**
+     * Method that saves the image as a JPG file.
+     *
+     * @param savePath    The path to save the image.
+     * @param imageVector The image vector.
+     * @param matrixSize  The size of the matrix.
+     * @param counter     The counter to append to the file name.
+     * @param filePattern The file pattern to append to the file name.
+     */
     public static void saveImageAsJPG(String savePath, double[] imageVector, int matrixSize, int counter, String filePattern) {
         int[][] array = new int[matrixSize][matrixSize];
         for (int i = 0; i < matrixSize; i++) {
@@ -907,6 +1102,13 @@ public class Main {
     }
 
 
+    /**
+     * Method that returns the vector Phi of a given Matrix on a specific position.
+     *
+     * @param matrixA The matrix to use for the search.
+     * @param index   The index to search for.
+     * @return The Phi vector at the given index.
+     */
     public static double[] getPhiInPosition(double[][] matrixA, int index) {
         double[] phi = new double[matrixA.length];
 
@@ -917,6 +1119,14 @@ public class Main {
         return phi;
     }
 
+    /**
+     * Method that returns the transposed vector Uj.
+     *
+     * @param matrixA
+     * @param eigenVectorsATA
+     * @param numEigenFaces
+     * @return
+     */
     public static double[][] calculateEigenVectorsC(double[][] matrixA, double[][] eigenVectorsATA, int numEigenFaces) {
         int numLinesA = matrixA.length;
         int numColumnsA = matrixA[0].length;
@@ -945,6 +1155,12 @@ public class Main {
         return eigenVectorsMatrixC;
     }
 
+    /**
+     * Method that uses Apache Commons Math to calculate the eigenvalues and eigenvectors of a matrix.
+     *
+     * @param matrixRead The matrix to decompose.
+     * @return The eigenvectors and eigenvalues of the matrix.
+     */
     public static RealMatrix[] ownDecomposition(double[][] matrixRead) {
         // Own decomposition
         RealMatrix[] result = new RealMatrix[2];
@@ -960,6 +1176,14 @@ public class Main {
         return result;
     }
 
+    /**
+     * This method compresses the eigenvalues and eigenvectors matrices by sorting them in descending order and selecting the top k eigenvalues and corresponding eigenvectors.
+     *
+     * @param matrixP The eigenvectors matrix.
+     * @param matrixD The eigenvalues matrix.
+     * @param k       The number of eigenfaces to use.
+     * @return The compressed matrices.
+     */
     public static double[][][] compressedMatrix(double[][] matrixP, double[][] matrixD, int k) {
         double[][] auxP = matrixP;
         double[][] auxD = matrixD;
@@ -1025,6 +1249,11 @@ public class Main {
         return new double[][][]{finalPk, finalDk};
     }
 
+    /**
+     * Method to handle the reading of user input for the number of eigenfaces to use, until a valid input is given.
+     *
+     * @return The number of eigenfaces to use.
+     */
     public static int askNumberOfEigenfaces() {
 
         int k = 0;
@@ -1098,6 +1327,12 @@ public class Main {
         return true;
     }
 
+    /**
+     * Function that validates the matrix. Checks if the matrix is square and does not contain values outside the interval [0, 255], returning error otherwise.
+     *
+     * @param matrix
+     * @return
+     */
     public static boolean validateImageBaseMatrix(double[][] matrix) {
         if (matrix.length != matrix[0].length) {
             System.out.println("A matriz não é quadrada.");
@@ -1115,6 +1350,12 @@ public class Main {
         return true;
     }
 
+    /**
+     * Method to handle the reading of user input for the number of eigen vectors to use, until a valid input is given.
+     *
+     * @param matrix The matrix to search the max number of eigenfaces.
+     * @return The number of eigenfaces to use.
+     */
     public static int askNumberOfEigenVectors(double[][] matrix) {
         int k = 0;
 
@@ -1171,7 +1412,12 @@ public class Main {
         return sum / (rows * cols);
     }
 
-
+    /**
+     * Method that sorts the eigenvectors and eigenvalues in descending order.
+     *
+     * @param eigenvalues  The eigenvalues.
+     * @param eigenvectors The eigenvectors.
+     */
     public static void sortEigenvectors(double[] eigenvalues, double[][] eigenvectors) {
 
         for (int i = 0; i < eigenvalues.length; i++) {
@@ -1189,6 +1435,12 @@ public class Main {
         }
     }
 
+    /**
+     * Method that calculates eigen vectors and eigen values and returns then after using the sort method in descending order.
+     *
+     * @param matrixATA The matrix used to obtain the eigen vectors and values.
+     * @return The eigen vectors.
+     */
     public static double[][] getEigenVectors(double[][] matrixATA) {
         RealMatrix matrix = MatrixUtils.createRealMatrix(matrixATA);
         EigenDecomposition eigenDecomposition = new EigenDecomposition(matrix);
@@ -1201,7 +1453,12 @@ public class Main {
         return eigenvectors;
     }
 
-
+    /**
+     * Method to normalize the eigenvectors.
+     *
+     * @param eigenvectorMatrixC The eigenvectors to normalize.
+     * @return The normalized eigenvectors.
+     */
     public static double[][] normalizeVectorsC(double[][] eigenvectorMatrixC) {
         int numRows = eigenvectorMatrixC.length;      //Number of rows
         int numCols = eigenvectorMatrixC[0].length;  //Number of columns (number of eigenvectors)

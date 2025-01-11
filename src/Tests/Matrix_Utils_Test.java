@@ -6,6 +6,9 @@ import Utils.UI_Utils;
 
 import static Tests.Compare.compareVector;
 
+/**
+ * Unit tests for the Matrix_Utils class.
+ */
 public class Matrix_Utils_Test {
 
     public static void main(String[] args) {

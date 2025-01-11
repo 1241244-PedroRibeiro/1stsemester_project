@@ -2,8 +2,17 @@ package Utils;
 
 import java.io.File;
 
+/**
+ * This class contains utility methods that are used in the non-interactive mode.
+ */
 public class NonInteractive_Utils {
 
+    /**
+     * This method validates the value of K. K can be any positive integer or -1. If it is -1, it means that the user wants to use all the values.
+     *
+     * @param kArgument The value of K
+     * @return True if the value of K is valid, false otherwise.
+     */
     public static boolean validateK(String kArgument) {
         try {
             int k = Integer.parseInt(kArgument);
@@ -20,6 +29,12 @@ public class NonInteractive_Utils {
         }
     }
 
+    /**
+     * Method that validates the path to the folder that contains the CSV files.
+     *
+     * @param pathToFolder The path to the folder
+     * @return True if the path is valid, false otherwise.
+     */
     public static boolean selectFolderToRead(String pathToFolder) {
 
         boolean isValid = false;
@@ -52,6 +67,12 @@ public class NonInteractive_Utils {
         return isValid;
     }
 
+    /**
+     * Method that validates the path to the CSV file.
+     *
+     * @param filePath The path to the CSV file
+     * @return True if the path is valid, false otherwise.
+     */
     public static boolean validateFilePath(String filePath) {
         File file = new File(filePath);
 
@@ -63,6 +84,13 @@ public class NonInteractive_Utils {
         }
     }
 
+    /**
+     * Method that returns a string representation of a matrix, used to append on StringBuilder of non-interactive mode.
+     *
+     * @param matrix The matrix to be saved
+     * @param title  The title of the matrix
+     * @return The string representation of the matrix
+     */
     public static String saveMatrix(double[][] matrix, String title) {
         StringBuilder result = new StringBuilder();
         if (!title.isEmpty()) {
@@ -74,7 +102,7 @@ public class NonInteractive_Utils {
             for (int j = 0; j < matrix[i].length; j++) {
                 result.append(String.format("%.2f ", matrix[i][j]));
             }
-            if(i==matrix.length-1){
+            if (i == matrix.length - 1) {
                 result.append("]");
             }
             result.append("\n");
@@ -82,6 +110,13 @@ public class NonInteractive_Utils {
         return result.toString();
     }
 
+    /**
+     * Method that returns a string representation of a vector, used to append on StringBuilder of non-interactive mode.
+     *
+     * @param vector The vector to be saved
+     * @param title  The title of the vector
+     * @return The string representation of the vector
+     */
     public static String saveVector(double[] vector, String title) {
         StringBuilder result = new StringBuilder();
 
