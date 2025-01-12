@@ -245,8 +245,8 @@ public class File_Utils {
         File[] files = outputFolder.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (!file.delete()) {
-                    System.out.println("Erro ao eliminar ficheiro: " + file.getName());
+                if (!file.isDirectory() && !file.delete()) {
+                    System.out.println("Erro ao eliminar o ficheiro: " + file.getName());
                 }
             }
         }

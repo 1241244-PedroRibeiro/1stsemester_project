@@ -150,7 +150,7 @@ public class Main_Methods_Test {
         UI_Utils.showTestTitle("testGetImageAsJPG");
 
         File csvFile = new File("resources/exampleInputFunc1.csv");
-        String outputPath = "output/test_data/test_image.jpg";
+        String outputPath = "resources/test_data/test_image.jpg";
 
         Main.getImageAsJPG(csvFile, outputPath);
 
@@ -626,7 +626,7 @@ public class Main_Methods_Test {
         UI_Utils.showTestTitle("testSaveIntMatrixToCSV");
 
         double[] vector = {1.0, 2.0, 3.0, 4.0};
-        String outputPath = "output/test_data";
+        String outputPath = "resources/test_data";
         int matrixSize = 2;
         int counter = 1;
         String filePattern = "/test_matrix_";
