@@ -105,6 +105,11 @@ public class Main {
             return;
         }
 
+        if (!funcionalidade.matches("[0-9]+")) {
+            System.out.println("Funcionalidade inválida. Deve ser 1, 2, 3, 4 ou 5.");
+            return;
+        }
+
         int func = Integer.parseInt(funcionalidade);
 
         if (func < 1 || func > 5) {
